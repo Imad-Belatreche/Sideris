@@ -29,7 +29,7 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
+        preferredSize: AppBar().preferredSize,
         child: AnimatedSwitcher(
           duration: Duration(milliseconds: 300),
           transitionBuilder: (child, animation) {
