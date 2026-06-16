@@ -1,4 +1,4 @@
-# Dakerni
+# Sideris
 
 An application to push any custom notification whenever
 

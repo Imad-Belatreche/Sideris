@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Dakerni',
+      title: 'Sideris',
       theme: ThemeData.dark().copyWith(
         textTheme: GoogleFonts.interTextTheme().apply(bodyColor: Colors.white),
         floatingActionButtonTheme: FloatingActionButtonThemeData(
