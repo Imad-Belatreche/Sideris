@@ -12,7 +12,38 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Sideris',
       theme: ThemeData.dark().copyWith(
-        textTheme: GoogleFonts.interTextTheme().apply(bodyColor: Colors.white),
+        textTheme: TextTheme(
+          headlineLarge: GoogleFonts.outfit(
+            fontSize: 23,
+            fontWeight: FontWeight.w600,
+            color: Colors.white30,
+          ),
+          headlineSmall: GoogleFonts.outfit(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Colors.white70,
+          ),
+          labelLarge: GoogleFonts.outfit(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: Colors.white,
+          ),
+          labelMedium: GoogleFonts.outfit(
+            fontSize: 11,
+            fontWeight: FontWeight.w400,
+            color: Colors.white54,
+          ),
+          bodyMedium: GoogleFonts.outfit(
+            fontSize: 14,
+            fontWeight: FontWeight.normal,
+            color: Colors.white,
+          ),
+          bodySmall: GoogleFonts.outfit(
+            fontSize: 14,
+            fontWeight: FontWeight.normal,
+            color: Colors.white24,
+          ),
+        ),
         floatingActionButtonTheme: FloatingActionButtonThemeData(
           shape: CircleBorder(),
           backgroundColor: Colors.indigo,
