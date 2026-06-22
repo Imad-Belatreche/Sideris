@@ -744,6 +744,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.5.0"
+  recase:
+    dependency: "direct main"
+    description:
+      name: recase
+      sha256: e4eb4ec2dcdee52dcf99cb4ceabaffc631d7424ee55e56f280bc039737f89213
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.1.0"
   record_use:
     dependency: transitive
     description:
@@ -752,14 +760,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.0"
-  rename_app:
-    dependency: "direct main"
-    description:
-      name: rename_app
-      sha256: "9df79b531a59124f3ec60316385809f79835eccf934a1ca7051f602a988acade"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.6.6"
   shared_preferences:
     dependency: "direct main"
     description:
