@@ -52,6 +52,12 @@ class NotificationRuleModel {
   @Enumerated(EnumType.name)
   ColorTag? colorTag;
   bool bypassDnd;
+  
+  @Index(
+    composite: [CompositeIndex("isScheduled"), CompositeIndex("nextTriggerAt")],
+  )
+  bool isActive = true;
+  bool isScheduled = false;
 
   /// Choose recurrence `Specific`, `Random`, `Interval`
   @Enumerated(EnumType.name)
@@ -101,6 +107,7 @@ class NotificationRuleModel {
   int? durationCount;
 
   DateTime? lastTriggeredAt;
+
   DateTime? nextTriggerAt;
 
   DateTime createdAt;
@@ -232,6 +239,9 @@ class NotificationRuleModel {
     required this.startDate,
     this.colorTag,
     required this.bypassDnd,
+    this.isActive = true,
+    this.isScheduled = false,
+
     required this.repetitionType,
     required this.recurrenceType,
     this.fixedTimesMinutes,
@@ -259,13 +269,15 @@ class NotificationRuleModel {
     this.lastTriggeredAt,
     this.nextTriggerAt,
   }) : createdAt = DateTime.now();
-
   NotificationRuleModel copyWith(
     String? title,
     Optional<String?>? content,
     DateTime? startDate,
     ColorTag? colorTag,
     bool? bypassDnd,
+    bool? isActive,
+    bool? isScheduled,
+
     RepetitionType? repetitionType,
     RecurrenceType? recurrenceType,
 
@@ -333,6 +345,8 @@ class NotificationRuleModel {
       recurrenceType: recurrenceType ?? this.recurrenceType,
       colorTag: colorTag ?? this.colorTag,
       bypassDnd: bypassDnd ?? this.bypassDnd,
+      isActive: isActive ?? this.isActive,
+      isScheduled: isScheduled ?? this.isScheduled,
 
       fixedTimesMinutes: fixedTimesMinutes,
 
@@ -376,6 +390,6 @@ class NotificationRuleModel {
 
       lastTriggeredAt: lastTriggeredAt ?? this.lastTriggeredAt,
       nextTriggerAt: nextTriggerAt ?? this.nextTriggerAt,
-    );
+    )..id = id;
   }
 }

@@ -81,82 +81,92 @@ const NotificationRuleModelSchema = CollectionSchema(
       name: r'intervalWindowStartMinutes',
       type: IsarType.long,
     ),
-    r'isForever': PropertySchema(
+    r'isActive': PropertySchema(
       id: 12,
+      name: r'isActive',
+      type: IsarType.bool,
+    ),
+    r'isForever': PropertySchema(
+      id: 13,
       name: r'isForever',
       type: IsarType.bool,
     ),
+    r'isScheduled': PropertySchema(
+      id: 14,
+      name: r'isScheduled',
+      type: IsarType.bool,
+    ),
     r'lastTriggeredAt': PropertySchema(
-      id: 13,
+      id: 15,
       name: r'lastTriggeredAt',
       type: IsarType.dateTime,
     ),
     r'nextTriggerAt': PropertySchema(
-      id: 14,
+      id: 16,
       name: r'nextTriggerAt',
       type: IsarType.dateTime,
     ),
     r'randomCount': PropertySchema(
-      id: 15,
+      id: 17,
       name: r'randomCount',
       type: IsarType.long,
     ),
     r'randomWindowEndMinutes': PropertySchema(
-      id: 16,
+      id: 18,
       name: r'randomWindowEndMinutes',
       type: IsarType.long,
     ),
     r'randomWindowStartMinutes': PropertySchema(
-      id: 17,
+      id: 19,
       name: r'randomWindowStartMinutes',
       type: IsarType.long,
     ),
     r'recurrenceType': PropertySchema(
-      id: 18,
+      id: 20,
       name: r'recurrenceType',
       type: IsarType.string,
       enumMap: _NotificationRuleModelrecurrenceTypeEnumValueMap,
     ),
     r'repetitionType': PropertySchema(
-      id: 19,
+      id: 21,
       name: r'repetitionType',
       type: IsarType.string,
       enumMap: _NotificationRuleModelrepetitionTypeEnumValueMap,
     ),
     r'scheduleEvery': PropertySchema(
-      id: 20,
+      id: 22,
       name: r'scheduleEvery',
       type: IsarType.long,
     ),
     r'scheduleUnit': PropertySchema(
-      id: 21,
+      id: 23,
       name: r'scheduleUnit',
       type: IsarType.string,
       enumMap: _NotificationRuleModelscheduleUnitEnumValueMap,
     ),
     r'selectedDaysOfWeek': PropertySchema(
-      id: 22,
+      id: 24,
       name: r'selectedDaysOfWeek',
       type: IsarType.longList,
     ),
     r'selectedMonthDays': PropertySchema(
-      id: 23,
+      id: 25,
       name: r'selectedMonthDays',
       type: IsarType.objectList,
       target: r'MonthDaysRepetition',
     ),
     r'startDate': PropertySchema(
-      id: 24,
+      id: 26,
       name: r'startDate',
       type: IsarType.dateTime,
     ),
     r'title': PropertySchema(
-      id: 25,
+      id: 27,
       name: r'title',
       type: IsarType.string,
     ),
     r'totalOccurrences': PropertySchema(
-      id: 26,
+      id: 28,
       name: r'totalOccurrences',
       type: IsarType.long,
     )
@@ -166,7 +176,31 @@ const NotificationRuleModelSchema = CollectionSchema(
   deserialize: _notificationRuleModelDeserialize,
   deserializeProp: _notificationRuleModelDeserializeProp,
   idName: r'id',
-  indexes: {},
+  indexes: {
+    r'isActive_isScheduled_nextTriggerAt': IndexSchema(
+      id: -3737118100490942973,
+      name: r'isActive_isScheduled_nextTriggerAt',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'isActive',
+          type: IndexType.value,
+          caseSensitive: false,
+        ),
+        IndexPropertySchema(
+          name: r'isScheduled',
+          type: IndexType.value,
+          caseSensitive: false,
+        ),
+        IndexPropertySchema(
+          name: r'nextTriggerAt',
+          type: IndexType.value,
+          caseSensitive: false,
+        )
+      ],
+    )
+  },
   links: {},
   embeddedSchemas: {r'MonthDaysRepetition': MonthDaysRepetitionSchema},
   getId: _notificationRuleModelGetId,
@@ -261,26 +295,28 @@ void _notificationRuleModelSerialize(
   writer.writeString(offsets[9], object.intervalUnit?.name);
   writer.writeLong(offsets[10], object.intervalWindowEndMinutes);
   writer.writeLong(offsets[11], object.intervalWindowStartMinutes);
-  writer.writeBool(offsets[12], object.isForever);
-  writer.writeDateTime(offsets[13], object.lastTriggeredAt);
-  writer.writeDateTime(offsets[14], object.nextTriggerAt);
-  writer.writeLong(offsets[15], object.randomCount);
-  writer.writeLong(offsets[16], object.randomWindowEndMinutes);
-  writer.writeLong(offsets[17], object.randomWindowStartMinutes);
-  writer.writeString(offsets[18], object.recurrenceType.name);
-  writer.writeString(offsets[19], object.repetitionType.name);
-  writer.writeLong(offsets[20], object.scheduleEvery);
-  writer.writeString(offsets[21], object.scheduleUnit?.name);
-  writer.writeLongList(offsets[22], object.selectedDaysOfWeek);
+  writer.writeBool(offsets[12], object.isActive);
+  writer.writeBool(offsets[13], object.isForever);
+  writer.writeBool(offsets[14], object.isScheduled);
+  writer.writeDateTime(offsets[15], object.lastTriggeredAt);
+  writer.writeDateTime(offsets[16], object.nextTriggerAt);
+  writer.writeLong(offsets[17], object.randomCount);
+  writer.writeLong(offsets[18], object.randomWindowEndMinutes);
+  writer.writeLong(offsets[19], object.randomWindowStartMinutes);
+  writer.writeString(offsets[20], object.recurrenceType.name);
+  writer.writeString(offsets[21], object.repetitionType.name);
+  writer.writeLong(offsets[22], object.scheduleEvery);
+  writer.writeString(offsets[23], object.scheduleUnit?.name);
+  writer.writeLongList(offsets[24], object.selectedDaysOfWeek);
   writer.writeObjectList<MonthDaysRepetition>(
-    offsets[23],
+    offsets[25],
     allOffsets,
     MonthDaysRepetitionSchema.serialize,
     object.selectedMonthDays,
   );
-  writer.writeDateTime(offsets[24], object.startDate);
-  writer.writeString(offsets[25], object.title);
-  writer.writeLong(offsets[26], object.totalOccurrences);
+  writer.writeDateTime(offsets[26], object.startDate);
+  writer.writeString(offsets[27], object.title);
+  writer.writeLong(offsets[28], object.totalOccurrences);
 }
 
 NotificationRuleModel _notificationRuleModelDeserialize(
@@ -304,31 +340,33 @@ NotificationRuleModel _notificationRuleModelDeserialize(
         reader.readStringOrNull(offsets[9])],
     intervalWindowEndMinutes: reader.readLongOrNull(offsets[10]),
     intervalWindowStartMinutes: reader.readLongOrNull(offsets[11]),
-    isForever: reader.readBool(offsets[12]),
-    lastTriggeredAt: reader.readDateTimeOrNull(offsets[13]),
-    nextTriggerAt: reader.readDateTimeOrNull(offsets[14]),
-    randomCount: reader.readLongOrNull(offsets[15]),
-    randomWindowEndMinutes: reader.readLongOrNull(offsets[16]),
-    randomWindowStartMinutes: reader.readLongOrNull(offsets[17]),
+    isActive: reader.readBoolOrNull(offsets[12]) ?? true,
+    isForever: reader.readBool(offsets[13]),
+    isScheduled: reader.readBoolOrNull(offsets[14]) ?? false,
+    lastTriggeredAt: reader.readDateTimeOrNull(offsets[15]),
+    nextTriggerAt: reader.readDateTimeOrNull(offsets[16]),
+    randomCount: reader.readLongOrNull(offsets[17]),
+    randomWindowEndMinutes: reader.readLongOrNull(offsets[18]),
+    randomWindowStartMinutes: reader.readLongOrNull(offsets[19]),
     recurrenceType: _NotificationRuleModelrecurrenceTypeValueEnumMap[
-            reader.readStringOrNull(offsets[18])] ??
+            reader.readStringOrNull(offsets[20])] ??
         RecurrenceType.specific,
     repetitionType: _NotificationRuleModelrepetitionTypeValueEnumMap[
-            reader.readStringOrNull(offsets[19])] ??
+            reader.readStringOrNull(offsets[21])] ??
         RepetitionType.oneTime,
-    scheduleEvery: reader.readLongOrNull(offsets[20]),
+    scheduleEvery: reader.readLongOrNull(offsets[22]),
     scheduleUnit: _NotificationRuleModelscheduleUnitValueEnumMap[
-        reader.readStringOrNull(offsets[21])],
-    selectedDaysOfWeek: reader.readLongList(offsets[22]),
+        reader.readStringOrNull(offsets[23])],
+    selectedDaysOfWeek: reader.readLongList(offsets[24]),
     selectedMonthDays: reader.readObjectList<MonthDaysRepetition>(
-      offsets[23],
+      offsets[25],
       MonthDaysRepetitionSchema.deserialize,
       allOffsets,
       MonthDaysRepetition(),
     ),
-    startDate: reader.readDateTime(offsets[24]),
-    title: reader.readString(offsets[25]),
-    totalOccurrences: reader.readLongOrNull(offsets[26]),
+    startDate: reader.readDateTime(offsets[26]),
+    title: reader.readString(offsets[27]),
+    totalOccurrences: reader.readLongOrNull(offsets[28]),
   );
   object.createdAt = reader.readDateTime(offsets[3]);
   object.id = id;
@@ -370,44 +408,48 @@ P _notificationRuleModelDeserializeProp<P>(
     case 11:
       return (reader.readLongOrNull(offset)) as P;
     case 12:
-      return (reader.readBool(offset)) as P;
+      return (reader.readBoolOrNull(offset) ?? true) as P;
     case 13:
-      return (reader.readDateTimeOrNull(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 14:
-      return (reader.readDateTimeOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset) ?? false) as P;
     case 15:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readDateTimeOrNull(offset)) as P;
     case 16:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readDateTimeOrNull(offset)) as P;
     case 17:
       return (reader.readLongOrNull(offset)) as P;
     case 18:
+      return (reader.readLongOrNull(offset)) as P;
+    case 19:
+      return (reader.readLongOrNull(offset)) as P;
+    case 20:
       return (_NotificationRuleModelrecurrenceTypeValueEnumMap[
               reader.readStringOrNull(offset)] ??
           RecurrenceType.specific) as P;
-    case 19:
+    case 21:
       return (_NotificationRuleModelrepetitionTypeValueEnumMap[
               reader.readStringOrNull(offset)] ??
           RepetitionType.oneTime) as P;
-    case 20:
+    case 22:
       return (reader.readLongOrNull(offset)) as P;
-    case 21:
+    case 23:
       return (_NotificationRuleModelscheduleUnitValueEnumMap[
           reader.readStringOrNull(offset)]) as P;
-    case 22:
+    case 24:
       return (reader.readLongList(offset)) as P;
-    case 23:
+    case 25:
       return (reader.readObjectList<MonthDaysRepetition>(
         offset,
         MonthDaysRepetitionSchema.deserialize,
         allOffsets,
         MonthDaysRepetition(),
       )) as P;
-    case 24:
-      return (reader.readDateTime(offset)) as P;
-    case 25:
-      return (reader.readString(offset)) as P;
     case 26:
+      return (reader.readDateTime(offset)) as P;
+    case 27:
+      return (reader.readString(offset)) as P;
+    case 28:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -507,6 +549,16 @@ extension NotificationRuleModelQueryWhereSort
       return query.addWhereClause(const IdWhereClause.any());
     });
   }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhere>
+      anyIsActiveIsScheduledNextTriggerAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(
+            indexName: r'isActive_isScheduled_nextTriggerAt'),
+      );
+    });
+  }
 }
 
 extension NotificationRuleModelQueryWhere on QueryBuilder<NotificationRuleModel,
@@ -574,6 +626,226 @@ extension NotificationRuleModelQueryWhere on QueryBuilder<NotificationRuleModel,
         lower: lowerId,
         includeLower: includeLower,
         upper: upperId,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
+      isActiveEqualToAnyIsScheduledNextTriggerAt(bool isActive) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'isActive_isScheduled_nextTriggerAt',
+        value: [isActive],
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
+      isActiveNotEqualToAnyIsScheduledNextTriggerAt(bool isActive) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isActive_isScheduled_nextTriggerAt',
+              lower: [],
+              upper: [isActive],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isActive_isScheduled_nextTriggerAt',
+              lower: [isActive],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isActive_isScheduled_nextTriggerAt',
+              lower: [isActive],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isActive_isScheduled_nextTriggerAt',
+              lower: [],
+              upper: [isActive],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
+      isActiveIsScheduledEqualToAnyNextTriggerAt(
+          bool isActive, bool isScheduled) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'isActive_isScheduled_nextTriggerAt',
+        value: [isActive, isScheduled],
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
+      isActiveEqualToIsScheduledNotEqualToAnyNextTriggerAt(
+          bool isActive, bool isScheduled) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isActive_isScheduled_nextTriggerAt',
+              lower: [isActive],
+              upper: [isActive, isScheduled],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isActive_isScheduled_nextTriggerAt',
+              lower: [isActive, isScheduled],
+              includeLower: false,
+              upper: [isActive],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isActive_isScheduled_nextTriggerAt',
+              lower: [isActive, isScheduled],
+              includeLower: false,
+              upper: [isActive],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isActive_isScheduled_nextTriggerAt',
+              lower: [isActive],
+              upper: [isActive, isScheduled],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
+      isActiveIsScheduledEqualToNextTriggerAtIsNull(
+          bool isActive, bool isScheduled) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'isActive_isScheduled_nextTriggerAt',
+        value: [isActive, isScheduled, null],
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
+      isActiveIsScheduledEqualToNextTriggerAtIsNotNull(
+          bool isActive, bool isScheduled) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'isActive_isScheduled_nextTriggerAt',
+        lower: [isActive, isScheduled, null],
+        includeLower: false,
+        upper: [
+          isActive,
+          isScheduled,
+        ],
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
+      isActiveIsScheduledNextTriggerAtEqualTo(
+          bool isActive, bool isScheduled, DateTime? nextTriggerAt) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'isActive_isScheduled_nextTriggerAt',
+        value: [isActive, isScheduled, nextTriggerAt],
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
+      isActiveIsScheduledEqualToNextTriggerAtNotEqualTo(
+          bool isActive, bool isScheduled, DateTime? nextTriggerAt) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isActive_isScheduled_nextTriggerAt',
+              lower: [isActive, isScheduled],
+              upper: [isActive, isScheduled, nextTriggerAt],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isActive_isScheduled_nextTriggerAt',
+              lower: [isActive, isScheduled, nextTriggerAt],
+              includeLower: false,
+              upper: [isActive, isScheduled],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isActive_isScheduled_nextTriggerAt',
+              lower: [isActive, isScheduled, nextTriggerAt],
+              includeLower: false,
+              upper: [isActive, isScheduled],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isActive_isScheduled_nextTriggerAt',
+              lower: [isActive, isScheduled],
+              upper: [isActive, isScheduled, nextTriggerAt],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
+      isActiveIsScheduledEqualToNextTriggerAtGreaterThan(
+    bool isActive,
+    bool isScheduled,
+    DateTime? nextTriggerAt, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'isActive_isScheduled_nextTriggerAt',
+        lower: [isActive, isScheduled, nextTriggerAt],
+        includeLower: include,
+        upper: [isActive, isScheduled],
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
+      isActiveIsScheduledEqualToNextTriggerAtLessThan(
+    bool isActive,
+    bool isScheduled,
+    DateTime? nextTriggerAt, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'isActive_isScheduled_nextTriggerAt',
+        lower: [isActive, isScheduled],
+        upper: [isActive, isScheduled, nextTriggerAt],
+        includeUpper: include,
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
+      isActiveIsScheduledEqualToNextTriggerAtBetween(
+    bool isActive,
+    bool isScheduled,
+    DateTime? lowerNextTriggerAt,
+    DateTime? upperNextTriggerAt, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'isActive_isScheduled_nextTriggerAt',
+        lower: [isActive, isScheduled, lowerNextTriggerAt],
+        includeLower: includeLower,
+        upper: [isActive, isScheduled, upperNextTriggerAt],
         includeUpper: includeUpper,
       ));
     });
@@ -1862,10 +2134,30 @@ extension NotificationRuleModelQueryFilter on QueryBuilder<
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel,
+      QAfterFilterCondition> isActiveEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isActive',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
       QAfterFilterCondition> isForeverEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'isForever',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
+      QAfterFilterCondition> isScheduledEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isScheduled',
         value: value,
       ));
     });
@@ -3457,6 +3749,20 @@ extension NotificationRuleModelQuerySortBy
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
+      sortByIsActive() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isActive', Sort.asc);
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
+      sortByIsActiveDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isActive', Sort.desc);
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
       sortByIsForever() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isForever', Sort.asc);
@@ -3467,6 +3773,20 @@ extension NotificationRuleModelQuerySortBy
       sortByIsForeverDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isForever', Sort.desc);
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
+      sortByIsScheduled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isScheduled', Sort.asc);
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
+      sortByIsScheduledDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isScheduled', Sort.desc);
     });
   }
 
@@ -3810,6 +4130,20 @@ extension NotificationRuleModelQuerySortThenBy
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
+      thenByIsActive() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isActive', Sort.asc);
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
+      thenByIsActiveDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isActive', Sort.desc);
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
       thenByIsForever() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isForever', Sort.asc);
@@ -3820,6 +4154,20 @@ extension NotificationRuleModelQuerySortThenBy
       thenByIsForeverDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isForever', Sort.desc);
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
+      thenByIsScheduled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isScheduled', Sort.asc);
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
+      thenByIsScheduledDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isScheduled', Sort.desc);
     });
   }
 
@@ -4079,9 +4427,23 @@ extension NotificationRuleModelQueryWhereDistinct
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
+      distinctByIsActive() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isActive');
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
       distinctByIsForever() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isForever');
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
+      distinctByIsScheduled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isScheduled');
     });
   }
 
@@ -4272,9 +4634,23 @@ extension NotificationRuleModelQueryProperty on QueryBuilder<
   }
 
   QueryBuilder<NotificationRuleModel, bool, QQueryOperations>
+      isActiveProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isActive');
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, bool, QQueryOperations>
       isForeverProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isForever');
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, bool, QQueryOperations>
+      isScheduledProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isScheduled');
     });
   }
 
