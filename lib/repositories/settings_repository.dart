@@ -1,4 +1,4 @@
-import 'package:dakerni/models/settings_model.dart';
+import 'package:sideris/models/settings_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsRepository {

@@ -1,4 +1,4 @@
-name: dakerni
+name: sideris
 description: "An application to push any custom notification whenever"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.

@@ -1,4 +1,4 @@
-package imadbelatrech.org.dakerni
+package imadbelatrech.org.sideris
 
 import io.flutter.embedding.android.FlutterActivity
 

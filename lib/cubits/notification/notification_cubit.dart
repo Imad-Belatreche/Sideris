@@ -1,10 +1,10 @@
 import 'dart:developer';
 
-import 'package:dakerni/models/notification_rule_model.dart';
-import 'package:dakerni/repositories/notifications_repository.dart';
-import 'package:dakerni/services/notification_service.dart';
-import 'package:dakerni/utils/exceptions.dart';
-import 'package:dakerni/utils/recurrence_calculator.dart';
+import 'package:sideris/models/notification_rule_model.dart';
+import 'package:sideris/repositories/notifications_repository.dart';
+import 'package:sideris/services/notification_service.dart';
+import 'package:sideris/utils/exceptions.dart';
+import 'package:sideris/utils/recurrence_calculator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';

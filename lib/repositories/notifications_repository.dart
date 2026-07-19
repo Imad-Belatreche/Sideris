@@ -1,5 +1,5 @@
-import 'package:dakerni/isar_setup.dart';
-import 'package:dakerni/models/notification_rule_model.dart';
+import 'package:sideris/isar_setup.dart';
+import 'package:sideris/models/notification_rule_model.dart';
 import 'package:isar/isar.dart';
 
 class NotificationsRepository {

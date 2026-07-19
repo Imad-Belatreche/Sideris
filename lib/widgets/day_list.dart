@@ -1,10 +1,10 @@
 import 'dart:developer';
 import 'dart:math' hide log;
 
-import 'package:dakerni/cubits/notification/notification_cubit.dart';
-import 'package:dakerni/models/notification_rule_model.dart';
-import 'package:dakerni/utils/constants.dart';
-import 'package:dakerni/utils/general_utils.dart';
+import 'package:sideris/cubits/notification/notification_cubit.dart';
+import 'package:sideris/models/notification_rule_model.dart';
+import 'package:sideris/utils/constants.dart';
+import 'package:sideris/utils/general_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

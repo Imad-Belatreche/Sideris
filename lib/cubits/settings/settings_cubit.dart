@@ -1,5 +1,5 @@
-import 'package:dakerni/models/settings_model.dart';
-import 'package:dakerni/repositories/settings_repository.dart';
+import 'package:sideris/models/settings_model.dart';
+import 'package:sideris/repositories/settings_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'settings_state.dart';

@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:dakerni/models/notification_rule_model.dart';
+import 'package:sideris/models/notification_rule_model.dart';
 
 class RecurrenceCalculationResponse {
   final DateTime? nextTrigger;

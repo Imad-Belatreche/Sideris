@@ -1,8 +1,8 @@
 import 'dart:developer';
 
-import 'package:dakerni/models/notification_rule_model.dart';
-import 'package:dakerni/repositories/notifications_repository.dart';
-import 'package:dakerni/utils/recurrence_calculator.dart';
+import 'package:sideris/models/notification_rule_model.dart';
+import 'package:sideris/repositories/notifications_repository.dart';
+import 'package:sideris/utils/recurrence_calculator.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -71,8 +71,8 @@ class NotificationService {
         id: _platformId(notificationRule.id),
         notificationDetails: NotificationDetails(
           android: AndroidNotificationDetails(
-            'dakerni_channel_id',
-            'dakerni_channel_name',
+            'sideris_channel_id',
+            'sideris_channel_name',
             channelBypassDnd: notificationRule.bypassDnd,
             importance: notificationRule.bypassDnd
                 ? Importance.max

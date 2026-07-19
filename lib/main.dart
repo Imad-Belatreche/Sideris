@@ -1,6 +1,6 @@
-import 'package:dakerni/app.dart';
-import 'package:dakerni/isar_setup.dart';
-import 'package:dakerni/services/notification_service.dart';
+import 'package:sideris/app.dart';
+import 'package:sideris/isar_setup.dart';
+import 'package:sideris/services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
@@ -22,6 +22,6 @@ void main() async {
   ]);
 
   await initializeIsar();
-  
+
   runApp(const MyApp());
 }
