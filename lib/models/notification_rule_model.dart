@@ -5,8 +5,6 @@ import 'package:isar/isar.dart';
 
 part 'notification_rule_model.g.dart';
 
-//TODO: Maybe i'll add an "isActive" field to the model, so that we can deactivate a notification rule without deleting it, and then we can have a separate collection for "archived" notification rules, so that we can keep track of them and maybe even restore them later.
-
 enum ColorTag {
   green(Colors.green),
   blue(Colors.blue),
@@ -269,7 +267,8 @@ class NotificationRuleModel {
     this.lastTriggeredAt,
     this.nextTriggerAt,
   }) : createdAt = DateTime.now();
-  NotificationRuleModel copyWith(
+
+  NotificationRuleModel copyWith({
     String? title,
     Optional<String?>? content,
     DateTime? startDate,
@@ -303,9 +302,9 @@ class NotificationRuleModel {
     Optional<ScheduleUnit?>? durationUnit,
     Optional<int?>? durationCount,
 
-    DateTime? lastTriggeredAt,
-    DateTime? nextTriggerAt,
-  ) {
+    Optional<DateTime?>? lastTriggeredAt,
+    Optional<DateTime?>? nextTriggerAt,
+  }) {
     final List<int>? fixedTimesMinutes = fixedTimes != null
         ? (fixedTimes.value?.map((e) => e.hour * 60 + e.minute).toList())
         : this.fixedTimesMinutes;
@@ -388,8 +387,12 @@ class NotificationRuleModel {
           ? totalOccurrences.value
           : this.totalOccurrences,
 
-      lastTriggeredAt: lastTriggeredAt ?? this.lastTriggeredAt,
-      nextTriggerAt: nextTriggerAt ?? this.nextTriggerAt,
+      lastTriggeredAt: lastTriggeredAt != null
+          ? lastTriggeredAt.value
+          : this.lastTriggeredAt,
+      nextTriggerAt: nextTriggerAt != null
+          ? nextTriggerAt.value
+          : this.nextTriggerAt,
     )..id = id;
   }
 }
