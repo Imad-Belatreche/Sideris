@@ -3,10 +3,10 @@ part of 'notification_cubit.dart';
 final class NotificationState {
   final bool isLoading;
   final String? errorMessage;
-  final List<NotificationModel> notifications;
+  final List<NotificationRuleModel> notifications;
 
   NotificationState copyWith({
-    List<NotificationModel>? notifications,
+    List<NotificationRuleModel>? notifications,
     bool? isLoading,
     String? errorMessage,
   }) {

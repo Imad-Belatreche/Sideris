@@ -1,6 +1,6 @@
-import 'package:dakerni/cubits/settings/settings_cubit.dart';
-import 'package:dakerni/pages/notification_page.dart';
-import 'package:dakerni/pages/settings_page.dart';
+import 'package:sideris/cubits/settings/settings_cubit.dart';
+import 'package:sideris/pages/notification_page.dart';
+import 'package:sideris/pages/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

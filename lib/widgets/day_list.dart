@@ -1,15 +1,15 @@
 import 'dart:developer';
 import 'dart:math' hide log;
 
-import 'package:dakerni/cubits/notification/notification_cubit.dart';
-import 'package:dakerni/models/notification_model.dart';
-import 'package:dakerni/utils/constants.dart';
-import 'package:dakerni/utils/general_utils.dart';
+import 'package:sideris/cubits/notification/notification_cubit.dart';
+import 'package:sideris/models/notification_rule_model.dart';
+import 'package:sideris/utils/constants.dart';
+import 'package:sideris/utils/general_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DayList extends StatelessWidget {
-  final List<NotificationModel> notifications;
+  final List<NotificationRuleModel> notifications;
 
   const DayList({super.key, required this.notifications});
 
@@ -28,7 +28,7 @@ class DayList extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            formateDate(notifications[0].scheduledDate),
+            formateDate(notifications[0].startDate),
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           Divider(color: colorScheme.onSurface.withAlpha(150)),
@@ -39,22 +39,19 @@ class DayList extends StatelessWidget {
             itemBuilder: (context, index) {
               return ListTile(
                 title: Text(
-                  notifications[index].content,
+                  notifications[index].title,
                   style: TextStyle(
                     fontSize: 16,
                     color: colorScheme.onSurface.withAlpha(190),
                   ),
                 ),
                 subtitle: Text(
-                  formateTime(notifications[index].scheduledDate),
+                  formateTime(notifications[index].startDate),
                   style: TextStyle(color: colorScheme.onSurface.withAlpha(150)),
                 ),
                 leading: Icon(
                   Icons.notifications,
-                  color:
-                      notifications[index].scheduledDate.isBefore(
-                        DateTime.now(),
-                      )
+                  color: notifications[index].startDate.isBefore(DateTime.now())
                       ? colorScheme.onSurface.withAlpha(150)
                       : colorScheme.primary,
                 ),

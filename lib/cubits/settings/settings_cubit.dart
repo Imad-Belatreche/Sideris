@@ -1,6 +1,6 @@
-import 'package:dakerni/models/settings_model.dart';
+import 'package:sideris/models/settings_model.dart';
+import 'package:sideris/repositories/settings_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 part 'settings_state.dart';
 
@@ -20,19 +20,13 @@ class SettingsCubit extends Cubit<SettingsState> {
       ) {
     getCurrentSettings();
   }
-  final SharedPreferencesAsync prefs = SharedPreferencesAsync(
-    options: SharedPreferencesOptions(),
-  );
+
+  SettingsRepository settingsRepository = SettingsRepository();
 
   Future<void> saveSettings(SettingsModel settings) async {
     emit(state.copyWith(isLoading: true));
     try {
-      await Future.wait([
-        prefs.setString('uiLanguage', settings.uiLanguage.name),
-        prefs.setString('defaultTitle', settings.defaultTitle),
-        prefs.setString('defaultDescription', settings.defaultDescription),
-      ]);
-
+      await settingsRepository.saveSettings(settings);
       emit(state.copyWith(settings: settings, isLoading: false));
     } catch (e) {
       final error = SettingsCubitException(e.toString());
@@ -43,32 +37,28 @@ class SettingsCubit extends Cubit<SettingsState> {
   Future<void> getCurrentSettings() async {
     emit(state.copyWith(isLoading: true));
     try {
-      final [
-        uiLanguageStr,
-        defaultTitle,
-        defaultDescription,
-      ] = await Future.wait([
-        prefs.getString('uiLanguage'),
-        prefs.getString('defaultTitle'),
-        prefs.getString('defaultDescription'),
-      ]);
-
-      final uiLanguage = uiLanguageStr != null
-          ? UiLanguage.values.byName(uiLanguageStr)
-          : UiLanguage.english;
-
+      final currentSettings = await settingsRepository.getCurrentSettings();
       emit(
         state.copyWith(
-          settings: SettingsModel(
-            uiLanguage: uiLanguage,
-            defaultTitle: defaultTitle ?? state.settings.defaultTitle,
-            defaultDescription:
-                defaultDescription ?? state.settings.defaultDescription,
-          ),
+          settings: currentSettings,
           isLoading: false,
           isInitialized: true,
         ),
       );
+    } catch (e) {
+      final error = SettingsCubitException(e.toString());
+      emit(state.copyWith(errorMessage: error.message, isLoading: false));
+    }
+  }
+
+  Future<void> resetSettingsToDefault() async {
+    emit(state.copyWith(isLoading: true));
+
+    try {
+      await settingsRepository.resetSettingsToDefault();
+
+      final defaultSettings = await settingsRepository.getCurrentSettings();
+      emit(state.copyWith(settings: defaultSettings, isLoading: false));
     } catch (e) {
       final error = SettingsCubitException(e.toString());
       emit(state.copyWith(errorMessage: error.message, isLoading: false));

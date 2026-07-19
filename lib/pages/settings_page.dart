@@ -1,5 +1,5 @@
-import 'package:dakerni/cubits/settings/settings_cubit.dart';
-import 'package:dakerni/models/settings_model.dart';
+import 'package:sideris/cubits/settings/settings_cubit.dart';
+import 'package:sideris/models/settings_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:recase/recase.dart';
