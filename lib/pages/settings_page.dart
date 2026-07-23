@@ -1,3 +1,5 @@
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:sideris/cubits/settings/settings_cubit.dart';
 import 'package:sideris/models/settings_model.dart';
 import 'package:flutter/material.dart';
@@ -37,158 +39,188 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SettingsCubit, SettingsState>(
-      builder: (context, state) {
-        if (state.isLoading) {
-          return CircularProgressIndicator(color: Colors.white);
-        }
-        if (state.errorMessage != null) {
-          return Center(
-            child: Text(
-              "An error happened while loading settings: ${state.errorMessage}",
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          );
-        }
-        return SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsetsGeometry.all(10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+    return SafeArea(
+      child: Column(
+        children: [
+          AppBar(
+            centerTitle: false,
+            title:
                 Text(
-                  "Language",
-                  style: Theme.of(context).textTheme.headlineLarge,
-                ),
-                SizedBox(height: 10),
-                DropdownMenu<UiLanguage>(
-                  enableSearch: false,
-                  enableFilter: false,
-                  width: double.infinity,
-                  selectOnly: true,
-                  textStyle: Theme.of(
-                    context,
-                  ).textTheme.bodyLarge!.apply(color: Colors.indigoAccent),
-                  decorationBuilder: (context, controller) =>
-                      _buildInputDecoration(),
-                  initialSelection: selectedLanguage,
-                  onSelected: (value) {
-                    if (value != null) {
-                      setState(() {
-                        selectedLanguage = value;
-                      });
-                    }
-                  },
-                  dropdownMenuEntries: <DropdownMenuEntry<UiLanguage>>[
-                    DropdownMenuEntry(
-                      value: UiLanguage.english,
-                      label: ReCase(UiLanguage.english.name).titleCase,
+                      "Settings",
+                      style: GoogleFonts.outfit(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.3,
+                      ),
+                    )
+                    .animate()
+                    .fadeIn(duration: 400.ms)
+                    .slideX(
+                      duration: 400.ms,
+                      begin: -0.05,
+                      curve: Curves.easeOut,
                     ),
-                    DropdownMenuEntry(
-                      value: UiLanguage.french,
-                      label: ReCase(UiLanguage.french.name).titleCase,
-                    ),
-                    DropdownMenuEntry(
-                      value: UiLanguage.arabic,
-                      label: ReCase(UiLanguage.arabic.name).titleCase,
-                    ),
-                  ],
-                ),
-                SizedBox(height: 15),
-                Text(
-                  "Default options",
-                  style: Theme.of(context).textTheme.headlineLarge,
-                ),
-                SizedBox(height: 10),
+          ),
+          const SizedBox(height: 6),
 
-                Text(
-                  "Title :",
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-                SizedBox(height: 5),
-                TextField(
-                  controller: _defaultTitleController,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  decoration: _buildInputDecoration(),
-                ),
-                SizedBox(height: 10),
-
-                Text(
-                  "Description :",
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-                SizedBox(height: 5),
-                TextField(
-                  controller: _defaultDescriptionController,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  decoration: _buildInputDecoration(
-                    hintText: "(Default is empty)",
+          BlocBuilder<SettingsCubit, SettingsState>(
+            builder: (context, state) {
+              if (state.isLoading) {
+                return CircularProgressIndicator(color: Colors.white);
+              }
+              if (state.errorMessage != null) {
+                return Center(
+                  child: Text(
+                    "An error happened while loading settings: ${state.errorMessage}",
+                    style: Theme.of(context).textTheme.headlineMedium,
                   ),
-                ),
-                SizedBox(height: 10),
-
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      final originalSettings = settingsCubit.state.settings;
-
-                      final title = _defaultTitleController.text.trim();
-                      final description = _defaultDescriptionController.text
-                          .trim();
-                      final newSettings = SettingsModel(
-                        uiLanguage:
-                            selectedLanguage ?? originalSettings.uiLanguage,
-                        defaultTitle: title,
-                        defaultDescription: description,
-                      );
-
-                      await settingsCubit.saveSettings(newSettings);
-                      if (!context.mounted) return;
-
-                      if (settingsCubit.state.errorMessage != null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(settingsCubit.state.errorMessage!),
+                );
+              }
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsetsGeometry.all(10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Language",
+                        style: Theme.of(context).textTheme.headlineLarge,
+                      ),
+                      SizedBox(height: 10),
+                      DropdownMenu<UiLanguage>(
+                        enableSearch: false,
+                        enableFilter: false,
+                        width: double.infinity,
+                        selectOnly: true,
+                        textStyle: Theme.of(context).textTheme.bodyLarge!.apply(
+                          color: Colors.indigoAccent,
+                        ),
+                        decorationBuilder: (context, controller) =>
+                            _buildInputDecoration(),
+                        initialSelection: selectedLanguage,
+                        onSelected: (value) {
+                          if (value != null) {
+                            setState(() {
+                              selectedLanguage = value;
+                            });
+                          }
+                        },
+                        dropdownMenuEntries: <DropdownMenuEntry<UiLanguage>>[
+                          DropdownMenuEntry(
+                            value: UiLanguage.english,
+                            label: ReCase(UiLanguage.english.name).titleCase,
                           ),
-                        );
-                        return;
-                      }
+                          DropdownMenuEntry(
+                            value: UiLanguage.french,
+                            label: ReCase(UiLanguage.french.name).titleCase,
+                          ),
+                          DropdownMenuEntry(
+                            value: UiLanguage.arabic,
+                            label: ReCase(UiLanguage.arabic.name).titleCase,
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 15),
+                      Text(
+                        "Default options",
+                        style: Theme.of(context).textTheme.headlineLarge,
+                      ),
+                      SizedBox(height: 10),
 
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          backgroundColor: Theme.of(
-                            context,
-                          ).scaffoldBackgroundColor,
-                          content: Text(
-                            "Settings have been saved",
-                            style: Theme.of(
-                              context,
-                            ).textTheme.bodySmall!.apply(color: Colors.white),
+                      Text(
+                        "Title :",
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                      SizedBox(height: 5),
+                      TextField(
+                        controller: _defaultTitleController,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        decoration: _buildInputDecoration(),
+                      ),
+                      SizedBox(height: 10),
+
+                      Text(
+                        "Description :",
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                      SizedBox(height: 5),
+                      TextField(
+                        controller: _defaultDescriptionController,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        decoration: _buildInputDecoration(
+                          hintText: "(Default is empty)",
+                        ),
+                      ),
+                      SizedBox(height: 10),
+
+                      Center(
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            final originalSettings =
+                                settingsCubit.state.settings;
+
+                            final title = _defaultTitleController.text.trim();
+                            final description = _defaultDescriptionController
+                                .text
+                                .trim();
+                            final newSettings = SettingsModel(
+                              uiLanguage:
+                                  selectedLanguage ??
+                                  originalSettings.uiLanguage,
+                              defaultTitle: title,
+                              defaultDescription: description,
+                            );
+
+                            await settingsCubit.saveSettings(newSettings);
+                            if (!context.mounted) return;
+
+                            if (settingsCubit.state.errorMessage != null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    settingsCubit.state.errorMessage!,
+                                  ),
+                                ),
+                              );
+                              return;
+                            }
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: Theme.of(
+                                  context,
+                                ).scaffoldBackgroundColor,
+                                content: Text(
+                                  "Settings have been saved",
+                                  style: Theme.of(context).textTheme.bodySmall!
+                                      .apply(color: Colors.white),
+                                ),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.indigo,
+                            elevation: 5,
+                            shadowColor: Colors.black,
+                          ),
+                          child: Text(
+                            "Save",
+                            style: Theme.of(context).textTheme.bodyMedium!
+                                .copyWith(fontWeight: FontWeight.w900),
                           ),
                         ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: Colors.indigo,
-                      elevation: 5,
-                      shadowColor: Colors.black,
-                    ),
-                    child: Text(
-                      "Save",
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        fontWeight: FontWeight.w900,
                       ),
-                    ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              );
+            },
           ),
-        );
-      },
-    );
+        ],
+      ),
+    ).animate().fade(duration: 400.ms);
   }
 
   InputDecoration _buildInputDecoration({String? hintText}) {

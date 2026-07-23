@@ -1,5 +1,6 @@
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:sideris/cubits/settings/settings_cubit.dart';
-import 'package:sideris/pages/notification_page.dart';
+import 'package:sideris/pages/home_page.dart';
 import 'package:sideris/pages/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,11 +22,11 @@ class _MainPageState extends State<MainPage> {
 
   Widget _buildPage() {
     if (_selectedIndex == 0) {
-      return NotificationPage(key: ValueKey("notifications"));
+      return HomePage(key: ValueKey("home"));
     } else {
       return BlocProvider(
         create: (context) => SettingsCubit(),
-        child: SettingsPage(key: ValueKey("notifications")),
+        child: SettingsPage(key: ValueKey("settings")),
       );
     }
   }
@@ -33,65 +34,20 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: AppBar().preferredSize,
-        child: AnimatedSwitcher(
-          duration: Duration(milliseconds: 300),
-          transitionBuilder: (child, animation) {
-            final slideAnimation =
-                Tween<Offset>(
-                  begin: Offset(0.0, -0.2),
-                  end: Offset.zero,
-                ).animate(
-                  CurvedAnimation(
-                    parent: animation,
-                    curve: Curves.easeOutCubic,
-                  ),
-                );
-            return FadeTransition(
-              opacity: animation,
-              child: SlideTransition(position: slideAnimation, child: child),
-            );
-          },
+      body: _buildPage(),
 
-          child: AppBar(
-            key: ValueKey(_selectedIndex),
-            title: IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.indigo,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    width: 5,
-                  ),
-                  SizedBox(width: 10),
-                  Text(
-                    _selectedIndex == 0 ? 'Notifications' : 'Settings',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            ),
-            actions: _selectedIndex == 0 ? [] : null,
-          ),
-        ),
-      ),
-      body: AnimatedSwitcher(
-        duration: Duration(milliseconds: 500),
-        switchInCurve: Curves.easeIn,
-        switchOutCurve: Curves.easeOut,
+      floatingActionButton: (_selectedIndex == 0)
+          ? FloatingActionButton(
+                  onPressed: () {
+                    //TODO: Navigate to create notification screen
+                  },
 
-        child: _buildPage(),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          //TODO: Navigate to create notification screen
-        },
-        child: Icon(Icons.add),
-      ),
+                  child: Icon(Icons.add),
+                )
+                .animate()
+                .fade(duration: 400.ms)
+                .slideY(duration: 400.ms, begin: 0.05, curve: Curves.easeOut)
+          : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
@@ -109,8 +65,9 @@ class _MainPageState extends State<MainPage> {
           items: [
             BottomNavigationBarItem(
               icon: Icon(Icons.home_outlined),
-              label: 'Notifications',
+              label: 'Home',
             ),
+
             BottomNavigationBarItem(
               icon: Icon(Icons.settings_outlined),
               label: 'Settings',
