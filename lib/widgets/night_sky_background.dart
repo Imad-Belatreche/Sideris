@@ -17,13 +17,13 @@ class Star {
 }
 
 class ShootingStar {
-  final double startX; // Normalized start X (0.0 - 1.0)
-  final double startY; // Normalized start Y (0.0 - 1.0)
-  final double length; // Length of tail in pixels
-  final double angle; // Angle in radians
+  final double startX;
+  final double startY;
+  final double length;
+  final double angle;
   final double speedMultiplier;
   final double delay;
-  double progress = 0.0; // Flight completion (0.0 to 1.0)
+  double progress = 0.0;
 
   ShootingStar({
     required this.startX,
@@ -36,7 +36,6 @@ class ShootingStar {
 
   double get activeProgress {
     if (progress < delay) return 0.0;
-    // Map progress from delay..1.0 to 0.0..1.0
     return ((progress - delay) / (1.0 - delay)).clamp(0.0, 1.0);
   }
 
@@ -83,12 +82,10 @@ class _NightSkyBackgroundState extends State<NightSkyBackground>
                 for (int i = 0; i < groupCount; i++) {
                   _shootingStars.add(
                     ShootingStar(
-                      // Slight positional scatter for the cluster
                       startX: _random.nextDouble() * 0.7,
                       startY: _random.nextDouble() * 0.4,
                       length: 100 + _random.nextDouble() * 100,
                       angle: pi / 4,
-                      // Vary speeds slightly so they pass each other
                       speedMultiplier: 0.8 + _random.nextDouble() * 0.5,
                       delay: i == 0 ? 0.0 : _random.nextDouble() * 0.3,
                     ),
@@ -218,10 +215,10 @@ class StarPainter extends CustomPainter {
       final streakPaint = Paint()
         ..shader = LinearGradient(
           colors: [
-            Colors.transparent, // Faded tail
+            Colors.transparent,
             const Color.fromARGB(200, 255, 255, 255).withValues(
               alpha: 1.0 - s.progress,
-            ), // Bright head (fades as it finishes)
+            ),
           ],
         ).createShader(Rect.fromPoints(head, tail))
         ..strokeWidth = 2.0
