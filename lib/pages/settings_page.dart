@@ -44,6 +44,7 @@ class _SettingsPageState extends State<SettingsPage> {
         children: [
           AppBar(
             centerTitle: false,
+            backgroundColor: Colors.transparent,
             title:
                 Text(
                       "Settings",

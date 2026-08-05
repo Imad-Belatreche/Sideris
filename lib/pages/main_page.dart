@@ -4,6 +4,7 @@ import 'package:sideris/pages/home_page.dart';
 import 'package:sideris/pages/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sideris/widgets/night_sky_background.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -34,7 +35,8 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _buildPage(),
+      extendBody: true,
+      body: NightSkyBackground(child: _buildPage()),
 
       floatingActionButton: (_selectedIndex == 0)
           ? FloatingActionButton(
@@ -55,7 +57,8 @@ class _MainPageState extends State<MainPage> {
           highlightColor: Colors.transparent,
         ),
         child: BottomNavigationBar(
-          elevation: 10,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
           currentIndex: _selectedIndex,
           onTap: (index) {
             setState(() {

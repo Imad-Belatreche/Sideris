@@ -20,7 +20,7 @@ subprojects {
     afterEvaluate {
         if (project.plugins.hasPlugin("com.android.library")) {
             project.extensions.configure<com.android.build.gradle.LibraryExtension>("android") {
-                compileSdk = 34
+                compileSdk = 37
             }
         }
         if (project.name == "isar_flutter_libs") {

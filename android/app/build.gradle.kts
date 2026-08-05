@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "imadbelatrech.org.sideris"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {

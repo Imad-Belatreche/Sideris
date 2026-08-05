@@ -22,6 +22,10 @@ class HomePage extends StatelessWidget {
       child: Column(
         children: [
           AppBar(
+            toolbarHeight: 70,
+            shadowColor: Colors.transparent,
+            surfaceTintColor: Colors.transparent,
+            backgroundColor: Colors.transparent,
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -40,7 +44,7 @@ class HomePage extends StatelessWidget {
                       begin: -0.05,
                       curve: Curves.easeOut,
                     ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 2),
 
                 Text(
                       DateFormat.EEEE().addPattern(", MMMM dd").format(now),
@@ -62,7 +66,22 @@ class HomePage extends StatelessWidget {
             ),
           ),
 
-          const Expanded(child: Center(child: Text('Home Page'))),
+          Expanded(
+            child: ListView.builder(
+              physics: const BouncingScrollPhysics(),
+              scrollDirection: Axis.vertical,
+              itemCount: 100,
+              itemBuilder: (context, index) {
+                final item = "Item $index";
+                return ListTile(
+                  title: Text(
+                    item,
+                    style: GoogleFonts.outfit(color: Colors.white),
+                  ),
+                );
+              },
+            ),
+          ),
         ],
       ),
     ).animate().fade(duration: 400.ms);
