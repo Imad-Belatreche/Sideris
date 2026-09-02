@@ -1,7 +1,7 @@
 import 'package:sideris/app.dart';
 import 'package:sideris/isar_setup.dart';
 import 'package:sideris/services/notification_service.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest.dart';
@@ -16,10 +16,25 @@ void main() async {
 
   await NotificationService.instance.initialize();
 
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      systemNavigationBarColor: Colors.transparent,
+
+      systemNavigationBarContrastEnforced: false,
+      systemStatusBarContrastEnforced: false,
+
+      systemNavigationBarIconBrightness: Brightness.dark,
+      statusBarIconBrightness: Brightness.dark,
+    ),
+  );
 
   await initializeIsar();
 

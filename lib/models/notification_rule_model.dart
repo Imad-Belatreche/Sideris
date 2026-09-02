@@ -1,6 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:isar/isar.dart';
 
 part 'notification_rule_model.g.dart';
@@ -50,7 +50,7 @@ class NotificationRuleModel {
   @Enumerated(EnumType.name)
   ColorTag? colorTag;
   bool bypassDnd;
-  
+
   @Index(
     composite: [CompositeIndex("isScheduled"), CompositeIndex("nextTriggerAt")],
   )
@@ -59,7 +59,7 @@ class NotificationRuleModel {
 
   /// Choose recurrence `Specific`, `Random`, `Interval`
   @Enumerated(EnumType.name)
-  RecurrenceType recurrenceType;
+  RecurrenceType? recurrenceType;
 
   /// Choose between `One-Time` or `Repetitive`
   @Enumerated(EnumType.name)
@@ -241,7 +241,7 @@ class NotificationRuleModel {
     this.isScheduled = false,
 
     required this.repetitionType,
-    required this.recurrenceType,
+    this.recurrenceType,
     this.fixedTimesMinutes,
 
     this.intervalUnit,
@@ -278,7 +278,7 @@ class NotificationRuleModel {
     bool? isScheduled,
 
     RepetitionType? repetitionType,
-    RecurrenceType? recurrenceType,
+    Optional<RecurrenceType?>? recurrenceType,
 
     Optional<List<TimeOfDay>?>? fixedTimes,
 
@@ -341,7 +341,9 @@ class NotificationRuleModel {
       content: content != null ? content.value : this.content,
       startDate: startDate ?? this.startDate,
       repetitionType: repetitionType ?? this.repetitionType,
-      recurrenceType: recurrenceType ?? this.recurrenceType,
+      recurrenceType: recurrenceType != null
+          ? recurrenceType.value
+          : this.recurrenceType,
       colorTag: colorTag ?? this.colorTag,
       bypassDnd: bypassDnd ?? this.bypassDnd,
       isActive: isActive ?? this.isActive,

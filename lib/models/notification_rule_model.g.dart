@@ -245,7 +245,12 @@ int _notificationRuleModelEstimateSize(
       bytesCount += 3 + value.name.length * 3;
     }
   }
-  bytesCount += 3 + object.recurrenceType.name.length * 3;
+  {
+    final value = object.recurrenceType;
+    if (value != null) {
+      bytesCount += 3 + value.name.length * 3;
+    }
+  }
   bytesCount += 3 + object.repetitionType.name.length * 3;
   {
     final value = object.scheduleUnit;
@@ -303,7 +308,7 @@ void _notificationRuleModelSerialize(
   writer.writeLong(offsets[17], object.randomCount);
   writer.writeLong(offsets[18], object.randomWindowEndMinutes);
   writer.writeLong(offsets[19], object.randomWindowStartMinutes);
-  writer.writeString(offsets[20], object.recurrenceType.name);
+  writer.writeString(offsets[20], object.recurrenceType?.name);
   writer.writeString(offsets[21], object.repetitionType.name);
   writer.writeLong(offsets[22], object.scheduleEvery);
   writer.writeString(offsets[23], object.scheduleUnit?.name);
@@ -349,8 +354,7 @@ NotificationRuleModel _notificationRuleModelDeserialize(
     randomWindowEndMinutes: reader.readLongOrNull(offsets[18]),
     randomWindowStartMinutes: reader.readLongOrNull(offsets[19]),
     recurrenceType: _NotificationRuleModelrecurrenceTypeValueEnumMap[
-            reader.readStringOrNull(offsets[20])] ??
-        RecurrenceType.specific,
+        reader.readStringOrNull(offsets[20])],
     repetitionType: _NotificationRuleModelrepetitionTypeValueEnumMap[
             reader.readStringOrNull(offsets[21])] ??
         RepetitionType.oneTime,
@@ -425,8 +429,7 @@ P _notificationRuleModelDeserializeProp<P>(
       return (reader.readLongOrNull(offset)) as P;
     case 20:
       return (_NotificationRuleModelrecurrenceTypeValueEnumMap[
-              reader.readStringOrNull(offset)] ??
-          RecurrenceType.specific) as P;
+          reader.readStringOrNull(offset)]) as P;
     case 21:
       return (_NotificationRuleModelrepetitionTypeValueEnumMap[
               reader.readStringOrNull(offset)] ??
@@ -2534,8 +2537,26 @@ extension NotificationRuleModelQueryFilter on QueryBuilder<
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel,
+      QAfterFilterCondition> recurrenceTypeIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'recurrenceType',
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
+      QAfterFilterCondition> recurrenceTypeIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'recurrenceType',
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
       QAfterFilterCondition> recurrenceTypeEqualTo(
-    RecurrenceType value, {
+    RecurrenceType? value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -2549,7 +2570,7 @@ extension NotificationRuleModelQueryFilter on QueryBuilder<
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel,
       QAfterFilterCondition> recurrenceTypeGreaterThan(
-    RecurrenceType value, {
+    RecurrenceType? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -2565,7 +2586,7 @@ extension NotificationRuleModelQueryFilter on QueryBuilder<
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel,
       QAfterFilterCondition> recurrenceTypeLessThan(
-    RecurrenceType value, {
+    RecurrenceType? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -2581,8 +2602,8 @@ extension NotificationRuleModelQueryFilter on QueryBuilder<
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel,
       QAfterFilterCondition> recurrenceTypeBetween(
-    RecurrenceType lower,
-    RecurrenceType upper, {
+    RecurrenceType? lower,
+    RecurrenceType? upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -4689,7 +4710,7 @@ extension NotificationRuleModelQueryProperty on QueryBuilder<
     });
   }
 
-  QueryBuilder<NotificationRuleModel, RecurrenceType, QQueryOperations>
+  QueryBuilder<NotificationRuleModel, RecurrenceType?, QQueryOperations>
       recurrenceTypeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'recurrenceType');

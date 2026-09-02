@@ -1,6 +1,6 @@
 import 'package:sideris/cubits/notification/notification_cubit.dart';
 import 'package:sideris/pages/main_page.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -49,6 +49,10 @@ class MyApp extends StatelessWidget {
           backgroundColor: Colors.indigo,
           elevation: 5,
           iconSize: 30,
+        ),
+        datePickerTheme: DatePickerThemeData(
+          backgroundColor: const Color.fromARGB(255, 27, 14, 49),
+          
         ),
       ),
       home: BlocProvider(
