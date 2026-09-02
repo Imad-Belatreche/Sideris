@@ -1,6 +1,6 @@
 import 'dart:math' hide log;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class Star {
   final double x;
@@ -77,26 +77,23 @@ class _NightSkyBackgroundState extends State<NightSkyBackground>
         AnimationController(vsync: this, duration: const Duration(seconds: 2))
           ..addListener(() {
             setState(() {
-              if (_shootingStars.isEmpty && _random.nextDouble() < 0.02) {
-                int groupCount = 1 + _random.nextInt(3);
-                for (int i = 0; i < groupCount; i++) {
-                  _shootingStars.add(
-                    ShootingStar(
-                      startX: _random.nextDouble() * 0.7,
-                      startY: _random.nextDouble() * 0.4,
-                      length: 100 + _random.nextDouble() * 100,
-                      angle: pi / 4,
-                      speedMultiplier: 0.8 + _random.nextDouble() * 0.5,
-                      delay: i == 0 ? 0.0 : _random.nextDouble() * 0.3,
-                    ),
-                  );
-                }
-              } else if (_shootingStars.isNotEmpty) {
-                _shootingStars.removeWhere((star) {
-                  star.progress += 0.01 * star.speedMultiplier;
-                  return star.progress >= 1.0;
-                });
+              if (_shootingStars.length < 5 && _random.nextDouble() < 0.02) {
+                _shootingStars.add(
+                  ShootingStar(
+                    startX: _random.nextDouble(),
+                    startY: -0.12,
+                    length: 100 + _random.nextDouble() * 100,
+                    angle: pi / 2 - _random.nextDouble() * 0.35,
+                    speedMultiplier: 0.8 + _random.nextDouble() * 0.5,
+                    delay: _random.nextDouble() * 0.35,
+                  ),
+                );
               }
+
+              _shootingStars.removeWhere((star) {
+                star.progress += 0.01 * star.speedMultiplier;
+                return star.progress >= 1.0;
+              });
             });
           })
           ..repeat();
@@ -120,7 +117,8 @@ class _NightSkyBackgroundState extends State<NightSkyBackground>
       ),
       child: NotificationListener<ScrollNotification>(
         onNotification: (notification) {
-          if (notification is ScrollUpdateNotification) {
+          if (notification is ScrollUpdateNotification &&
+              notification.metrics.axis == Axis.vertical) {
             setState(() {
               _scrollOffset = notification.metrics.pixels;
             });
@@ -196,9 +194,11 @@ class StarPainter extends CustomPainter {
       final p = s.activeProgress;
 
       final headX =
-          s.startX * size.width + cos(s.angle) * (s.length * s.progress * 3);
+          s.startX * size.width +
+          cos(s.angle) * (max(size.width, size.height) * s.progress * 1.35);
       final headY =
-          s.startY * size.height + sin(s.angle) * (s.length * s.progress * 3);
+          s.startY * size.height +
+          sin(s.angle) * (max(size.width, size.height) * s.progress * 1.35);
       final head = Offset(headX, headY);
 
       double currentTailLength = s.length;
@@ -216,9 +216,12 @@ class StarPainter extends CustomPainter {
         ..shader = LinearGradient(
           colors: [
             Colors.transparent,
-            const Color.fromARGB(200, 255, 255, 255).withValues(
-              alpha: 1.0 - s.progress,
-            ),
+            const Color.fromARGB(
+              200,
+              255,
+              255,
+              255,
+            ).withValues(alpha: 1.0 - s.progress),
           ],
         ).createShader(Rect.fromPoints(head, tail))
         ..strokeWidth = 2.0
