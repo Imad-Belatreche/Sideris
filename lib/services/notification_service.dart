@@ -4,7 +4,6 @@ import 'package:sideris/models/notification_rule_model.dart';
 import 'package:sideris/repositories/notifications_repository.dart';
 import 'package:sideris/utils/recurrence_calculator.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 class NotificationService {
@@ -27,20 +26,6 @@ class NotificationService {
         iOS: DarwinInitializationSettings(),
       ),
     );
-  }
-
-  //TODO: May create a separate permission service to handle all permission requests in the app
-  Future<void> requestExactAlarmPermission() async {
-    return plugin
-            .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin
-            >()
-            ?.requestExactAlarmsPermission() ??
-        Future.value();
-  }
-
-  Future<PermissionStatus> checkNotificationPermissionStatus() async {
-    return Permission.notification.status;
   }
 
   Future<bool> scheduleExactNotification(
