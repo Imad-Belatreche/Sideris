@@ -56,8 +56,12 @@ class NotificationService {
         id: _platformId(notificationRule.id),
         notificationDetails: NotificationDetails(
           android: AndroidNotificationDetails(
-            'sideris_channel_id',
-            'sideris_channel_name',
+            notificationRule.bypassDnd
+                ? 'sideris_dnd_channel_id'
+                : 'sideris_channel_id',
+            notificationRule.bypassDnd
+                ? 'sideris_dnd_channel_name'
+                : 'sideris_channel_name',
             channelBypassDnd: notificationRule.bypassDnd,
             importance: notificationRule.bypassDnd
                 ? Importance.max
