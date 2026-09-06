@@ -5,9 +5,7 @@ import 'package:sideris/repositories/notifications_repository.dart';
 import 'package:sideris/services/notification_service.dart';
 import 'package:sideris/utils/exceptions.dart';
 import 'package:sideris/utils/recurrence_calculator.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 part 'notification_state.dart';
 
@@ -27,38 +25,6 @@ class NotificationCubit extends Cubit<NotificationState> {
       emit(state.copyWith(errorMessage: e.toString()));
     } finally {
       emit(state.copyWith(isLoading: false));
-    }
-  }
-
-  // inside e.g. NotificationSettingsCubit
-  Future<void> ensureNotificationPermission(BuildContext context) async {
-    final status = await NotificationService.instance
-        .checkNotificationPermissionStatus();
-
-    if (status.isPermanentlyDenied || status.isDenied) {
-      if (!context.mounted) return;
-      final shouldOpenSettings = await showDialog<bool>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Notifications Permission Required'),
-          content: const Text(
-            'Please allow notifications permission in settings to receive reminders.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('Open Settings'),
-            ),
-          ],
-        ),
-      );
-      if (shouldOpenSettings == true) await openAppSettings();
-    } else if (!status.isGranted) {
-      await NotificationService.instance.requestExactAlarmPermission();
     }
   }
 
