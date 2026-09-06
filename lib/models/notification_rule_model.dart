@@ -397,4 +397,9 @@ class NotificationRuleModel {
           : this.nextTriggerAt,
     )..id = id;
   }
+
+  @override
+  String toString() {
+    return "NotificationRuleModel(id: $id, title: $title, content: $content, startDate: $startDate, colorTag: $colorTag, bypassDnd: $bypassDnd, isActive: $isActive, isScheduled: $isScheduled, recurrenceType: $recurrenceType, repetitionType: $repetitionType, fixedTimesMinutes: $fixedTimesMinutes, intervalUnit: $intervalUnit, intervalEvery: $intervalEvery, intervalWindowStartMinutes: $intervalWindowStartMinutes, intervalWindowEndMinutes: $intervalWindowEndMinutes, scheduleUnit: $scheduleUnit, scheduleEvery: $scheduleEvery, selectedDaysOfWeek: $selectedDaysOfWeek, selectedMonthDays: $selectedMonthDays, randomCount: $randomCount, randomWindowStartMinutes: $randomWindowStartMinutes, randomWindowEndMinutes: $randomWindowEndMinutes, isForever: $isForever, endDate: $endDate, totalOccurrences: $totalOccurrences, durationUnit: $durationUnit, durationCount: $durationCount, lastTriggeredAt: $lastTriggeredAt, nextTriggerAt: $nextTriggerAt)";
+  }
 }
