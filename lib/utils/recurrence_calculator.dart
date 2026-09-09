@@ -13,7 +13,7 @@ class RecurrenceCalculationResponse {
 }
 
 class RecurrenceCalculator {
-  static int daysInMonth(int year, int month) {
+  static int _daysInMonth(int year, int month) {
     return DateTime(year, month + 1, 0).day;
   }
 
@@ -68,7 +68,7 @@ class RecurrenceCalculator {
     required int minimumDay,
     required List<int> selectedDays,
   }) {
-    final lastDay = daysInMonth(year, month);
+    final lastDay = _daysInMonth(year, month);
 
     for (final day in selectedDays) {
       if (day >= minimumDay && day <= lastDay) {
@@ -97,7 +97,7 @@ class RecurrenceCalculator {
         continue;
       }
 
-      if (day > daysInMonth(year, month)) {
+      if (day > _daysInMonth(year, month)) {
         continue;
       }
 
