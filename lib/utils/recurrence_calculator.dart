@@ -13,9 +13,98 @@ class RecurrenceCalculationResponse {
 }
 
 class RecurrenceCalculator {
+  static int daysInMonth(int year, int month) {
+    return DateTime(year, month + 1, 0).day;
+  }
+
   // Will only return the next trigger date, without considering time.
   static DateTime _timeCropping(DateTime dateTime) {
     return DateTime(dateTime.year, dateTime.month, dateTime.day);
+  }
+
+  static DateTime _nextDailyDate({
+    required DateTime searchDate,
+    required List<int>? selectedWeekdays,
+  }) {
+    if (selectedWeekdays == null || selectedWeekdays.isEmpty) {
+      return searchDate;
+    }
+
+    var candidate = searchDate;
+
+    while (!selectedWeekdays.contains(candidate.weekday)) {
+      candidate = candidate.add(const Duration(days: 1));
+    }
+
+    return candidate;
+  }
+
+  static DateTime _nextWeeklyDate({
+    required DateTime searchDate,
+    required int scheduleEvery,
+    required List<int> selectedWeekdays,
+  }) {
+    final sortedWeekdays = [...selectedWeekdays]..sort();
+
+    final weekStart = searchDate.subtract(
+      Duration(days: searchDate.weekday - 1),
+    );
+
+    for (final weekday in sortedWeekdays) {
+      final candidate = weekStart.add(Duration(days: weekday - 1));
+
+      if (!candidate.isBefore(searchDate)) {
+        return candidate;
+      }
+    }
+
+    final nextWeekStart = weekStart.add(Duration(days: scheduleEvery * 7));
+    return nextWeekStart.add(Duration(days: sortedWeekdays.first - 1));
+  }
+
+  static DateTime? _nextMonthlyDate({
+    required int year,
+    required int month,
+    required int minimumDay,
+    required List<int> selectedDays,
+  }) {
+    final lastDay = daysInMonth(year, month);
+
+    for (final day in selectedDays) {
+      if (day >= minimumDay && day <= lastDay) {
+        return DateTime(year, month, day);
+      }
+    }
+
+    return null;
+  }
+
+  static DateTime? _nextYearlyDate({
+    required int year,
+    required int minimumMonth,
+    required int minimumDay,
+    required List<MapEntry<int, int>> selectedDates,
+  }) {
+    for (final selectedDate in selectedDates) {
+      final month = selectedDate.key;
+      final day = selectedDate.value;
+
+      if (month < minimumMonth) {
+        continue;
+      }
+
+      if (month == minimumMonth && day < minimumDay) {
+        continue;
+      }
+
+      if (day > daysInMonth(year, month)) {
+        continue;
+      }
+
+      return DateTime(year, month, day);
+    }
+
+    return null;
   }
 
   static DateTime _dateFinder(
@@ -42,43 +131,32 @@ class RecurrenceCalculator {
 
     switch (rule.scheduleUnit!) {
       case ScheduleUnit.day:
-        if (rule.selectedDaysOfWeek != null &&
-            rule.selectedDaysOfWeek!.isNotEmpty) {
-          if (rule.scheduleEvery! != 1) {
+        final selectedWeekdays = rule.selectedDaysOfWeek;
+
+        if (selectedWeekdays != null && selectedWeekdays.isNotEmpty) {
+          if (rule.scheduleEvery != 1) {
             throw Exception(
-              "scheduleEvery should be 1 when setting weekdays or weekends",
+              'scheduleEvery should be 1 when setting weekdays or weekends.',
             );
           }
-        }
 
-        if (effectiveLastTriggeredAt != null) {
-          var result = effectiveLastTriggeredAt;
-          result = _timeCropping(result);
-
-          result = result.add(Duration(days: rule.scheduleEvery!));
-
-          while (!result.isAfter(now)) {
-            result = result.add(Duration(days: rule.scheduleEvery!));
-          }
-
-          if (rule.selectedDaysOfWeek != null &&
-              rule.selectedDaysOfWeek!.isNotEmpty) {
-            while (!rule.selectedDaysOfWeek!.contains(result.weekday)) {
-              result = result.add(const Duration(days: 1));
-            }
-          }
-
-          anchorDate = result;
-        } else {
-          if (rule.selectedDaysOfWeek != null &&
-              rule.selectedDaysOfWeek!.isNotEmpty) {
-            while (!rule.selectedDaysOfWeek!.contains(anchorDate.weekday)) {
-              anchorDate = anchorDate.add(const Duration(days: 1));
+          for (final weekday in selectedWeekdays) {
+            if (weekday < 1 || weekday > 7) {
+              throw Exception('Selected weekday must be between 1 and 7.');
             }
           }
         }
 
-        return anchorDate;
+        var searchDate = effectiveLastTriggeredAt == null
+            ? anchorDate
+            : _timeCropping(
+                effectiveLastTriggeredAt,
+              ).add(Duration(days: rule.scheduleEvery!));
+
+        return _nextDailyDate(
+          searchDate: searchDate,
+          selectedWeekdays: selectedWeekdays,
+        );
 
       case ScheduleUnit.week:
         if (rule.selectedDaysOfWeek == null ||
@@ -88,102 +166,66 @@ class RecurrenceCalculator {
           );
         }
 
-        if (effectiveLastTriggeredAt != null) {
-          var result = effectiveLastTriggeredAt;
-          result = _timeCropping(result);
-
-          while (!result.isAfter(now)) {
-            while (!rule.selectedDaysOfWeek!.contains(result.weekday)) {
-              result = result.add(Duration(days: 1));
-            }
-
-            if (result.weekday == rule.selectedDaysOfWeek!.last &&
-                !result.isAfter(now)) {
-              result = result.add(
-                Duration(
-                  days:
-                      (7 * rule.scheduleEvery!) -
-                      rule.selectedDaysOfWeek!.last +
-                      rule.selectedDaysOfWeek!.first,
-                ),
-              );
-            } else if (!result.isAfter(now)) {
-              result = result.add(Duration(days: 1));
-
-              while (!rule.selectedDaysOfWeek!.contains(result.weekday)) {
-                result = result.add(Duration(days: 1));
-              }
-            }
-          }
-
-          anchorDate = result;
-        } else {
-          while (!rule.selectedDaysOfWeek!.contains(anchorDate.weekday)) {
-            anchorDate = anchorDate.add(Duration(days: 1));
+        for (final weekday in rule.selectedDaysOfWeek!) {
+          if (weekday < 1 || weekday > 7) {
+            throw Exception('Selected weekday must be between 1 and 7.');
           }
         }
 
-        return anchorDate;
+        var searchDate = effectiveLastTriggeredAt == null
+            ? anchorDate
+            : _timeCropping(effectiveLastTriggeredAt);
+
+        if (effectiveLastTriggeredAt != null) {
+          searchDate = searchDate.add(const Duration(days: 1));
+        }
+
+        return _nextWeeklyDate(
+          searchDate: searchDate,
+          scheduleEvery: rule.scheduleEvery!,
+          selectedWeekdays: rule.selectedDaysOfWeek!,
+        );
 
       case ScheduleUnit.month:
-        if (rule.selectedMonthDays == null || rule.selectedMonthDays!.isEmpty) {
+        if (rule.selectedMonthDays == null ||
+            rule.selectedMonthDays!.isEmpty ||
+            rule.selectedMonthDays!.first.selectedDaysOfMonth == null ||
+            rule.selectedMonthDays!.first.selectedDaysOfMonth!.isEmpty) {
           throw Exception(
             "Selected month days must be provided for monthly recurrence.",
           );
         }
 
+        final selectedDays = [
+          ...rule.selectedMonthDays!.first.selectedDaysOfMonth!,
+        ]..sort();
+
+        var searchDate = effectiveLastTriggeredAt == null
+            ? anchorDate
+            : _timeCropping(effectiveLastTriggeredAt);
+
         if (effectiveLastTriggeredAt != null) {
-          var result = effectiveLastTriggeredAt;
-          result = _timeCropping(result);
-
-          while (!result.isAfter(now)) {
-            if (result.day ==
-                rule.selectedMonthDays!.first.selectedDaysOfMonth!.last) {
-              result = result.copyWith(
-                month: result.month + rule.scheduleEvery!,
-                day: rule.selectedMonthDays!.first.selectedDaysOfMonth!.first,
-              );
-            } else {
-              if (result.day >
-                  rule.selectedMonthDays!.first.selectedDaysOfMonth!.last) {
-                result = result.copyWith(
-                  month: result.month + rule.scheduleEvery!,
-                  day: rule.selectedMonthDays!.first.selectedDaysOfMonth!.first,
-                );
-              } else {
-                for (var day
-                    in rule.selectedMonthDays!.first.selectedDaysOfMonth!) {
-                  if (day > result.day) {
-                    result = result.copyWith(day: day);
-                    break;
-                  }
-                }
-              }
-            }
-          }
-
-          anchorDate = result;
-        } else {
-          if (anchorDate.day >
-              rule.selectedMonthDays!.first.selectedDaysOfMonth!.last) {
-            anchorDate = anchorDate.copyWith(
-              month: anchorDate.month + rule.scheduleEvery!,
-              day: rule.selectedMonthDays!.first.selectedDaysOfMonth!.first,
-            );
-          } else {
-            for (var day
-                in rule.selectedMonthDays!.first.selectedDaysOfMonth!) {
-              if (day > anchorDate.day) {
-                anchorDate = anchorDate.copyWith(day: day);
-                break;
-              } else if (day == anchorDate.day) {
-                break;
-              }
-            }
-          }
+          searchDate = searchDate.add(Duration(days: 1));
         }
 
-        return anchorDate;
+        while (true) {
+          final candidate = _nextMonthlyDate(
+            year: searchDate.year,
+            month: searchDate.month,
+            minimumDay: searchDate.day,
+            selectedDays: selectedDays,
+          );
+
+          if (candidate != null) {
+            return candidate;
+          }
+
+          searchDate = DateTime(
+            searchDate.year,
+            searchDate.month + rule.scheduleEvery!,
+            1,
+          );
+        }
 
       case ScheduleUnit.year:
         if (rule.selectedMonthDays == null || rule.selectedMonthDays!.isEmpty) {
@@ -192,7 +234,9 @@ class RecurrenceCalculator {
           );
         } else {
           for (var md in rule.selectedMonthDays!) {
-            if (md.selectedMonth == null || md.selectedDaysOfMonth!.isEmpty) {
+            if (md.selectedMonth == null ||
+                md.selectedDaysOfMonth == null ||
+                md.selectedDaysOfMonth!.isEmpty) {
               throw Exception(
                 'Selected month and days of month must be provided for each selected month.',
               );
@@ -200,68 +244,60 @@ class RecurrenceCalculator {
           }
         }
 
-        final sortedPairs = <MapEntry<int, int>>[];
-        for (var md in rule.selectedMonthDays!) {
-          for (var day in md.selectedDaysOfMonth!) {
-            sortedPairs.add(MapEntry(md.selectedMonth!, day));
-          }
-        }
+        final selectedDates = <MapEntry<int, int>>[];
 
-        if (effectiveLastTriggeredAt != null) {
-          var result = effectiveLastTriggeredAt;
-          result = _timeCropping(result);
+        for (final monthDays in rule.selectedMonthDays!) {
+          final month = monthDays.selectedMonth;
+          final days = monthDays.selectedDaysOfMonth;
 
-          while (!result.isAfter(now)) {
-            var found = false;
-
-            for (var pair in sortedPairs) {
-              if (pair.key > result.month ||
-                  (pair.key == result.month && pair.value > result.day)) {
-                result = result.copyWith(month: pair.key, day: pair.value);
-                found = true;
-                break;
-              }
-            }
-
-            if (!found) {
-              result = result.copyWith(
-                year: result.year + rule.scheduleEvery!,
-                month: rule.selectedMonthDays!.first.selectedMonth!,
-                day: rule.selectedMonthDays!.first.selectedDaysOfMonth!.first,
-              );
-            }
-          }
-
-          anchorDate = result;
-        } else {
-          var found = false;
-
-          for (var pair in sortedPairs) {
-            if (pair.key > anchorDate.month ||
-                (pair.key == anchorDate.month && pair.value > anchorDate.day)) {
-              anchorDate = anchorDate.copyWith(
-                month: pair.key,
-                day: pair.value,
-              );
-              found = true;
-              break;
-            } else if (pair.key == anchorDate.month &&
-                pair.value == anchorDate.day) {
-              found = true;
-              break;
-            }
-          }
-
-          if (!found) {
-            anchorDate = anchorDate.copyWith(
-              year: anchorDate.year + rule.scheduleEvery!,
-              month: rule.selectedMonthDays!.first.selectedMonth!,
-              day: rule.selectedMonthDays!.first.selectedDaysOfMonth!.first,
+          if (month == null ||
+              month < 1 ||
+              month > 12 ||
+              days == null ||
+              days.isEmpty) {
+            throw Exception(
+              'Each yearly selection must contain a valid month and at least one day.',
             );
           }
+
+          for (final day in days) {
+            if (day < 1 || day > 31) {
+              throw Exception('Selected day must be between 1 and 31.');
+            }
+
+            selectedDates.add(MapEntry(month, day));
+          }
         }
 
-        return anchorDate;
+        selectedDates.sort((a, b) {
+          final monthComparison = a.key.compareTo(b.key);
+          return monthComparison != 0
+              ? monthComparison
+              : a.value.compareTo(b.value);
+        });
+
+        var searchDate = effectiveLastTriggeredAt == null
+            ? anchorDate
+            : _timeCropping(effectiveLastTriggeredAt);
+
+        if (effectiveLastTriggeredAt != null) {
+          searchDate = searchDate.add(const Duration(days: 1));
+        }
+
+        while (true) {
+          final candidate = _nextYearlyDate(
+            year: searchDate.year,
+            minimumMonth: searchDate.month,
+            minimumDay: searchDate.day,
+            selectedDates: selectedDates,
+          );
+
+          if (candidate != null) {
+            return candidate;
+          }
+
+          searchDate = DateTime(searchDate.year + rule.scheduleEvery!, 1, 1);
+        }
     }
   }
 
