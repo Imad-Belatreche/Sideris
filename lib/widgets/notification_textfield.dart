@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -7,10 +8,17 @@ class NotificationTextfield extends StatelessWidget {
     required this.controller,
     required this.hintText,
     required this.maxLines,
+    this.keyboardType = TextInputType.text,
+    this.isExpanded = true,
+    this.isDense = false,
   });
+
   final TextEditingController controller;
   final String hintText;
+  final TextInputType keyboardType;
   final int maxLines;
+  final bool isExpanded;
+  final bool isDense;
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +30,17 @@ class NotificationTextfield extends StatelessWidget {
       ),
     );
 
-    return TextField(
+    final textField = TextField(
       controller: controller,
       maxLines: maxLines,
+      keyboardType: keyboardType,
+      inputFormatters: keyboardType == TextInputType.number
+          ? [
+              FilteringTextInputFormatter.deny(RegExp(r'^0*')),
+              FilteringTextInputFormatter.digitsOnly,
+            ]
+          : null,
+
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: GoogleFonts.outfit(
@@ -37,7 +53,17 @@ class NotificationTextfield extends StatelessWidget {
         border: border,
         enabledBorder: border,
         focusedBorder: border,
+        isDense: isDense,
       ),
     );
+
+    return isExpanded
+        ? SizedBox(width: double.infinity, child: textField)
+        : IntrinsicWidth(
+            child: Container(
+              constraints: BoxConstraints(maxWidth: 150),
+              child: textField,
+            ),
+          );
   }
 }
