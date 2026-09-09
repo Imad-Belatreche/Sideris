@@ -37,6 +37,13 @@ class Optional<T> {
 class MonthDaysRepetition {
   int? selectedMonth;
   List<int>? selectedDaysOfMonth;
+
+  MonthDaysRepetition({this.selectedMonth, this.selectedDaysOfMonth});
+
+  @override
+  toString() {
+    return "MonthDaysRepetition(selectedMonth: $selectedMonth, selectedDaysOfMonth: $selectedDaysOfMonth)";
+  }
 }
 
 @Collection()
@@ -258,7 +265,7 @@ class NotificationRuleModel {
     this.randomWindowStartMinutes,
     this.randomWindowEndMinutes,
 
-    required this.isForever,
+    this.isForever = false,
     this.endDate,
     this.totalOccurrences,
     this.durationUnit,
