@@ -311,8 +311,14 @@ class RecurrenceCalculator {
       if (rule.fixedTimes == null || rule.fixedTimes!.isEmpty) {
         throw Exception("Specific repetition but fixedTimes was not provided");
       }
+      final times = [...rule.fixedTimes!]
+        ..sort((first, second) {
+          final firstMinutes = first.hour * 60 + first.minute;
+          final secondMinutes = second.hour * 60 + second.minute;
+          return firstMinutes.compareTo(secondMinutes);
+        });
 
-      for (var time in rule.fixedTimes!) {
+      for (var time in times) {
         triggerDate = triggerDate.copyWith(
           hour: time.hour,
           minute: time.minute,
@@ -333,7 +339,8 @@ class RecurrenceCalculator {
           rule.intervalWindowEnd == null ||
           rule.intervalEvery == null ||
           rule.intervalUnit == null ||
-          rule.intervalEvery! <= 0) {
+          rule.intervalEvery! <= 0 ||
+          rule.intervalWindowStartMinutes! >= rule.intervalWindowEndMinutes!) {
         throw Exception(
           "Interval repetition but intervalWindowStart, intervalWindowEnd, intervalEvery, or intervalUnit was not provided or invalid",
         );
@@ -371,12 +378,10 @@ class RecurrenceCalculator {
       if (rule.randomWindowStart == null ||
           rule.randomWindowEnd == null ||
           rule.randomCount == null ||
-          rule.randomCount! <= 0) {
-        throw Exception(
-          "Random repetition but randomWindowStart, randomWindowEnd, randomCount, or randomUnit was not provided or invalid",
-        );
+          rule.randomCount! <= 0 ||
+          rule.randomWindowStartMinutes! >= rule.randomWindowEndMinutes!) {
+        throw Exception("Random timing configuration is invalid");
       }
-
       List<DateTime> randomSlotsFor(
         DateTime triggerDate,
         NotificationRuleModel rule,
@@ -390,12 +395,26 @@ class RecurrenceCalculator {
 
         final startMin = rule.randomWindowStartMinutes!;
         final endMin = rule.randomWindowEndMinutes!;
-        final span = endMin - startMin;
 
-        final minutesList = List.generate(
-          rule.randomCount!,
-          (_) => startMin + rng.nextInt(span + 1),
-        )..sort();
+        if (startMin >= endMin) {
+          throw Exception("Random window start must be before window end");
+        }
+
+        final availableMinutes = endMin - startMin + 1;
+
+        if (rule.randomCount! > availableMinutes) {
+          throw Exception(
+            "Random notification count exceeds available window minutes",
+          );
+        }
+
+        final availableSlots = List.generate(
+          availableMinutes,
+          (index) => startMin + index,
+        )..shuffle(rng);
+
+        final minutesList = availableSlots.take(rule.randomCount!).toList()
+          ..sort();
 
         return minutesList.map((m) {
           return DateTime(
