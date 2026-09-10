@@ -4,11 +4,7 @@ class NotificationOutlinedButton extends StatelessWidget {
   const NotificationOutlinedButton({
     super.key,
     required this.label,
-    this.icon = const Icon(
-      Icons.calendar_today,
-      color: Colors.indigoAccent,
-      size: 20,
-    ),
+    this.icon,
     this.onPressed,
     this.isCurrentlySelected,
     this.isSelected,
@@ -17,9 +13,13 @@ class NotificationOutlinedButton extends StatelessWidget {
     this.isExpanded = false,
     this.centerText = false,
     this.isRounded = false,
+    this.tailingWidget,
+    this.labelStyle,
+    this.labelWidget,
   });
 
   final String label;
+  final Widget? labelWidget;
   final Icon? icon;
   final bool? isSelected;
   final bool? isCurrentlySelected;
@@ -29,6 +29,8 @@ class NotificationOutlinedButton extends StatelessWidget {
   final Size? minimumSize;
   final VoidCallback? onPressed;
   final bool isExpanded;
+  final Widget? tailingWidget;
+  final TextStyle? labelStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -76,14 +78,26 @@ class NotificationOutlinedButton extends StatelessWidget {
             : MainAxisAlignment.center,
         children: [
           if (isExpanded && icon != null) icon!,
+          if (labelWidget == null)
+            Text(
+              label,
+              style:
+                  labelStyle ??
+                  TextStyle(
+                    color: textColor,
+                    fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
+                  ),
+            )
+          else
+            labelWidget!,
 
-          Text(
-            label,
-            style: TextStyle(
-              color: textColor,
-              fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
+          if (tailingWidget != null)
+            Expanded(
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: tailingWidget!,
+              ),
             ),
-          ),
         ],
       ),
     );
