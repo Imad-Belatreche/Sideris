@@ -17,6 +17,34 @@ class RecurrenceCalculator {
     return DateTime(year, month + 1, 0).day;
   }
 
+  static DateTime? computeDurationEndDate(
+    DateTime startDate,
+    ScheduleUnit? durationUnit,
+    int? durationCount,
+  ) {
+    if (durationUnit == null || durationCount == null) return null;
+
+    switch (durationUnit) {
+      case ScheduleUnit.day:
+        return startDate.add(Duration(days: durationCount));
+      case ScheduleUnit.week:
+        return startDate.add(Duration(days: durationCount * 7));
+      case ScheduleUnit.month:
+        return _addMonths(startDate, durationCount);
+      case ScheduleUnit.year:
+        return _addMonths(startDate, durationCount * 12);
+    }
+  }
+
+  static DateTime _addMonths(DateTime start, int months) {
+    final totalMonths = (start.month - 1) + months;
+    final year = start.year + totalMonths ~/ 12;
+    final month = totalMonths % 12 + 1;
+    final daysInTargetMonth = _daysInMonth(year, month);
+    final day = start.day > daysInTargetMonth ? daysInTargetMonth : start.day;
+    return DateTime(year, month, day, start.hour, start.minute, start.second);
+  }
+
   // Will only return the next trigger date, without considering time.
   static DateTime _timeCropping(DateTime dateTime) {
     return DateTime(dateTime.year, dateTime.month, dateTime.day);
@@ -486,7 +514,10 @@ class RecurrenceCalculator {
       }
     }
 
-    DateTime candidateDate = _dateFinder(rule);
+    DateTime candidateDate = rule.lastTriggeredAt != null
+        ? _timeCropping(rule.lastTriggeredAt!)
+        : _dateFinder(rule);
+
     DateTime? result;
     var guard = 0;
     while (result == null) {
