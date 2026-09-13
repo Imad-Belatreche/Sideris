@@ -56,8 +56,12 @@ class NotificationService {
         id: _platformId(notificationRule.id),
         notificationDetails: NotificationDetails(
           android: AndroidNotificationDetails(
-            'sideris_channel_id',
-            'sideris_channel_name',
+            notificationRule.bypassDnd
+                ? 'sideris_dnd_channel_id'
+                : 'sideris_channel_id',
+            notificationRule.bypassDnd
+                ? 'sideris_dnd_channel_name'
+                : 'sideris_channel_name',
             channelBypassDnd: notificationRule.bypassDnd,
             importance: notificationRule.bypassDnd
                 ? Importance.max
@@ -119,22 +123,32 @@ class NotificationService {
         if (notification.nextTriggerAt == null ||
             !notification.nextTriggerAt!.isAfter(DateTime.now())) {
           try {
-            final response = RecurrenceCalculator.computeNextTrigger(
-              notification,
-            );
+            final firedAt = notification.nextTriggerAt;
+            var updated = notification;
+
+            if (firedAt != null) {
+              updated = updated.copyWith(
+                lastTriggeredAt: Optional(firedAt),
+                totalOccurrences: updated.totalOccurrences != null
+                    ? Optional(updated.totalOccurrences! - 1)
+                    : null,
+              );
+            }
+
+            final response = RecurrenceCalculator.computeNextTrigger(updated);
 
             if (response != null) {
               if (response.error != null) {
                 log(
                   "$runtimeType: Error computing next trigger for notification with id: ${notification.id}. Error: ${response.error}",
                 );
-                notification = notification.copyWith(isActive: false);
-                await _notificationRepository.updateNotification(notification);
+                updated = updated.copyWith(isActive: false);
+                await _notificationRepository.updateNotification(updated);
               } else if (response.nextTrigger != null) {
-                notification = notification.copyWith(
+                updated = updated.copyWith(
                   nextTriggerAt: Optional(response.nextTrigger),
                 );
-                await _notificationRepository.updateNotification(notification);
+                await _notificationRepository.updateNotification(updated);
               }
             }
           } catch (e) {

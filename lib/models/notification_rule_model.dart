@@ -28,6 +28,8 @@ enum ScheduleUnit { day, week, month, year }
 
 enum IntervalUnit { minute, hour }
 
+enum DailyOption { allDays, weekdays, weekends }
+
 class Optional<T> {
   final T value;
   const Optional(this.value);
@@ -37,6 +39,13 @@ class Optional<T> {
 class MonthDaysRepetition {
   int? selectedMonth;
   List<int>? selectedDaysOfMonth;
+
+  MonthDaysRepetition({this.selectedMonth, this.selectedDaysOfMonth});
+
+  @override
+  toString() {
+    return "MonthDaysRepetition(selectedMonth: $selectedMonth, selectedDaysOfMonth: $selectedDaysOfMonth)";
+  }
 }
 
 @Collection()
@@ -82,6 +91,10 @@ class NotificationRuleModel {
   /// Weekdays/Weekends will be handled through the UI and will set the correct [selectedDaysOfWeek]
   @Enumerated(EnumType.name)
   ScheduleUnit? scheduleUnit;
+
+  @Enumerated(EnumType.name)
+  DailyOption? dailyOption;
+
   int? scheduleEvery;
   // Monday, Tuesday, Wednesday....etc == 1, 2, 3 ...etc
   List<int>? selectedDaysOfWeek;
@@ -250,6 +263,7 @@ class NotificationRuleModel {
     this.intervalWindowEndMinutes,
 
     this.scheduleUnit,
+    this.dailyOption,
     this.scheduleEvery,
     this.selectedDaysOfWeek,
     this.selectedMonthDays,
@@ -258,7 +272,7 @@ class NotificationRuleModel {
     this.randomWindowStartMinutes,
     this.randomWindowEndMinutes,
 
-    required this.isForever,
+    this.isForever = false,
     this.endDate,
     this.totalOccurrences,
     this.durationUnit,
@@ -288,6 +302,7 @@ class NotificationRuleModel {
     Optional<TimeOfDay?>? intervalWindowEnd,
 
     Optional<ScheduleUnit?>? scheduleUnit,
+    Optional<DailyOption?>? dailyOption,
     Optional<int?>? scheduleEvery,
     Optional<List<int>?>? selectedDaysOfWeek,
     Optional<List<MonthDaysRepetition>?>? selectedMonthDays,
@@ -360,6 +375,8 @@ class NotificationRuleModel {
       intervalWindowStartMinutes: intervalWindowStartMinutes,
       intervalWindowEndMinutes: intervalWindowEndMinutes,
 
+      dailyOption: dailyOption != null ? dailyOption.value : this.dailyOption,
+
       scheduleUnit: scheduleUnit != null
           ? scheduleUnit.value
           : this.scheduleUnit,
@@ -396,5 +413,81 @@ class NotificationRuleModel {
           ? nextTriggerAt.value
           : this.nextTriggerAt,
     )..id = id;
+  }
+
+  NotificationRuleModel normalized() {
+    final repetitive = repetitionType == RepetitionType.repetitive;
+
+    final recurrence = repetitive ? recurrenceType : null;
+
+    final normalizedSelectedDaysOfWeek =
+        repetitive &&
+            (scheduleUnit == ScheduleUnit.week ||
+                (scheduleUnit == ScheduleUnit.day &&
+                    dailyOption != null &&
+                    (dailyOption == DailyOption.weekdays ||
+                        dailyOption == DailyOption.weekends)))
+        ? selectedDaysOfWeek
+        : null;
+
+    final dailyOpt =
+        (repetitive && scheduleUnit != null && scheduleUnit == ScheduleUnit.day)
+        ? dailyOption
+        : null;
+
+    return copyWith(
+      recurrenceType: Optional(recurrence),
+
+      fixedTimes: Optional(
+        recurrence == RecurrenceType.specific ? fixedTimes : null,
+      ),
+
+      randomCount: Optional(
+        recurrence == RecurrenceType.random ? randomCount : null,
+      ),
+      randomWindowStart: Optional(
+        recurrence == RecurrenceType.random ? randomWindowStart : null,
+      ),
+      randomWindowEnd: Optional(
+        recurrence == RecurrenceType.random ? randomWindowEnd : null,
+      ),
+
+      intervalEvery: Optional(
+        recurrence == RecurrenceType.interval ? intervalEvery : null,
+      ),
+      intervalUnit: Optional(
+        recurrence == RecurrenceType.interval ? intervalUnit : null,
+      ),
+      intervalWindowStart: Optional(
+        recurrence == RecurrenceType.interval ? intervalWindowStart : null,
+      ),
+      intervalWindowEnd: Optional(
+        recurrence == RecurrenceType.interval ? intervalWindowEnd : null,
+      ),
+
+      scheduleUnit: Optional(repetitive ? scheduleUnit : null),
+      dailyOption: Optional(dailyOpt),
+      scheduleEvery: Optional(repetitive ? scheduleEvery : null),
+
+      selectedDaysOfWeek: Optional(normalizedSelectedDaysOfWeek),
+
+      selectedMonthDays: Optional(
+        repetitive &&
+                (scheduleUnit == ScheduleUnit.month ||
+                    scheduleUnit == ScheduleUnit.year)
+            ? selectedMonthDays
+            : null,
+      ),
+
+      durationUnit: Optional(isForever ? null : durationUnit),
+      durationCount: Optional(isForever ? null : durationCount),
+      endDate: Optional(isForever ? null : endDate),
+      totalOccurrences: Optional(isForever ? null : totalOccurrences),
+    );
+  }
+
+  @override
+  String toString() {
+    return "NotificationRuleModel(id: $id, title: $title, content: $content, startDate: $startDate, colorTag: $colorTag, bypassDnd: $bypassDnd, isActive: $isActive, isScheduled: $isScheduled, recurrenceType: $recurrenceType, repetitionType: $repetitionType, fixedTimesMinutes: $fixedTimesMinutes, intervalUnit: $intervalUnit, intervalEvery: $intervalEvery, intervalWindowStartMinutes: $intervalWindowStartMinutes, intervalWindowEndMinutes: $intervalWindowEndMinutes, scheduleUnit: $scheduleUnit, dailyOption: $dailyOption, scheduleEvery: $scheduleEvery, selectedDaysOfWeek: $selectedDaysOfWeek, selectedMonthDays: $selectedMonthDays, randomCount: $randomCount, randomWindowStartMinutes: $randomWindowStartMinutes, randomWindowEndMinutes: $randomWindowEndMinutes, isForever: $isForever, endDate: $endDate, totalOccurrences: $totalOccurrences, durationUnit: $durationUnit, durationCount: $durationCount, lastTriggeredAt: $lastTriggeredAt, nextTriggerAt: $nextTriggerAt)";
   }
 }

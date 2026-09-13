@@ -1,8 +1,10 @@
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:sideris/cubits/notification/notification_cubit.dart';
 import 'package:sideris/cubits/settings/settings_cubit.dart';
+import 'package:sideris/pages/create_update_notification_page.dart';
 import 'package:sideris/pages/home_page.dart';
 import 'package:sideris/pages/settings_page.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sideris/widgets/night_sky_background.dart';
 
@@ -40,8 +42,24 @@ class _MainPageState extends State<MainPage> {
 
       floatingActionButton: (_selectedIndex == 0)
           ? FloatingActionButton(
-                  onPressed: () {
+                  onPressed: () async {
                     //TODO: Navigate to create notification screen
+                    await ensureNotificationPermission(context);
+
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => NightSkyBackground(
+                          child:
+                              BlocProvider(
+                                    create: (context) => NotificationCubit(),
+                                    child: const CreateUpdateNotificationPage(),
+                                  )
+                                  .animate()
+                                  .slideY(duration: 400.ms, begin: 0.1)
+                                  .fadeIn(duration: 500.ms),
+                        ),
+                      ),
+                    );
                   },
 
                   child: Icon(Icons.add),
