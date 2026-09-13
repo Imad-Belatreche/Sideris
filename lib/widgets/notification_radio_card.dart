@@ -1,9 +1,8 @@
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:sideris/models/notification_rule_model.dart';
 import 'package:sideris/widgets/notification_card.dart';
 
-class NotificationRadioCard extends StatelessWidget {
+class NotificationRadioCard<T> extends StatelessWidget {
   const NotificationRadioCard({
     super.key,
     required this.selectedType,
@@ -14,7 +13,7 @@ class NotificationRadioCard extends StatelessWidget {
     this.onTap,
   });
 
-  final RecurrenceType selectedType;
+  final T selectedType;
   final String label;
   final IconData? icon;
   final Widget? child;
@@ -31,7 +30,7 @@ class NotificationRadioCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Radio<RecurrenceType>(
+                Radio<T>(
                   side: BorderSide(
                     color: isSelected ? Colors.blue.shade700 : Colors.white54,
                     width: isSelected ? 2.0 : 1.0,
