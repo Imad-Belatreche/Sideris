@@ -35,6 +35,21 @@ class NotificationCubit extends Cubit<NotificationState> {
 
     try {
       emit(state.copyWith(isLoading: true, errorMessage: null));
+      notification = notification.normalized();
+
+      if (!notification.isForever &&
+          notification.durationCount != null &&
+          notification.durationUnit != null) {
+        notification = notification.copyWith(
+          endDate: Optional(
+            RecurrenceCalculator.computeDurationEndDate(
+              notification.startDate,
+              notification.durationUnit,
+              notification.durationCount,
+            ),
+          ),
+        );
+      }
 
       final nextTrigger = RecurrenceCalculator.computeNextTrigger(notification);
       if (nextTrigger == null) {
@@ -94,6 +109,21 @@ class NotificationCubit extends Cubit<NotificationState> {
   Future<void> updateNotification(NotificationRuleModel notification) async {
     try {
       emit(state.copyWith(isLoading: true, errorMessage: null));
+      notification = notification.normalized();
+
+      if (!notification.isForever &&
+          notification.durationCount != null &&
+          notification.durationUnit != null) {
+        notification = notification.copyWith(
+          endDate: Optional(
+            RecurrenceCalculator.computeDurationEndDate(
+              notification.startDate,
+              notification.durationUnit,
+              notification.durationCount,
+            ),
+          ),
+        );
+      }
 
       await _notificationRepository.updateNotification(notification);
 
