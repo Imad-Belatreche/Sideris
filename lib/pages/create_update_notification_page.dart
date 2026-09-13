@@ -16,7 +16,7 @@ import 'package:sideris/widgets/notification_radio_card.dart';
 import 'package:sideris/widgets/notification_textfield.dart';
 import 'package:sideris/widgets/text/creation_screen_title.dart';
 
-enum DailyOption { allDays, weekdays, weekends }
+enum DurationOption { forever, duration, untilDate, totalTimes }
 
 class CreateUpdateNotificationPage extends StatefulWidget {
   const CreateUpdateNotificationPage({super.key});
@@ -30,27 +30,28 @@ class _CreateUpdateNotificationPageState
     extends State<CreateUpdateNotificationPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  ColorTag? _selectedColorTag;
+  ColorTag? _colorTag;
 
-  DateTime? _selectedDateTime;
-  RepetitionType _selectedRepetitionType = RepetitionType.oneTime;
-  DailyOption _selectedDailyOption = DailyOption.allDays;
-
+  DateTime? _startDate;
   bool _isDndEnabled = false;
 
-  ScheduleUnit _selectedScheduleUnit = ScheduleUnit.day;
+  RepetitionType _repetitionType = RepetitionType.oneTime;
+
+  DailyOption? _dailyOption = DailyOption.allDays;
+
+  ScheduleUnit? _scheduleUnit = ScheduleUnit.day;
   final TextEditingController _scheduleEveryController =
       TextEditingController();
 
   List<int>? _selectedDaysOfWeek;
 
   List<int>? _selectedDaysOfMonth;
-  bool? isFirstOfMonthSelected;
+  bool? _isFirstOfMonthSelected;
 
   List<MonthDaysRepetition>? _selectedDaysOfYear;
   int? _activeSelectedMonth;
 
-  RecurrenceType? _selectedRecurrenceType;
+  RecurrenceType? _recurrenceType;
   List<TimeOfDay>? _fixedSpecificTimes;
 
   final TextEditingController _randomTimesController = TextEditingController();
@@ -63,6 +64,16 @@ class _CreateUpdateNotificationPageState
   TimeOfDay? _intervalWindowStart;
   TimeOfDay? _intervalWindowEnd;
 
+  DurationOption? _durationOption;
+
+  ScheduleUnit? _durationUnit;
+  final TextEditingController _durationCountController =
+      TextEditingController();
+
+  final TextEditingController _totalTimesController = TextEditingController();
+
+  DateTime? _endDate;
+
   @override
   void dispose() {
     _titleController.dispose();
@@ -70,7 +81,345 @@ class _CreateUpdateNotificationPageState
     _scheduleEveryController.dispose();
     _randomTimesController.dispose();
     _intervalTimesController.dispose();
+    _durationCountController.dispose();
+    _totalTimesController.dispose();
     super.dispose();
+  }
+
+  final GlobalKey<AnimatedListState> _fixedTimesListKey =
+      GlobalKey<AnimatedListState>();
+
+  NotificationRuleModel? buildNotificationFromForm() {
+    late NotificationRuleModel notification;
+
+    final title = _titleController.text.trim();
+    if (title.isEmpty) {
+      showError("Title cannot be empty.");
+      return null;
+    }
+
+    String? description = _descriptionController.text.trim();
+    if (description.isEmpty) {
+      description = null;
+    }
+
+    if (_startDate == null) {
+      showError("Please select a start date and time.");
+      return null;
+    }
+
+    if (_repetitionType == RepetitionType.oneTime) {
+      if (_startDate != null && _startDate!.isBefore(DateTime.now())) {
+        showError("Selected date and time cannot be in the past.");
+        return null;
+      }
+
+      notification = NotificationRuleModel(
+        title: title,
+        content: description,
+        startDate: _startDate!,
+        repetitionType: _repetitionType,
+        colorTag: _colorTag,
+        bypassDnd: _isDndEnabled,
+      );
+    } else if (_repetitionType == RepetitionType.repetitive) {
+      if (_recurrenceType == null) {
+        showError("Select a daily timing method.");
+        return null;
+      }
+
+      int? scheduleEvery = int.tryParse(_scheduleEveryController.text.trim());
+
+      if (_scheduleUnit == ScheduleUnit.day) {
+        if (scheduleEvery == null || scheduleEvery <= 0) {
+          showError("'Repeat every' must be a whole number greater than 0.");
+          return null;
+        }
+
+        if (_dailyOption == DailyOption.weekdays ||
+            _dailyOption == DailyOption.weekends) {
+          scheduleEvery = 1;
+        }
+      }
+
+      if (_scheduleUnit == ScheduleUnit.week) {
+        if (scheduleEvery == null || scheduleEvery <= 0) {
+          showError("'Repeat every' must be a whole number greater than 0.");
+          return null;
+        }
+
+        if (_selectedDaysOfWeek == null || _selectedDaysOfWeek!.isEmpty) {
+          showError("Select at least one day of the week.");
+          return null;
+        }
+      }
+
+      if (_scheduleUnit == ScheduleUnit.month) {
+        if (scheduleEvery == null || scheduleEvery <= 0) {
+          showError("'Repeat every' must be a whole number greater than 0.");
+          return null;
+        }
+
+        if (_selectedDaysOfMonth == null || _selectedDaysOfMonth!.isEmpty) {
+          showError("Select at least one day of the month.");
+          return null;
+        }
+      }
+
+      if (_scheduleUnit == ScheduleUnit.year) {
+        if (scheduleEvery == null || scheduleEvery <= 0) {
+          showError("'Repeat every' must be a whole number greater than 0.");
+          return null;
+        }
+
+        if (_selectedDaysOfYear == null ||
+            _selectedDaysOfYear!.isEmpty ||
+            _selectedDaysOfYear!.any(
+              (selection) =>
+                  selection.selectedMonth == null ||
+                  selection.selectedDaysOfMonth == null ||
+                  selection.selectedDaysOfMonth!.isEmpty,
+            )) {
+          showError("Select at least one month and one day.");
+          return null;
+        }
+      }
+      final DailyOption? dailyOption = _scheduleUnit == ScheduleUnit.day
+          ? _dailyOption
+          : null;
+
+      final List<int>? selectedDaysOfWeek = _scheduleUnit == ScheduleUnit.week
+          ? _selectedDaysOfWeek
+          : _scheduleUnit == ScheduleUnit.day &&
+                _dailyOption == DailyOption.weekdays
+          ? [1, 2, 3, 4, 5]
+          : _scheduleUnit == ScheduleUnit.day &&
+                _dailyOption == DailyOption.weekends
+          ? [6, 7]
+          : null;
+
+      final List<MonthDaysRepetition>? selectedMonthDays =
+          _scheduleUnit == ScheduleUnit.year
+          ? _selectedDaysOfYear
+          : _scheduleUnit == ScheduleUnit.month
+          ? [
+              MonthDaysRepetition(
+                selectedMonth: null,
+                selectedDaysOfMonth: _selectedDaysOfMonth,
+              ),
+            ]
+          : null;
+
+      int? randomCount;
+      int? intervalCount;
+      if (_recurrenceType == RecurrenceType.specific) {
+        if (_fixedSpecificTimes == null || _fixedSpecificTimes!.isEmpty) {
+          showError(
+            "You must add at least one time for `At selected times` type",
+          );
+          return null;
+        }
+        // Show error when duplicated times
+        if (_fixedSpecificTimes!.length !=
+            _fixedSpecificTimes!.toSet().length) {
+          showError(
+            "You cannot add duplicate times for `At selected times` type",
+          );
+          return null;
+        }
+      } else if (_recurrenceType == RecurrenceType.random) {
+        if (_randomTimesController.text.trim().isEmpty) {
+          showError(
+            "You must set the `How many times` field for `Random times` type",
+          );
+          return null;
+        }
+        randomCount = int.tryParse(_randomTimesController.text.trim());
+        if (randomCount == null) {
+          showError("The `How many times` field must be a number");
+          return null;
+        }
+
+        if (randomCount <= 0) {
+          showError("Number of random notifications must be greater than 0.");
+          return null;
+        }
+
+        if (_randomWindowStart == null || _randomWindowEnd == null) {
+          showError("Select random notification start and end times.");
+          return null;
+        }
+
+        final startMinutes =
+            _randomWindowStart!.hour * 60 + _randomWindowStart!.minute;
+        final endMinutes =
+            _randomWindowEnd!.hour * 60 + _randomWindowEnd!.minute;
+
+        if (startMinutes >= endMinutes) {
+          showError("Random times start time must be before end time.");
+          return null;
+        }
+
+        final availableMinutes = endMinutes - startMinutes + 1;
+        if (randomCount > availableMinutes) {
+          showError(
+            "Random times notification count cannot exceed available minutes in window.",
+          );
+          return null;
+        }
+      } else {
+        if (_intervalTimesController.text.trim().isEmpty) {
+          showError(
+            "You must set the `Every` field for `At regular intervals` type",
+          );
+          return null;
+        }
+        intervalCount = int.tryParse(_intervalTimesController.text.trim());
+
+        if (intervalCount == null || intervalCount <= 0) {
+          showError(
+            "At regular intervals must be a whole number greater than 0.",
+          );
+          return null;
+        }
+
+        if (_intervalUnit == null) {
+          showError("Select an interval unit.");
+          return null;
+        }
+
+        if (_intervalWindowStart == null || _intervalWindowEnd == null) {
+          showError("Select interval start and end times.");
+          return null;
+        }
+
+        final startMinutes =
+            _intervalWindowStart!.hour * 60 + _intervalWindowStart!.minute;
+        final endMinutes =
+            _intervalWindowEnd!.hour * 60 + _intervalWindowEnd!.minute;
+
+        if (startMinutes >= endMinutes) {
+          showError("At regular intervals start time must be before end time.");
+          return null;
+        }
+      }
+
+      final fixedTimes = [...?_fixedSpecificTimes]
+        ..sort((first, second) {
+          final firstMinutes = first.hour * 60 + first.minute;
+          final secondMinutes = second.hour * 60 + second.minute;
+          return firstMinutes.compareTo(secondMinutes);
+        });
+
+      if (_durationOption == null) {
+        showError("Select a duration type");
+        return null;
+      }
+
+      if (_durationOption == DurationOption.duration && _durationUnit == null) {
+        showError("Select a duration unit.");
+        return null;
+      }
+
+      final int? parsedDurationCount = int.tryParse(
+        _durationCountController.text.trim(),
+      );
+
+      final int? parsedTotalTimes = int.tryParse(
+        _totalTimesController.text.trim(),
+      );
+
+      if (_durationOption == DurationOption.duration &&
+          (parsedDurationCount == null || parsedDurationCount <= 0)) {
+        showError("Enter a valid duration.");
+        return null;
+      }
+
+      if (_durationOption == DurationOption.totalTimes &&
+          (parsedTotalTimes == null || parsedTotalTimes <= 0)) {
+        showError("Enter valid total times occurrences.");
+        return null;
+      }
+
+      if (_durationOption == DurationOption.untilDate && _endDate == null) {
+        showError("Select an end date for the notification.");
+        return null;
+      }
+
+      final bool isForever = _durationOption == DurationOption.forever;
+
+      final durationUnit = _durationOption == DurationOption.duration
+          ? _durationUnit
+          : null;
+
+      final durationCount = _durationOption == DurationOption.duration
+          ? parsedDurationCount
+          : null;
+
+      final DateTime? endDate = _durationOption == DurationOption.untilDate
+          ? _endDate
+          : null;
+
+      final int? totalOccurrences = _durationOption == DurationOption.totalTimes
+          ? parsedTotalTimes
+          : null;
+
+      notification = NotificationRuleModel(
+        title: title,
+        content: description,
+        colorTag: _colorTag,
+        repetitionType: _repetitionType,
+        startDate: _startDate!,
+        bypassDnd: _isDndEnabled,
+        scheduleUnit: _scheduleUnit,
+        dailyOption: dailyOption,
+        scheduleEvery: scheduleEvery,
+        selectedDaysOfWeek: selectedDaysOfWeek,
+        selectedMonthDays: selectedMonthDays,
+        recurrenceType: _repetitionType == RepetitionType.repetitive
+            ? _recurrenceType
+            : null,
+        randomCount: _recurrenceType == RecurrenceType.random
+            ? randomCount
+            : null,
+        intervalEvery: _recurrenceType == RecurrenceType.interval
+            ? intervalCount
+            : null,
+
+        intervalUnit: _recurrenceType == RecurrenceType.interval
+            ? _intervalUnit
+            : null,
+        isForever: isForever,
+        durationUnit: durationUnit,
+        durationCount: durationCount,
+        endDate: endDate,
+        totalOccurrences: totalOccurrences,
+      );
+      notification = notification.copyWith(
+        fixedTimes: Optional(
+          _recurrenceType == RecurrenceType.specific ? fixedTimes : null,
+        ),
+        intervalWindowStart: Optional(
+          _recurrenceType == RecurrenceType.interval
+              ? _intervalWindowStart
+              : null,
+        ),
+        intervalWindowEnd: Optional(
+          _recurrenceType == RecurrenceType.interval
+              ? _intervalWindowEnd
+              : null,
+        ),
+
+        randomWindowStart: Optional(
+          _recurrenceType == RecurrenceType.random ? _randomWindowStart : null,
+        ),
+        randomWindowEnd: Optional(
+          _recurrenceType == RecurrenceType.random ? _randomWindowEnd : null,
+        ),
+      );
+    }
+
+    return notification;
   }
 
   @override
@@ -93,6 +442,9 @@ class _CreateUpdateNotificationPageState
       ),
       body: SafeArea(
         child: SingleChildScrollView(
+          physics: BouncingScrollPhysics(
+            decelerationRate: ScrollDecelerationRate.fast,
+          ),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -132,13 +484,17 @@ class _CreateUpdateNotificationPageState
 
                 AnimatedSwitcher(
                   duration: 200.ms,
-                  child: _selectedRepetitionType == RepetitionType.oneTime
+                  child: _repetitionType == RepetitionType.oneTime
                       ? buildOneTime(key: "oneTime")
                       : buildRepetitive(key: "repetitive"),
                 ),
 
                 SizedBox(height: 16),
+
+                const CreationScreenTitle(title: "Options"),
+                SizedBox(height: 5),
                 buildOptions(),
+
                 SizedBox(height: 30),
 
                 Align(
@@ -160,324 +516,9 @@ class _CreateUpdateNotificationPageState
                           return;
                         }
 
-                        late NotificationRuleModel notification;
-
-                        final title = _titleController.text.trim();
-                        if (title.isEmpty) {
-                          showError("Title cannot be empty.");
+                        final notification = buildNotificationFromForm();
+                        if (notification == null) {
                           return;
-                        }
-
-                        String? description = _descriptionController.text
-                            .trim();
-                        if (description.isEmpty) {
-                          description = null;
-                        }
-
-                        if (_selectedDateTime == null) {
-                          showError("Please select a date and time.");
-                          return;
-                        }
-
-                        if (_selectedRepetitionType == RepetitionType.oneTime) {
-                          if (_selectedDateTime != null &&
-                              _selectedDateTime!.isBefore(DateTime.now())) {
-                            showError(
-                              "Selected date and time cannot be in the past.",
-                            );
-                            return;
-                          }
-
-                          notification = NotificationRuleModel(
-                            title: title,
-                            content: description,
-                            startDate: _selectedDateTime!,
-                            repetitionType: _selectedRepetitionType,
-                            colorTag: _selectedColorTag,
-                            bypassDnd: _isDndEnabled,
-                          );
-                        } else if (_selectedRepetitionType ==
-                            RepetitionType.repetitive) {
-                          if (_selectedRecurrenceType == null) {
-                            showError("Select a daily timing method.");
-                            return;
-                          }
-
-                          int? randomCount;
-                          int? intervalCount;
-                          if (_selectedRecurrenceType ==
-                              RecurrenceType.specific) {
-                            if (_fixedSpecificTimes == null ||
-                                _fixedSpecificTimes!.isEmpty) {
-                              showError(
-                                "You must add at least one time for `At selected times` type",
-                              );
-                              return;
-                            }
-                            // Show error when duplicated times
-                            if (_fixedSpecificTimes!.length !=
-                                _fixedSpecificTimes!.toSet().length) {
-                              showError(
-                                "You cannot add duplicate times for `At selected times` type",
-                              );
-                              return;
-                            }
-
-                            _fixedSpecificTimes!.sort((a, b) {
-                              final aMinutes = a.hour * 60 + a.minute;
-                              final bMinutes = b.hour * 60 + b.minute;
-                              return aMinutes.compareTo(bMinutes);
-                            });
-                            setState(() {
-                              _randomWindowStart = null;
-                              _randomWindowEnd = null;
-                              _randomTimesController.clear();
-
-                              _intervalWindowStart = null;
-                              _intervalWindowEnd = null;
-                              _intervalTimesController.clear();
-                              _intervalUnit = null;
-                            });
-                          } else if (_selectedRecurrenceType ==
-                              RecurrenceType.random) {
-                            if (_randomTimesController.text.trim().isEmpty) {
-                              showError(
-                                "You must set the `How many times` field for `Random times` type",
-                              );
-                              return;
-                            }
-                            randomCount = int.tryParse(
-                              _randomTimesController.text.trim(),
-                            );
-                            if (randomCount == null) {
-                              showError(
-                                "The `How many times` field must be a number",
-                              );
-                              return;
-                            }
-
-                            if (randomCount <= 0) {
-                              showError(
-                                "Number of random notifications must be greater than 0.",
-                              );
-                              return;
-                            }
-
-                            if (_randomWindowStart == null ||
-                                _randomWindowEnd == null) {
-                              showError(
-                                "Select random notification start and end times.",
-                              );
-                              return;
-                            }
-
-                            final startMinutes =
-                                _randomWindowStart!.hour * 60 +
-                                _randomWindowStart!.minute;
-                            final endMinutes =
-                                _randomWindowEnd!.hour * 60 +
-                                _randomWindowEnd!.minute;
-
-                            if (startMinutes >= endMinutes) {
-                              showError(
-                                "Random times start time must be before end time.",
-                              );
-                              return;
-                            }
-
-                            final availableMinutes =
-                                endMinutes - startMinutes + 1;
-                            if (randomCount > availableMinutes) {
-                              showError(
-                                "Random times notification count cannot exceed available minutes in window.",
-                              );
-                              return;
-                            }
-
-                            setState(() {
-                              _fixedSpecificTimes = null;
-
-                              _intervalWindowStart = null;
-                              _intervalWindowEnd = null;
-                              _intervalTimesController.clear();
-                              _intervalUnit = null;
-                            });
-                          } else {
-                            if (_intervalTimesController.text.trim().isEmpty) {
-                              showError(
-                                "You must set the `Every` field for `At regular intervals` type",
-                              );
-                              return;
-                            }
-                            intervalCount = int.tryParse(
-                              _intervalTimesController.text.trim(),
-                            );
-
-                            if (intervalCount == null || intervalCount <= 0) {
-                              showError(
-                                "At regular intervals must be a whole number greater than 0.",
-                              );
-                              return;
-                            }
-
-                            if (_intervalUnit == null) {
-                              showError("Select an interval unit.");
-                              return;
-                            }
-
-                            if (_intervalWindowStart == null ||
-                                _intervalWindowEnd == null) {
-                              showError("Select interval start and end times.");
-                              return;
-                            }
-
-                            final startMinutes =
-                                _intervalWindowStart!.hour * 60 +
-                                _intervalWindowStart!.minute;
-                            final endMinutes =
-                                _intervalWindowEnd!.hour * 60 +
-                                _intervalWindowEnd!.minute;
-
-                            if (startMinutes >= endMinutes) {
-                              showError(
-                                "At regular intervals start time must be before end time.",
-                              );
-                              return;
-                            }
-
-                            setState(() {
-                              _fixedSpecificTimes = null;
-
-                              _randomWindowStart = null;
-                              _randomWindowEnd = null;
-                              _randomTimesController.clear();
-                            });
-                          }
-
-                          final userInputScheduleEvery =
-                              _scheduleEveryController.text.trim();
-
-                          int? scheduleEvery = int.tryParse(
-                            userInputScheduleEvery,
-                          );
-
-                          if (_selectedScheduleUnit == ScheduleUnit.day) {
-                            if (_selectedDailyOption != DailyOption.allDays &&
-                                (scheduleEvery == null || scheduleEvery <= 0)) {
-                              showError(
-                                "'Repeat every' must be a whole number greater than 0.",
-                              );
-                              return;
-                            }
-
-                            if (_selectedDailyOption == DailyOption.weekdays ||
-                                _selectedDailyOption == DailyOption.weekends) {
-                              scheduleEvery = 1;
-                              setState(() {
-                                _selectedDaysOfWeek =
-                                    _selectedDailyOption == DailyOption.weekdays
-                                    ? [1, 2, 3, 4, 5]
-                                    : [6, 7];
-                              });
-                            }
-                          }
-
-                          if (_selectedScheduleUnit == ScheduleUnit.week) {
-                            if (scheduleEvery == null || scheduleEvery <= 0) {
-                              showError(
-                                "'Repeat every' must be a whole number greater than 0.",
-                              );
-                              return;
-                            }
-
-                            if (_selectedDaysOfWeek == null ||
-                                _selectedDaysOfWeek!.isEmpty) {
-                              showError("Select at least one day of the week.");
-                              return;
-                            }
-                          }
-
-                          if (_selectedScheduleUnit == ScheduleUnit.month) {
-                            if (scheduleEvery == null || scheduleEvery <= 0) {
-                              showError(
-                                "'Repeat every' must be a whole number greater than 0.",
-                              );
-                              return;
-                            }
-
-                            if (_selectedDaysOfMonth == null ||
-                                _selectedDaysOfMonth!.isEmpty) {
-                              showError(
-                                "Select at least one day of the month.",
-                              );
-                              return;
-                            }
-                          }
-
-                          if (_selectedScheduleUnit == ScheduleUnit.year) {
-                            if (scheduleEvery == null || scheduleEvery <= 0) {
-                              showError(
-                                "'Repeat every' must be a whole number greater than 0.",
-                              );
-                              return;
-                            }
-
-                            if (_selectedDaysOfYear == null ||
-                                _selectedDaysOfYear!.isEmpty ||
-                                _selectedDaysOfYear!.any(
-                                  (selection) =>
-                                      selection.selectedMonth == null ||
-                                      selection.selectedDaysOfMonth == null ||
-                                      selection.selectedDaysOfMonth!.isEmpty,
-                                )) {
-                              showError(
-                                "Select at least one month and one day.",
-                              );
-                              return;
-                            }
-                          }
-
-                          notification = NotificationRuleModel(
-                            title: title,
-                            content: description,
-                            colorTag: _selectedColorTag,
-                            repetitionType: _selectedRepetitionType,
-                            startDate: _selectedDateTime!,
-                            bypassDnd: _isDndEnabled,
-                            scheduleUnit: _selectedScheduleUnit,
-                            scheduleEvery: scheduleEvery,
-                            selectedDaysOfWeek:
-                                _selectedScheduleUnit == ScheduleUnit.week ||
-                                    (_selectedScheduleUnit ==
-                                            ScheduleUnit.day &&
-                                        _selectedDailyOption !=
-                                            DailyOption.allDays)
-                                ? _selectedDaysOfWeek
-                                : null,
-                            selectedMonthDays:
-                                _selectedScheduleUnit == ScheduleUnit.year
-                                ? _selectedDaysOfYear
-                                : _selectedScheduleUnit == ScheduleUnit.month
-                                ? [
-                                    MonthDaysRepetition(
-                                      selectedMonth: null,
-                                      selectedDaysOfMonth: _selectedDaysOfMonth,
-                                    ),
-                                  ]
-                                : null,
-                            recurrenceType: _selectedRecurrenceType,
-                            randomCount: randomCount,
-                            intervalEvery: intervalCount,
-                            intervalUnit: _intervalUnit,
-                          );
-                          notification = notification.copyWith(
-                            fixedTimes: Optional(_fixedSpecificTimes),
-                            intervalWindowStart: Optional(_intervalWindowStart),
-                            intervalWindowEnd: Optional(_intervalWindowEnd),
-
-                            randomWindowStart: Optional(_randomWindowStart),
-                            randomWindowEnd: Optional(_randomWindowEnd),
-                          );
                         }
 
                         await notificationCubit.addNotification(notification);
@@ -518,11 +559,11 @@ class _CreateUpdateNotificationPageState
               child: GestureDetector(
                 onTap: () {
                   setState(() {
-                    _selectedColorTag = value;
+                    _colorTag = value;
                   });
                 },
                 child: AnimatedScale(
-                  scale: _selectedColorTag == value ? 1.14 : 1.0,
+                  scale: _colorTag == value ? 1.14 : 1.0,
                   duration: 200.ms,
                   curve: Curves.easeOut,
                   child: AnimatedContainer(
@@ -531,7 +572,7 @@ class _CreateUpdateNotificationPageState
                     width: 35,
                     height: 35,
                     decoration: BoxDecoration(
-                      boxShadow: value == _selectedColorTag
+                      boxShadow: value == _colorTag
                           ? [
                               BoxShadow(
                                 color: value.value,
@@ -541,7 +582,7 @@ class _CreateUpdateNotificationPageState
                             ]
                           : [],
                       shape: BoxShape.circle,
-                      border: _selectedColorTag == value
+                      border: _colorTag == value
                           ? Border.all(color: Colors.white, width: 2)
                           : null,
                       color: value.value,
@@ -556,7 +597,7 @@ class _CreateUpdateNotificationPageState
             child: GestureDetector(
               onTap: () {
                 setState(() {
-                  _selectedColorTag = null;
+                  _colorTag = null;
                 });
               },
               child: Container(
@@ -585,32 +626,34 @@ class _CreateUpdateNotificationPageState
       children: [
         NotificationOutlinedButton(
           label: "One-time",
-          isSelected: _selectedRepetitionType == RepetitionType.oneTime,
+          isSelected: _repetitionType == RepetitionType.oneTime,
           onPressed: () {
             setState(() {
-              if (_selectedDateTime != null) {
-                _selectedDateTime = null;
+              if (_startDate != null) {
+                _startDate = null;
               }
-              _selectedRepetitionType = RepetitionType.oneTime;
+              _repetitionType = RepetitionType.oneTime;
             });
           },
         ),
 
         NotificationOutlinedButton(
           label: "Repetitive",
-          isSelected: _selectedRepetitionType == RepetitionType.repetitive,
+          isSelected: _repetitionType == RepetitionType.repetitive,
           onPressed: () {
             setState(() {
-              if (_selectedDateTime != null) {
-                _selectedDateTime = null;
+              if (_startDate != null) {
+                _startDate = null;
               }
-              _selectedRepetitionType = RepetitionType.repetitive;
+              _repetitionType = RepetitionType.repetitive;
               if (_scheduleEveryController.text.isEmpty) {
                 _scheduleEveryController.text = "1";
               }
-              _selectedDateTime = DateTime.now();
-              _selectedRecurrenceType = RecurrenceType.specific;
+              _startDate = DateTime.now();
+              _recurrenceType = RecurrenceType.specific;
               _fixedSpecificTimes = [TimeOfDay(hour: 9, minute: 0)];
+
+              _durationOption = DurationOption.forever;
             });
           },
         ),
@@ -622,8 +665,6 @@ class _CreateUpdateNotificationPageState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const CreationScreenTitle(title: "Options"),
-        SizedBox(height: 5),
         DndSwitch(
           isSelected: _isDndEnabled,
           value: _isDndEnabled,
@@ -647,11 +688,11 @@ class _CreateUpdateNotificationPageState
         ///TODO: Maybe using a single button for whole date?
         /// First shows the date picker then the time picker
         NotificationOutlinedButton(
-          label: _selectedDateTime != null
-              ? DateFormat.yMMMd().format(_selectedDateTime!)
+          label: _startDate != null
+              ? DateFormat.yMMMd().format(_startDate!)
               : "Select Date",
           isExpanded: true,
-          isSelected: _selectedDateTime != null,
+          isSelected: _startDate != null,
           icon: const Icon(
             Icons.calendar_today,
             color: Colors.indigoAccent,
@@ -661,18 +702,18 @@ class _CreateUpdateNotificationPageState
             final DateTime? pickedDate = await showDatePicker(
               context: context,
               firstDate: DateTime.now(),
-              initialDate: _selectedDateTime ?? DateTime.now(),
+              initialDate: _startDate ?? DateTime.now(),
               lastDate: DateTime.now().add(const Duration(days: 365 * 100)),
             );
 
             if (pickedDate != null) {
               setState(() {
-                _selectedDateTime = DateTime(
+                _startDate = DateTime(
                   pickedDate.year,
                   pickedDate.month,
                   pickedDate.day,
-                  _selectedDateTime?.hour ?? 0,
-                  _selectedDateTime?.minute ?? 0,
+                  _startDate?.hour ?? 0,
+                  _startDate?.minute ?? 0,
                 );
               });
             }
@@ -681,22 +722,21 @@ class _CreateUpdateNotificationPageState
         SizedBox(height: 10),
         NotificationOutlinedButton(
           label:
-              (_selectedDateTime != null &&
-                  (_selectedDateTime!.hour != 0 ||
-                      _selectedDateTime!.minute != 0))
-              ? DateFormat.jm().format(_selectedDateTime!)
+              (_startDate != null &&
+                  (_startDate!.hour != 0 || _startDate!.minute != 0))
+              ? DateFormat.jm().format(_startDate!)
               : "Select Time",
           isExpanded: true,
           isSelected:
-              _selectedDateTime != null &&
-              (_selectedDateTime!.hour != 0 || _selectedDateTime!.minute != 0),
+              _startDate != null &&
+              (_startDate!.hour != 0 || _startDate!.minute != 0),
           icon: const Icon(
             Icons.access_time,
             color: Colors.indigoAccent,
             size: 20,
           ),
           onPressed: () async {
-            if (_selectedDateTime == null) {
+            if (_startDate == null) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text("Please select a date first.")),
               );
@@ -713,10 +753,10 @@ class _CreateUpdateNotificationPageState
 
             if (pickedTime != null) {
               setState(() {
-                _selectedDateTime = DateTime(
-                  _selectedDateTime!.year,
-                  _selectedDateTime!.month,
-                  _selectedDateTime!.day,
+                _startDate = DateTime(
+                  _startDate!.year,
+                  _startDate!.month,
+                  _startDate!.day,
                   pickedTime.hour,
                   pickedTime.minute,
                 );
@@ -741,37 +781,37 @@ class _CreateUpdateNotificationPageState
             children: [
               NotificationOutlinedButton(
                 label: "Day",
-                isSelected: _selectedScheduleUnit == ScheduleUnit.day,
+                isSelected: _scheduleUnit == ScheduleUnit.day,
                 onPressed: () {
                   setState(() {
-                    _selectedScheduleUnit = ScheduleUnit.day;
+                    _scheduleUnit = ScheduleUnit.day;
                   });
                 },
               ),
               NotificationOutlinedButton(
                 label: "Week",
-                isSelected: _selectedScheduleUnit == ScheduleUnit.week,
+                isSelected: _scheduleUnit == ScheduleUnit.week,
                 onPressed: () {
                   setState(() {
-                    _selectedScheduleUnit = ScheduleUnit.week;
+                    _scheduleUnit = ScheduleUnit.week;
                   });
                 },
               ),
               NotificationOutlinedButton(
                 label: "Month",
-                isSelected: _selectedScheduleUnit == ScheduleUnit.month,
+                isSelected: _scheduleUnit == ScheduleUnit.month,
                 onPressed: () {
                   setState(() {
-                    _selectedScheduleUnit = ScheduleUnit.month;
+                    _scheduleUnit = ScheduleUnit.month;
                   });
                 },
               ),
               NotificationOutlinedButton(
                 label: "Year",
-                isSelected: _selectedScheduleUnit == ScheduleUnit.year,
+                isSelected: _scheduleUnit == ScheduleUnit.year,
                 onPressed: () {
                   setState(() {
-                    _selectedScheduleUnit = ScheduleUnit.year;
+                    _scheduleUnit = ScheduleUnit.year;
                   });
                 },
               ),
@@ -809,14 +849,14 @@ class _CreateUpdateNotificationPageState
                       label: "From now",
                       isExpanded: true,
                       isSelected:
-                          _selectedDateTime != null &&
-                          _selectedDateTime!.isBefore(DateTime.now()),
+                          _startDate != null &&
+                          _startDate!.isBefore(DateTime.now()),
 
                       centerText: true,
                       icon: null,
                       onPressed: () {
                         setState(() {
-                          _selectedDateTime = DateTime.now();
+                          _startDate = DateTime.now();
                         });
                       },
                     ),
@@ -824,14 +864,14 @@ class _CreateUpdateNotificationPageState
                   Expanded(
                     child: NotificationOutlinedButton(
                       label:
-                          _selectedDateTime != null &&
-                              _selectedDateTime!.isAfter(DateTime.now())
-                          ? DateFormat.yMd().add_jm().format(_selectedDateTime!)
+                          _startDate != null &&
+                              _startDate!.isAfter(DateTime.now())
+                          ? DateFormat.yMd().add_jm().format(_startDate!)
                           : "Pick date & time",
                       isExpanded: true,
                       isSelected:
-                          _selectedDateTime != null &&
-                          _selectedDateTime!.isAfter(DateTime.now()),
+                          _startDate != null &&
+                          _startDate!.isAfter(DateTime.now()),
                       centerText: true,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 12,
@@ -842,7 +882,7 @@ class _CreateUpdateNotificationPageState
                         final DateTime? pickedDate = await showDatePicker(
                           context: context,
                           firstDate: DateTime.now(),
-                          initialDate: _selectedDateTime ?? DateTime.now(),
+                          initialDate: _startDate ?? DateTime.now(),
                           lastDate: DateTime.now().add(
                             const Duration(days: 365 * 100),
                           ),
@@ -869,7 +909,7 @@ class _CreateUpdateNotificationPageState
                             );
                             if (pickedDateTime.isAfter(DateTime.now())) {
                               setState(() {
-                                _selectedDateTime = pickedDateTime;
+                                _startDate = pickedDateTime;
                               });
                             } else {
                               if (!mounted) return;
@@ -913,9 +953,9 @@ class _CreateUpdateNotificationPageState
             );
           },
           child:
-              (_selectedScheduleUnit == ScheduleUnit.day &&
-                  (_selectedDailyOption == DailyOption.weekdays ||
-                      _selectedDailyOption == DailyOption.weekends))
+              (_scheduleUnit == ScheduleUnit.day &&
+                  (_dailyOption == DailyOption.weekdays ||
+                      _dailyOption == DailyOption.weekends))
               ? SizedBox(height: 0, key: ValueKey<String>("empty"))
               : NotificationCard(
                   key: ValueKey<String>("repeatEvery"),
@@ -958,8 +998,8 @@ class _CreateUpdateNotificationPageState
                           );
                         },
                         child: Text(
-                          key: ValueKey<String>(_selectedScheduleUnit.name),
-                          "${_selectedScheduleUnit.name[0].toUpperCase()}${_selectedScheduleUnit.name.substring(1)} (s)",
+                          key: ValueKey<String>(_scheduleUnit!.name),
+                          "${_scheduleUnit!.name[0].toUpperCase()}${_scheduleUnit!.name.substring(1)} (s)",
                           style: GoogleFonts.outfit(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
@@ -982,13 +1022,29 @@ class _CreateUpdateNotificationPageState
             );
           },
           transitionBuilder: (child, animation) {
-            return FadeTransition(opacity: animation, child: child);
+            return SizeTransition(
+              sizeFactor: animation,
+              axis: Axis.vertical,
+              child: FadeTransition(opacity: animation, child: child),
+            );
           },
-          child: switch (_selectedScheduleUnit) {
-            ScheduleUnit.day => buildDayOptions(),
-            ScheduleUnit.week => buildWeekOptions(),
-            ScheduleUnit.month => buildMonthOptions(),
-            ScheduleUnit.year => buildYearOptions(),
+          child: switch (_scheduleUnit!) {
+            ScheduleUnit.day => KeyedSubtree(
+              key: const ValueKey('schedule-day'),
+              child: buildDayOptions(),
+            ),
+            ScheduleUnit.week => KeyedSubtree(
+              key: const ValueKey('schedule-week'),
+              child: buildWeekOptions(),
+            ),
+            ScheduleUnit.month => KeyedSubtree(
+              key: const ValueKey('schedule-month'),
+              child: buildMonthOptions(),
+            ),
+            ScheduleUnit.year => KeyedSubtree(
+              key: const ValueKey('schedule-year'),
+              child: buildYearOptions(),
+            ),
           },
         ),
 
@@ -997,6 +1053,12 @@ class _CreateUpdateNotificationPageState
         SizedBox(height: 5),
 
         buildDailyTiming(),
+
+        SizedBox(height: 16),
+        CreationScreenTitle(title: "Duration"),
+        SizedBox(height: 5),
+
+        buildDurationOptions(),
       ],
     );
   }
@@ -1010,36 +1072,36 @@ class _CreateUpdateNotificationPageState
         NotificationOutlinedButton(
           label: "All days",
           isExpanded: false,
-          isSelected: _selectedDailyOption == DailyOption.allDays,
+          isSelected: _dailyOption == DailyOption.allDays,
           centerText: true,
           icon: null,
           onPressed: () {
             setState(() {
-              _selectedDailyOption = DailyOption.allDays;
+              _dailyOption = DailyOption.allDays;
             });
           },
         ),
         NotificationOutlinedButton(
           label: "Weekdays",
           isExpanded: false,
-          isSelected: _selectedDailyOption == DailyOption.weekdays,
+          isSelected: _dailyOption == DailyOption.weekdays,
           centerText: true,
           icon: null,
           onPressed: () {
             setState(() {
-              _selectedDailyOption = DailyOption.weekdays;
+              _dailyOption = DailyOption.weekdays;
             });
           },
         ),
         NotificationOutlinedButton(
           label: "Weekends",
           isExpanded: false,
-          isSelected: _selectedDailyOption == DailyOption.weekends,
+          isSelected: _dailyOption == DailyOption.weekends,
           centerText: true,
           icon: null,
           onPressed: () {
             setState(() {
-              _selectedDailyOption = DailyOption.weekends;
+              _dailyOption = DailyOption.weekends;
             });
           },
         ),
@@ -1100,19 +1162,19 @@ class _CreateUpdateNotificationPageState
                 label: "First day of month",
                 isExpanded: false,
                 isSelected:
-                    isFirstOfMonthSelected != null &&
-                    isFirstOfMonthSelected == true,
+                    _isFirstOfMonthSelected != null &&
+                    _isFirstOfMonthSelected == true,
                 centerText: true,
                 icon: null,
                 onPressed: () {
                   setState(() {
-                    if (isFirstOfMonthSelected == true) {
-                      isFirstOfMonthSelected = null;
+                    if (_isFirstOfMonthSelected == true) {
+                      _isFirstOfMonthSelected = null;
                       selectedDaysOfMonth.clear();
                       _selectedDaysOfMonth = null;
                       return;
                     }
-                    isFirstOfMonthSelected = true;
+                    _isFirstOfMonthSelected = true;
 
                     selectedDaysOfMonth.clear();
                     selectedDaysOfMonth.add(1);
@@ -1125,19 +1187,19 @@ class _CreateUpdateNotificationPageState
                 label: "Last day of month",
                 isExpanded: false,
                 isSelected:
-                    isFirstOfMonthSelected != null &&
-                    isFirstOfMonthSelected == false,
+                    _isFirstOfMonthSelected != null &&
+                    _isFirstOfMonthSelected == false,
                 centerText: true,
                 icon: null,
                 onPressed: () {
                   setState(() {
-                    if (isFirstOfMonthSelected == false) {
-                      isFirstOfMonthSelected = null;
+                    if (_isFirstOfMonthSelected == false) {
+                      _isFirstOfMonthSelected = null;
                       selectedDaysOfMonth.clear();
                       _selectedDaysOfMonth = null;
                       return;
                     }
-                    isFirstOfMonthSelected = false;
+                    _isFirstOfMonthSelected = false;
 
                     //TODO: Handle last day of month selection cuz not every month end with 31, it maybe 30, 28, 29 ...etc
                     selectedDaysOfMonth.clear();
@@ -1169,12 +1231,12 @@ class _CreateUpdateNotificationPageState
                       }
                       if (selectedDaysOfMonth.length == 1 &&
                           selectedDaysOfMonth.contains(1)) {
-                        isFirstOfMonthSelected = true;
+                        _isFirstOfMonthSelected = true;
                       } else if (selectedDaysOfMonth.length == 1 &&
                           selectedDaysOfMonth.contains(31)) {
-                        isFirstOfMonthSelected = false;
+                        _isFirstOfMonthSelected = false;
                       } else {
-                        isFirstOfMonthSelected = null;
+                        _isFirstOfMonthSelected = null;
                       }
                       _selectedDaysOfMonth = selectedDaysOfMonth;
                     });
@@ -1390,12 +1452,12 @@ class _CreateUpdateNotificationPageState
 
   Widget buildDailyTiming() {
     return RadioGroup<RecurrenceType>(
-      groupValue: _selectedRecurrenceType,
+      groupValue: _recurrenceType,
       onChanged: (RecurrenceType? value) {
         if (value == null) return;
 
         setState(() {
-          _selectedRecurrenceType = value;
+          _recurrenceType = value;
         });
       },
       child: Column(
@@ -1404,10 +1466,10 @@ class _CreateUpdateNotificationPageState
             selectedType: RecurrenceType.specific,
             label: "At selected times",
             icon: Icons.access_time,
-            isSelected: _selectedRecurrenceType == RecurrenceType.specific,
+            isSelected: _recurrenceType == RecurrenceType.specific,
             onTap: () {
               setState(() {
-                _selectedRecurrenceType = RecurrenceType.specific;
+                _recurrenceType = RecurrenceType.specific;
               });
             },
             child: Column(
@@ -1415,69 +1477,40 @@ class _CreateUpdateNotificationPageState
               children: [
                 if (_fixedSpecificTimes != null &&
                     _fixedSpecificTimes!.isNotEmpty)
-                  for (
-                    var index = 0;
-                    index < _fixedSpecificTimes!.length;
-                    index++
-                  )
-                    NotificationOutlinedButton(
-                      label: _fixedSpecificTimes![index].format(context),
-                      isExpanded: true,
-                      isSelected: true,
+                  AnimatedList(
+                    key: _fixedTimesListKey,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    initialItemCount: _fixedSpecificTimes?.length ?? 0,
+                    itemBuilder: (context, index, animation) {
+                      final time = _fixedSpecificTimes![index];
 
-                      icon: Icon(
-                        Icons.access_time,
-                        color: Colors.blue.shade600,
-                        size: 20,
-                      ),
-                      tailingWidget: _fixedSpecificTimes!.length > 1
-                          ? IconButton(
-                              icon: Icon(
-                                Icons.delete_outline,
-                                size: 20,
-                                color: Colors.blue.shade600,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _fixedSpecificTimes!.removeAt(index);
-                                });
-                              },
-                            )
-                          : null,
-                      onPressed: () async {
-                        final pickedTime = await showTimePicker(
-                          context: context,
-                          initialTime: _fixedSpecificTimes![index],
-                        );
-                        if (pickedTime != null) {
-                          final duplicate = _fixedSpecificTimes!
-                              .asMap()
-                              .entries
-                              .any(
-                                (entry) =>
-                                    entry.key != index &&
-                                    entry.value == pickedTime,
-                              );
+                      return _buildFixedTimeItem(
+                        time,
+                        animation,
+                        showDelete: _fixedSpecificTimes!.length > 1,
+                        onDelete: () {
+                          final removedTime = _fixedSpecificTimes!.removeAt(
+                            index,
+                          );
 
-                          if (duplicate) {
-                            if (!mounted) return;
-                            showError(
-                              "This time is already selected. Choose a different time.",
+                          _fixedTimesListKey.currentState?.removeItem(index, (
+                            context,
+                            animation,
+                          ) {
+                            return _buildFixedTimeItem(
+                              removedTime,
+                              animation,
+                              showDelete: false,
                             );
-                            return;
-                          }
+                          }, duration: const Duration(milliseconds: 250));
 
-                          setState(() {
-                            _fixedSpecificTimes![index] = pickedTime;
-                            _fixedSpecificTimes!.sort((a, b) {
-                              final first = a.hour * 60 + a.minute;
-                              final second = b.hour * 60 + b.minute;
-                              return first.compareTo(second);
-                            });
-                          });
-                        }
-                      },
-                    ),
+                          setState(() {});
+                        },
+                      );
+                    },
+                  ),
+
                 NotificationOutlinedButton(
                   label: "Add Time",
                   labelStyle: GoogleFonts.outfit(
@@ -1516,12 +1549,12 @@ class _CreateUpdateNotificationPageState
 
                     setState(() {
                       times.add(nextTime!);
-                      times.sort((a, b) {
-                        final first = a.hour * 60 + a.minute;
-                        final second = b.hour * 60 + b.minute;
-                        return first.compareTo(second);
-                      });
                     });
+
+                    _fixedTimesListKey.currentState?.insertItem(
+                      times.length - 1,
+                      duration: const Duration(milliseconds: 250),
+                    );
                   },
                 ),
               ],
@@ -1531,10 +1564,10 @@ class _CreateUpdateNotificationPageState
             selectedType: RecurrenceType.random,
             label: "Random times",
             icon: Icons.shuffle,
-            isSelected: _selectedRecurrenceType == RecurrenceType.random,
+            isSelected: _recurrenceType == RecurrenceType.random,
             onTap: () {
               setState(() {
-                _selectedRecurrenceType = RecurrenceType.random;
+                _recurrenceType = RecurrenceType.random;
                 _randomWindowStart = TimeOfDay(hour: 8, minute: 0);
                 _randomWindowEnd = TimeOfDay(hour: 17, minute: 0);
               });
@@ -1580,8 +1613,8 @@ class _CreateUpdateNotificationPageState
                     ],
                   ),
                 ),
-                if (_selectedRecurrenceType != null)
-                  buildTimeRangePicking(_selectedRecurrenceType!),
+                if (_recurrenceType != null)
+                  buildTimeRangePicking(_recurrenceType!),
               ],
             ),
           ),
@@ -1589,10 +1622,10 @@ class _CreateUpdateNotificationPageState
             selectedType: RecurrenceType.interval,
             label: "At regular intervals",
             icon: Icons.loop,
-            isSelected: _selectedRecurrenceType == RecurrenceType.interval,
+            isSelected: _recurrenceType == RecurrenceType.interval,
             onTap: () {
               setState(() {
-                _selectedRecurrenceType = RecurrenceType.interval;
+                _recurrenceType = RecurrenceType.interval;
                 _intervalUnit = IntervalUnit.hour;
                 _intervalWindowStart = TimeOfDay(hour: 8, minute: 0);
                 _intervalWindowEnd = TimeOfDay(hour: 17, minute: 0);
@@ -1664,9 +1697,234 @@ class _CreateUpdateNotificationPageState
                     ],
                   ),
                 ),
-                if (_selectedRecurrenceType != null)
-                  buildTimeRangePicking(_selectedRecurrenceType!),
+                if (_recurrenceType != null)
+                  buildTimeRangePicking(_recurrenceType!),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFixedTimeItem(
+    TimeOfDay time,
+    Animation<double> animation, {
+    required bool showDelete,
+    VoidCallback? onDelete,
+  }) {
+    return SizeTransition(
+      sizeFactor: animation,
+      axis: Axis.vertical,
+      child: FadeTransition(
+        opacity: animation,
+        child: Column(
+          children: [
+            SizedBox(height: 10),
+            NotificationOutlinedButton(
+              label: time.format(context),
+              isExpanded: true,
+              isSelected: true,
+              icon: Icon(
+                Icons.access_time,
+                color: Colors.blue.shade600,
+                size: 20,
+              ),
+              tailingWidget: AnimatedSwitcher(
+                duration: 250.ms,
+                child: showDelete
+                    ? IconButton(
+                        icon: Icon(
+                          Icons.delete_outline,
+                          size: 20,
+                          color: Colors.blue.shade600,
+                        ),
+                        onPressed: onDelete,
+                      )
+                    : null,
+              ),
+
+              onPressed: () async {
+                final pickedTime = await showTimePicker(
+                  context: context,
+                  initialTime: time,
+                );
+
+                if (pickedTime == null) return;
+
+                final duplicate = _fixedSpecificTimes!.any(
+                  (existingTime) => existingTime == pickedTime,
+                );
+
+                if (duplicate) {
+                  showError(
+                    "This time is already selected. Choose a different time.",
+                  );
+                  return;
+                }
+
+                setState(() {
+                  _fixedSpecificTimes![_fixedSpecificTimes!.indexOf(time)] =
+                      pickedTime;
+                });
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildDurationOptions() {
+    return RadioGroup(
+      groupValue: _durationOption,
+      onChanged: (value) {
+        setState(() {
+          _durationOption = value;
+        });
+      },
+      child: Column(
+        children: [
+          NotificationRadioCard(
+            selectedType: DurationOption.forever,
+            label: "Forever",
+            isSelected: _durationOption == DurationOption.forever,
+            onTap: () {
+              setState(() {
+                _durationOption = DurationOption.forever;
+              });
+            },
+          ),
+
+          NotificationRadioCard(
+            selectedType: DurationOption.duration,
+            label: "N duration",
+            isSelected: _durationOption == DurationOption.duration,
+            onTap: () {
+              setState(() {
+                _durationOption = DurationOption.duration;
+              });
+            },
+            child: NotificationCard(
+              child: Row(
+                spacing: 5,
+                children: [
+                  Text(
+                    "Duration: ",
+                    style: GoogleFonts.outfit(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white70,
+                    ),
+                  ),
+                  NotificationTextfield(
+                    controller: _durationCountController,
+                    hintText: "7",
+                    maxLines: 1,
+                    keyboardType: TextInputType.number,
+                    isDense: true,
+                    isExpanded: false,
+                  ),
+                  NotificationOutlinedButton(
+                    label: _durationUnit != null
+                        ? "${_durationUnit!.name[0].toUpperCase()}${_durationUnit!.name.substring(1).toLowerCase()}s"
+                        : "${ScheduleUnit.day.name[0].toUpperCase()}${ScheduleUnit.day.name.substring(1).toLowerCase()}s",
+                    isCurrentlySelected: true,
+                    onPressed: () {
+                      setState(() {
+                        _durationUnit ??= ScheduleUnit.day;
+
+                        switch (_durationUnit!) {
+                          case ScheduleUnit.day:
+                            _durationUnit = ScheduleUnit.week;
+                          case ScheduleUnit.week:
+                            _durationUnit = ScheduleUnit.month;
+                          case ScheduleUnit.month:
+                            _durationUnit = ScheduleUnit.year;
+                          case ScheduleUnit.year:
+                            _durationUnit = ScheduleUnit.day;
+                        }
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+          NotificationRadioCard(
+            selectedType: DurationOption.untilDate,
+            label: "Until date",
+            isSelected: _durationOption == DurationOption.untilDate,
+            onTap: () {
+              setState(() {
+                _durationOption = DurationOption.untilDate;
+              });
+            },
+            child: NotificationOutlinedButton(
+              label: _endDate != null
+                  ? DateFormat.yMMMd().format(_endDate!)
+                  : "Select a date",
+              isExpanded: true,
+              icon: Icon(
+                Icons.calendar_month,
+                color: Colors.blueAccent.shade700,
+                size: 20,
+              ),
+              isSelected: _endDate != null,
+              onPressed: () async {
+                final pickedDate = await showDatePicker(
+                  context: context,
+                  firstDate: DateTime.now(),
+                  initialDate: DateTime.now(),
+                  lastDate: DateTime.now().add(const Duration(days: 365 * 100)),
+                );
+                if (pickedDate != null) {
+                  setState(() {
+                    _endDate = pickedDate;
+                  });
+                }
+              },
+            ),
+          ),
+          NotificationRadioCard(
+            selectedType: DurationOption.totalTimes,
+            label: "N total times",
+            isSelected: _durationOption == DurationOption.totalTimes,
+            onTap: () {
+              setState(() {
+                _durationOption = DurationOption.totalTimes;
+              });
+            },
+            child: NotificationCard(
+              child: Row(
+                spacing: 5,
+                children: [
+                  Text(
+                    "Duration: ",
+                    style: GoogleFonts.outfit(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white70,
+                    ),
+                  ),
+                  NotificationTextfield(
+                    controller: _totalTimesController,
+                    hintText: "10",
+                    maxLines: 1,
+                    keyboardType: TextInputType.number,
+                    isDense: true,
+                    isExpanded: false,
+                  ),
+                  Text(
+                    "occurrences",
+                    style: GoogleFonts.outfit(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white70,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
