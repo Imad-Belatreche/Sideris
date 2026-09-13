@@ -39,134 +39,140 @@ const NotificationRuleModelSchema = CollectionSchema(
       name: r'createdAt',
       type: IsarType.dateTime,
     ),
-    r'durationCount': PropertySchema(
+    r'dailyOption': PropertySchema(
       id: 4,
+      name: r'dailyOption',
+      type: IsarType.string,
+      enumMap: _NotificationRuleModeldailyOptionEnumValueMap,
+    ),
+    r'durationCount': PropertySchema(
+      id: 5,
       name: r'durationCount',
       type: IsarType.long,
     ),
     r'durationUnit': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'durationUnit',
       type: IsarType.string,
       enumMap: _NotificationRuleModeldurationUnitEnumValueMap,
     ),
     r'endDate': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'endDate',
       type: IsarType.dateTime,
     ),
     r'fixedTimesMinutes': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'fixedTimesMinutes',
       type: IsarType.longList,
     ),
     r'intervalEvery': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'intervalEvery',
       type: IsarType.long,
     ),
     r'intervalUnit': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'intervalUnit',
       type: IsarType.string,
       enumMap: _NotificationRuleModelintervalUnitEnumValueMap,
     ),
     r'intervalWindowEndMinutes': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'intervalWindowEndMinutes',
       type: IsarType.long,
     ),
     r'intervalWindowStartMinutes': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'intervalWindowStartMinutes',
       type: IsarType.long,
     ),
     r'isActive': PropertySchema(
-      id: 12,
+      id: 13,
       name: r'isActive',
       type: IsarType.bool,
     ),
     r'isForever': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'isForever',
       type: IsarType.bool,
     ),
     r'isScheduled': PropertySchema(
-      id: 14,
+      id: 15,
       name: r'isScheduled',
       type: IsarType.bool,
     ),
     r'lastTriggeredAt': PropertySchema(
-      id: 15,
+      id: 16,
       name: r'lastTriggeredAt',
       type: IsarType.dateTime,
     ),
     r'nextTriggerAt': PropertySchema(
-      id: 16,
+      id: 17,
       name: r'nextTriggerAt',
       type: IsarType.dateTime,
     ),
     r'randomCount': PropertySchema(
-      id: 17,
+      id: 18,
       name: r'randomCount',
       type: IsarType.long,
     ),
     r'randomWindowEndMinutes': PropertySchema(
-      id: 18,
+      id: 19,
       name: r'randomWindowEndMinutes',
       type: IsarType.long,
     ),
     r'randomWindowStartMinutes': PropertySchema(
-      id: 19,
+      id: 20,
       name: r'randomWindowStartMinutes',
       type: IsarType.long,
     ),
     r'recurrenceType': PropertySchema(
-      id: 20,
+      id: 21,
       name: r'recurrenceType',
       type: IsarType.string,
       enumMap: _NotificationRuleModelrecurrenceTypeEnumValueMap,
     ),
     r'repetitionType': PropertySchema(
-      id: 21,
+      id: 22,
       name: r'repetitionType',
       type: IsarType.string,
       enumMap: _NotificationRuleModelrepetitionTypeEnumValueMap,
     ),
     r'scheduleEvery': PropertySchema(
-      id: 22,
+      id: 23,
       name: r'scheduleEvery',
       type: IsarType.long,
     ),
     r'scheduleUnit': PropertySchema(
-      id: 23,
+      id: 24,
       name: r'scheduleUnit',
       type: IsarType.string,
       enumMap: _NotificationRuleModelscheduleUnitEnumValueMap,
     ),
     r'selectedDaysOfWeek': PropertySchema(
-      id: 24,
+      id: 25,
       name: r'selectedDaysOfWeek',
       type: IsarType.longList,
     ),
     r'selectedMonthDays': PropertySchema(
-      id: 25,
+      id: 26,
       name: r'selectedMonthDays',
       type: IsarType.objectList,
       target: r'MonthDaysRepetition',
     ),
     r'startDate': PropertySchema(
-      id: 26,
+      id: 27,
       name: r'startDate',
       type: IsarType.dateTime,
     ),
     r'title': PropertySchema(
-      id: 27,
+      id: 28,
       name: r'title',
       type: IsarType.string,
     ),
     r'totalOccurrences': PropertySchema(
-      id: 28,
+      id: 29,
       name: r'totalOccurrences',
       type: IsarType.long,
     )
@@ -225,6 +231,12 @@ int _notificationRuleModelEstimateSize(
     final value = object.content;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.dailyOption;
+    if (value != null) {
+      bytesCount += 3 + value.name.length * 3;
     }
   }
   {
@@ -292,36 +304,37 @@ void _notificationRuleModelSerialize(
   writer.writeString(offsets[1], object.colorTag?.name);
   writer.writeString(offsets[2], object.content);
   writer.writeDateTime(offsets[3], object.createdAt);
-  writer.writeLong(offsets[4], object.durationCount);
-  writer.writeString(offsets[5], object.durationUnit?.name);
-  writer.writeDateTime(offsets[6], object.endDate);
-  writer.writeLongList(offsets[7], object.fixedTimesMinutes);
-  writer.writeLong(offsets[8], object.intervalEvery);
-  writer.writeString(offsets[9], object.intervalUnit?.name);
-  writer.writeLong(offsets[10], object.intervalWindowEndMinutes);
-  writer.writeLong(offsets[11], object.intervalWindowStartMinutes);
-  writer.writeBool(offsets[12], object.isActive);
-  writer.writeBool(offsets[13], object.isForever);
-  writer.writeBool(offsets[14], object.isScheduled);
-  writer.writeDateTime(offsets[15], object.lastTriggeredAt);
-  writer.writeDateTime(offsets[16], object.nextTriggerAt);
-  writer.writeLong(offsets[17], object.randomCount);
-  writer.writeLong(offsets[18], object.randomWindowEndMinutes);
-  writer.writeLong(offsets[19], object.randomWindowStartMinutes);
-  writer.writeString(offsets[20], object.recurrenceType?.name);
-  writer.writeString(offsets[21], object.repetitionType.name);
-  writer.writeLong(offsets[22], object.scheduleEvery);
-  writer.writeString(offsets[23], object.scheduleUnit?.name);
-  writer.writeLongList(offsets[24], object.selectedDaysOfWeek);
+  writer.writeString(offsets[4], object.dailyOption?.name);
+  writer.writeLong(offsets[5], object.durationCount);
+  writer.writeString(offsets[6], object.durationUnit?.name);
+  writer.writeDateTime(offsets[7], object.endDate);
+  writer.writeLongList(offsets[8], object.fixedTimesMinutes);
+  writer.writeLong(offsets[9], object.intervalEvery);
+  writer.writeString(offsets[10], object.intervalUnit?.name);
+  writer.writeLong(offsets[11], object.intervalWindowEndMinutes);
+  writer.writeLong(offsets[12], object.intervalWindowStartMinutes);
+  writer.writeBool(offsets[13], object.isActive);
+  writer.writeBool(offsets[14], object.isForever);
+  writer.writeBool(offsets[15], object.isScheduled);
+  writer.writeDateTime(offsets[16], object.lastTriggeredAt);
+  writer.writeDateTime(offsets[17], object.nextTriggerAt);
+  writer.writeLong(offsets[18], object.randomCount);
+  writer.writeLong(offsets[19], object.randomWindowEndMinutes);
+  writer.writeLong(offsets[20], object.randomWindowStartMinutes);
+  writer.writeString(offsets[21], object.recurrenceType?.name);
+  writer.writeString(offsets[22], object.repetitionType.name);
+  writer.writeLong(offsets[23], object.scheduleEvery);
+  writer.writeString(offsets[24], object.scheduleUnit?.name);
+  writer.writeLongList(offsets[25], object.selectedDaysOfWeek);
   writer.writeObjectList<MonthDaysRepetition>(
-    offsets[25],
+    offsets[26],
     allOffsets,
     MonthDaysRepetitionSchema.serialize,
     object.selectedMonthDays,
   );
-  writer.writeDateTime(offsets[26], object.startDate);
-  writer.writeString(offsets[27], object.title);
-  writer.writeLong(offsets[28], object.totalOccurrences);
+  writer.writeDateTime(offsets[27], object.startDate);
+  writer.writeString(offsets[28], object.title);
+  writer.writeLong(offsets[29], object.totalOccurrences);
 }
 
 NotificationRuleModel _notificationRuleModelDeserialize(
@@ -335,42 +348,44 @@ NotificationRuleModel _notificationRuleModelDeserialize(
     colorTag: _NotificationRuleModelcolorTagValueEnumMap[
         reader.readStringOrNull(offsets[1])],
     content: reader.readStringOrNull(offsets[2]),
-    durationCount: reader.readLongOrNull(offsets[4]),
+    dailyOption: _NotificationRuleModeldailyOptionValueEnumMap[
+        reader.readStringOrNull(offsets[4])],
+    durationCount: reader.readLongOrNull(offsets[5]),
     durationUnit: _NotificationRuleModeldurationUnitValueEnumMap[
-        reader.readStringOrNull(offsets[5])],
-    endDate: reader.readDateTimeOrNull(offsets[6]),
-    fixedTimesMinutes: reader.readLongList(offsets[7]),
-    intervalEvery: reader.readLongOrNull(offsets[8]),
+        reader.readStringOrNull(offsets[6])],
+    endDate: reader.readDateTimeOrNull(offsets[7]),
+    fixedTimesMinutes: reader.readLongList(offsets[8]),
+    intervalEvery: reader.readLongOrNull(offsets[9]),
     intervalUnit: _NotificationRuleModelintervalUnitValueEnumMap[
-        reader.readStringOrNull(offsets[9])],
-    intervalWindowEndMinutes: reader.readLongOrNull(offsets[10]),
-    intervalWindowStartMinutes: reader.readLongOrNull(offsets[11]),
-    isActive: reader.readBoolOrNull(offsets[12]) ?? true,
-    isForever: reader.readBool(offsets[13]),
-    isScheduled: reader.readBoolOrNull(offsets[14]) ?? false,
-    lastTriggeredAt: reader.readDateTimeOrNull(offsets[15]),
-    nextTriggerAt: reader.readDateTimeOrNull(offsets[16]),
-    randomCount: reader.readLongOrNull(offsets[17]),
-    randomWindowEndMinutes: reader.readLongOrNull(offsets[18]),
-    randomWindowStartMinutes: reader.readLongOrNull(offsets[19]),
+        reader.readStringOrNull(offsets[10])],
+    intervalWindowEndMinutes: reader.readLongOrNull(offsets[11]),
+    intervalWindowStartMinutes: reader.readLongOrNull(offsets[12]),
+    isActive: reader.readBoolOrNull(offsets[13]) ?? true,
+    isForever: reader.readBoolOrNull(offsets[14]) ?? false,
+    isScheduled: reader.readBoolOrNull(offsets[15]) ?? false,
+    lastTriggeredAt: reader.readDateTimeOrNull(offsets[16]),
+    nextTriggerAt: reader.readDateTimeOrNull(offsets[17]),
+    randomCount: reader.readLongOrNull(offsets[18]),
+    randomWindowEndMinutes: reader.readLongOrNull(offsets[19]),
+    randomWindowStartMinutes: reader.readLongOrNull(offsets[20]),
     recurrenceType: _NotificationRuleModelrecurrenceTypeValueEnumMap[
-        reader.readStringOrNull(offsets[20])],
+        reader.readStringOrNull(offsets[21])],
     repetitionType: _NotificationRuleModelrepetitionTypeValueEnumMap[
-            reader.readStringOrNull(offsets[21])] ??
+            reader.readStringOrNull(offsets[22])] ??
         RepetitionType.oneTime,
-    scheduleEvery: reader.readLongOrNull(offsets[22]),
+    scheduleEvery: reader.readLongOrNull(offsets[23]),
     scheduleUnit: _NotificationRuleModelscheduleUnitValueEnumMap[
-        reader.readStringOrNull(offsets[23])],
-    selectedDaysOfWeek: reader.readLongList(offsets[24]),
+        reader.readStringOrNull(offsets[24])],
+    selectedDaysOfWeek: reader.readLongList(offsets[25]),
     selectedMonthDays: reader.readObjectList<MonthDaysRepetition>(
-      offsets[25],
+      offsets[26],
       MonthDaysRepetitionSchema.deserialize,
       allOffsets,
       MonthDaysRepetition(),
     ),
-    startDate: reader.readDateTime(offsets[26]),
-    title: reader.readString(offsets[27]),
-    totalOccurrences: reader.readLongOrNull(offsets[28]),
+    startDate: reader.readDateTime(offsets[27]),
+    title: reader.readString(offsets[28]),
+    totalOccurrences: reader.readLongOrNull(offsets[29]),
   );
   object.createdAt = reader.readDateTime(offsets[3]);
   object.id = id;
@@ -394,65 +409,68 @@ P _notificationRuleModelDeserializeProp<P>(
     case 3:
       return (reader.readDateTime(offset)) as P;
     case 4:
-      return (reader.readLongOrNull(offset)) as P;
+      return (_NotificationRuleModeldailyOptionValueEnumMap[
+          reader.readStringOrNull(offset)]) as P;
     case 5:
+      return (reader.readLongOrNull(offset)) as P;
+    case 6:
       return (_NotificationRuleModeldurationUnitValueEnumMap[
           reader.readStringOrNull(offset)]) as P;
-    case 6:
-      return (reader.readDateTimeOrNull(offset)) as P;
     case 7:
-      return (reader.readLongList(offset)) as P;
+      return (reader.readDateTimeOrNull(offset)) as P;
     case 8:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readLongList(offset)) as P;
     case 9:
+      return (reader.readLongOrNull(offset)) as P;
+    case 10:
       return (_NotificationRuleModelintervalUnitValueEnumMap[
           reader.readStringOrNull(offset)]) as P;
-    case 10:
-      return (reader.readLongOrNull(offset)) as P;
     case 11:
       return (reader.readLongOrNull(offset)) as P;
     case 12:
-      return (reader.readBoolOrNull(offset) ?? true) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 13:
-      return (reader.readBool(offset)) as P;
+      return (reader.readBoolOrNull(offset) ?? true) as P;
     case 14:
       return (reader.readBoolOrNull(offset) ?? false) as P;
     case 15:
-      return (reader.readDateTimeOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset) ?? false) as P;
     case 16:
       return (reader.readDateTimeOrNull(offset)) as P;
     case 17:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readDateTimeOrNull(offset)) as P;
     case 18:
       return (reader.readLongOrNull(offset)) as P;
     case 19:
       return (reader.readLongOrNull(offset)) as P;
     case 20:
+      return (reader.readLongOrNull(offset)) as P;
+    case 21:
       return (_NotificationRuleModelrecurrenceTypeValueEnumMap[
           reader.readStringOrNull(offset)]) as P;
-    case 21:
+    case 22:
       return (_NotificationRuleModelrepetitionTypeValueEnumMap[
               reader.readStringOrNull(offset)] ??
           RepetitionType.oneTime) as P;
-    case 22:
-      return (reader.readLongOrNull(offset)) as P;
     case 23:
+      return (reader.readLongOrNull(offset)) as P;
+    case 24:
       return (_NotificationRuleModelscheduleUnitValueEnumMap[
           reader.readStringOrNull(offset)]) as P;
-    case 24:
-      return (reader.readLongList(offset)) as P;
     case 25:
+      return (reader.readLongList(offset)) as P;
+    case 26:
       return (reader.readObjectList<MonthDaysRepetition>(
         offset,
         MonthDaysRepetitionSchema.deserialize,
         allOffsets,
         MonthDaysRepetition(),
       )) as P;
-    case 26:
-      return (reader.readDateTime(offset)) as P;
     case 27:
-      return (reader.readString(offset)) as P;
+      return (reader.readDateTime(offset)) as P;
     case 28:
+      return (reader.readString(offset)) as P;
+    case 29:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -478,6 +496,16 @@ const _NotificationRuleModelcolorTagValueEnumMap = {
   r'purple': ColorTag.purple,
   r'pink': ColorTag.pink,
   r'orange': ColorTag.orange,
+};
+const _NotificationRuleModeldailyOptionEnumValueMap = {
+  r'allDays': r'allDays',
+  r'weekdays': r'weekdays',
+  r'weekends': r'weekends',
+};
+const _NotificationRuleModeldailyOptionValueEnumMap = {
+  r'allDays': DailyOption.allDays,
+  r'weekdays': DailyOption.weekdays,
+  r'weekends': DailyOption.weekends,
 };
 const _NotificationRuleModeldurationUnitEnumValueMap = {
   r'day': r'day',
@@ -1231,6 +1259,162 @@ extension NotificationRuleModelQueryFilter on QueryBuilder<
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
+      QAfterFilterCondition> dailyOptionIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'dailyOption',
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
+      QAfterFilterCondition> dailyOptionIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'dailyOption',
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
+      QAfterFilterCondition> dailyOptionEqualTo(
+    DailyOption? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'dailyOption',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
+      QAfterFilterCondition> dailyOptionGreaterThan(
+    DailyOption? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'dailyOption',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
+      QAfterFilterCondition> dailyOptionLessThan(
+    DailyOption? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'dailyOption',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
+      QAfterFilterCondition> dailyOptionBetween(
+    DailyOption? lower,
+    DailyOption? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'dailyOption',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
+      QAfterFilterCondition> dailyOptionStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'dailyOption',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
+      QAfterFilterCondition> dailyOptionEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'dailyOption',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
+          QAfterFilterCondition>
+      dailyOptionContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'dailyOption',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
+          QAfterFilterCondition>
+      dailyOptionMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'dailyOption',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
+      QAfterFilterCondition> dailyOptionIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'dailyOption',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
+      QAfterFilterCondition> dailyOptionIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'dailyOption',
+        value: '',
       ));
     });
   }
@@ -3672,6 +3856,20 @@ extension NotificationRuleModelQuerySortBy
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
+      sortByDailyOption() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dailyOption', Sort.asc);
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
+      sortByDailyOptionDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dailyOption', Sort.desc);
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
       sortByDurationCount() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'durationCount', Sort.asc);
@@ -4039,6 +4237,20 @@ extension NotificationRuleModelQuerySortThenBy
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
+      thenByDailyOption() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dailyOption', Sort.asc);
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
+      thenByDailyOptionDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dailyOption', Sort.desc);
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
       thenByDurationCount() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'durationCount', Sort.asc);
@@ -4392,6 +4604,13 @@ extension NotificationRuleModelQueryWhereDistinct
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
+      distinctByDailyOption({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'dailyOption', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
       distinctByDurationCount() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'durationCount');
@@ -4595,6 +4814,13 @@ extension NotificationRuleModelQueryProperty on QueryBuilder<
       createdAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'createdAt');
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, DailyOption?, QQueryOperations>
+      dailyOptionProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'dailyOption');
     });
   }
 
@@ -4833,9 +5059,10 @@ MonthDaysRepetition _monthDaysRepetitionDeserialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  final object = MonthDaysRepetition();
-  object.selectedDaysOfMonth = reader.readLongList(offsets[0]);
-  object.selectedMonth = reader.readLongOrNull(offsets[1]);
+  final object = MonthDaysRepetition(
+    selectedDaysOfMonth: reader.readLongList(offsets[0]),
+    selectedMonth: reader.readLongOrNull(offsets[1]),
+  );
   return object;
 }
 
