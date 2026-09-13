@@ -1,3 +1,4 @@
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:sideris/widgets/notification_card.dart';
@@ -56,7 +57,27 @@ class NotificationRadioCard<T> extends StatelessWidget {
                 ),
               ],
             ),
-            if (child != null && isSelected) child!,
+
+            AnimatedSwitcher(
+              duration: 250.ms,
+              reverseDuration: 250.ms,
+              layoutBuilder: (currentChild, previousChildren) {
+                return Stack(
+                  alignment: Alignment.topCenter,
+                  children: [...previousChildren, ?currentChild],
+                );
+              },
+              transitionBuilder: (child, animation) {
+                return SizeTransition(
+                  sizeFactor: animation,
+                  axis: Axis.vertical,
+                  child: FadeTransition(opacity: animation, child: child),
+                );
+              },
+              child: isSelected && child != null
+                  ? KeyedSubtree(key: ValueKey(isSelected), child: child!)
+                  : const SizedBox.shrink(),
+            ),
           ],
         ),
       ),
