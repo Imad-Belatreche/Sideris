@@ -10,9 +10,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 part 'notification_state.dart';
 
 class NotificationCubit extends Cubit<NotificationState> {
-  NotificationCubit() : super(NotificationState(notifications: []));
-  final _notificationRepository = NotificationsRepository();
-  final _notificationService = NotificationService.instance;
+  NotificationCubit({
+    required NotificationsRepository repository,
+    required NotificationService service,
+  }) : _notificationRepository = repository,
+       _notificationService = service,
+       super(NotificationState(notifications: []));
+
+  final NotificationsRepository _notificationRepository;
+  final NotificationService _notificationService;
 
   Future<void> loadNotifications() async {
     try {

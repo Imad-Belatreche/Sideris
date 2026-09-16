@@ -3,9 +3,18 @@ import 'package:sideris/pages/main_page.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sideris/repositories/notifications_repository.dart';
+import 'package:sideris/services/notification_service.dart';
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final NotificationsRepository repository;
+  final NotificationService notificationService;
+
+  const MyApp({
+    super.key,
+    required this.repository,
+    required this.notificationService,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -52,12 +61,17 @@ class MyApp extends StatelessWidget {
         ),
         datePickerTheme: DatePickerThemeData(
           backgroundColor: const Color.fromARGB(255, 27, 14, 49),
-          
         ),
       ),
       home: BlocProvider(
-        create: (context) => NotificationCubit(),
-        child: const MainPage(),
+        create: (context) => NotificationCubit(
+          repository: repository,
+          service: notificationService,
+        ),
+        child: MainPage(
+          repository: repository,
+          notificationService: notificationService,
+        ),
       ),
     );
   }

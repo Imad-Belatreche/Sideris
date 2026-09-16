@@ -6,10 +6,18 @@ import 'package:sideris/pages/home_page.dart';
 import 'package:sideris/pages/settings_page.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sideris/repositories/notifications_repository.dart';
+import 'package:sideris/services/notification_service.dart';
 import 'package:sideris/widgets/night_sky_background.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+  final NotificationsRepository repository;
+  final NotificationService notificationService;
+  const MainPage({
+    super.key,
+    required this.repository,
+    required this.notificationService,
+  });
 
   @override
   State<MainPage> createState() => _MainPageState();
@@ -45,13 +53,16 @@ class _MainPageState extends State<MainPage> {
                   onPressed: () async {
                     //TODO: Navigate to create notification screen
                     await ensureNotificationPermission(context);
-
+                    if (!mounted) return;
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => NightSkyBackground(
                           child:
                               BlocProvider(
-                                    create: (context) => NotificationCubit(),
+                                    create: (context) => NotificationCubit(
+                                      repository: widget.repository,
+                                      service: widget.notificationService,
+                                    ),
                                     child: const CreateUpdateNotificationPage(),
                                   )
                                   .animate()

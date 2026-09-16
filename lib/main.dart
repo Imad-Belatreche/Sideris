@@ -1,5 +1,6 @@
 import 'package:sideris/app.dart';
 import 'package:sideris/isar_setup.dart';
+import 'package:sideris/repositories/notifications_repository.dart';
 import 'package:sideris/services/notification_service.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
@@ -13,8 +14,6 @@ void main() async {
   final TimezoneInfo currentTimeZone = await FlutterTimezone.getLocalTimezone();
   initializeTimeZones();
   tz.setLocalLocation(tz.getLocation(currentTimeZone.identifier));
-
-  await NotificationService.instance.initialize();
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
@@ -37,6 +36,12 @@ void main() async {
   );
 
   await initializeIsar();
+  final repository = NotificationsRepository(isar);
+  final notificationService = NotificationService(repository: repository);
 
-  runApp(const MyApp());
+  await notificationService.initialize();
+
+  runApp(
+    MyApp(repository: repository, notificationService: notificationService),
+  );
 }

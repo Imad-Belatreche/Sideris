@@ -7,20 +7,20 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 class NotificationService {
-  NotificationService._();
-  static final NotificationService instance = NotificationService._();
+  NotificationService({
+    required NotificationsRepository repository,
+    FlutterLocalNotificationsPlugin? plugin,
+  }) : _notificationRepository = repository,
+       _plugin = plugin ?? FlutterLocalNotificationsPlugin();
 
-  final FlutterLocalNotificationsPlugin plugin =
-      FlutterLocalNotificationsPlugin();
-
-  final NotificationsRepository _notificationRepository =
-      NotificationsRepository();
+  final NotificationsRepository _notificationRepository;
+  final FlutterLocalNotificationsPlugin _plugin;
 
   int _platformId(int isarId) =>
       isarId.bitLength > 31 ? isarId % 0x7FFFFFFF : isarId;
 
   Future<void> initialize() async {
-    await plugin.initialize(
+    await _plugin.initialize(
       settings: const InitializationSettings(
         android: AndroidInitializationSettings('@mipmap/launcher_icon'),
         iOS: DarwinInitializationSettings(),
@@ -38,7 +38,7 @@ class NotificationService {
       );
     }
     try {
-      final isAlreadyScheduled = await plugin
+      final isAlreadyScheduled = await _plugin
           .pendingNotificationRequests()
           .then((scheduledNotifications) {
             return scheduledNotifications.any(
@@ -52,7 +52,7 @@ class NotificationService {
         );
       }
 
-      await plugin.zonedSchedule(
+      await _plugin.zonedSchedule(
         id: _platformId(notificationRule.id),
         notificationDetails: NotificationDetails(
           android: AndroidNotificationDetails(
@@ -97,7 +97,7 @@ class NotificationService {
   Future<void> cancelNotification(int id) async {
     try {
       log("$runtimeType: Cancelling notification with id: $id");
-      await plugin.cancel(id: _platformId(id));
+      await _plugin.cancel(id: _platformId(id));
     } catch (e) {
       throw Exception(
         "$runtimeType: Error cancelling notification with id: ${_platformId(id)}: $e",
@@ -107,7 +107,7 @@ class NotificationService {
 
   Future<List<NotificationRuleModel>> refreshScheduledNotifications() async {
     try {
-      final pendingOs = await plugin.pendingNotificationRequests();
+      final pendingOs = await _plugin.pendingNotificationRequests();
       final pendingOsIds = pendingOs.map((n) => n.id).toSet();
 
       if (pendingOsIds.length > 50) {
