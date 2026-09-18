@@ -301,8 +301,8 @@ void main() {
       expect(rule.content, isNull);
       expect(rule.colorTag, isNull);
       expect(
-        rule.createdAt.isAfter(before.subtract(const Duration(seconds: 1))) &&
-            rule.createdAt.isBefore(after.add(const Duration(seconds: 1))),
+        rule.createdAt!.isAfter(before.subtract(const Duration(seconds: 1))) &&
+            rule.createdAt!.isBefore(after.add(const Duration(seconds: 1))),
         isTrue,
       );
     });
