@@ -121,7 +121,8 @@ class NotificationRuleModel {
 
   DateTime? nextTriggerAt;
 
-  DateTime createdAt;
+  DateTime? createdAt;
+  DateTime? updatedAt;
 
   @ignore
   TimeOfDay? get intervalWindowStart {
@@ -280,7 +281,9 @@ class NotificationRuleModel {
 
     this.lastTriggeredAt,
     this.nextTriggerAt,
-  }) : createdAt = DateTime.now();
+    DateTime? createdAt,
+    this.updatedAt,
+  }) : createdAt = createdAt ?? DateTime.now();
 
   NotificationRuleModel copyWith({
     String? title,
@@ -319,6 +322,9 @@ class NotificationRuleModel {
 
     Optional<DateTime?>? lastTriggeredAt,
     Optional<DateTime?>? nextTriggerAt,
+
+    DateTime? createdAt,
+    Optional<DateTime?>? updatedAt,
   }) {
     final List<int>? fixedTimesMinutes = fixedTimes != null
         ? (fixedTimes.value?.map((e) => e.hour * 60 + e.minute).toList())
@@ -412,6 +418,8 @@ class NotificationRuleModel {
       nextTriggerAt: nextTriggerAt != null
           ? nextTriggerAt.value
           : this.nextTriggerAt,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt != null ? updatedAt.value : this.updatedAt,
     )..id = id;
   }
 

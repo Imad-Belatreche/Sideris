@@ -9,6 +9,7 @@ import 'package:sideris/cubits/notification/notification_cubit.dart';
 import 'package:sideris/models/notification_rule_model.dart';
 import 'package:sideris/services/permission_service.dart';
 import 'package:sideris/utils/permission_dialog.dart';
+import 'package:sideris/widgets/create_update_elevated_button.dart';
 import 'package:sideris/widgets/dnd_switch.dart';
 import 'package:sideris/widgets/notification_card.dart';
 import 'package:sideris/widgets/notification_outlined_button.dart';
@@ -19,7 +20,8 @@ import 'package:sideris/widgets/text/creation_screen_title.dart';
 enum DurationOption { forever, duration, untilDate, totalTimes }
 
 class CreateUpdateNotificationPage extends StatefulWidget {
-  const CreateUpdateNotificationPage({super.key});
+  final NotificationRuleModel? updateNotification;
+  const CreateUpdateNotificationPage({super.key, this.updateNotification});
 
   @override
   State<CreateUpdateNotificationPage> createState() =>
@@ -84,6 +86,84 @@ class _CreateUpdateNotificationPageState
     _durationCountController.dispose();
     _totalTimesController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.updateNotification != null) {
+      final toUpdate = widget.updateNotification!;
+      _titleController.text = toUpdate.title;
+      _descriptionController.text = toUpdate.content ?? "";
+      _colorTag = toUpdate.colorTag;
+
+      _startDate = toUpdate.startDate;
+      _isDndEnabled = toUpdate.bypassDnd;
+
+      _repetitionType = toUpdate.repetitionType;
+
+      _dailyOption = toUpdate.dailyOption;
+
+      _scheduleUnit = toUpdate.scheduleUnit;
+      _scheduleEveryController.text = toUpdate.scheduleEvery?.toString() ?? "";
+
+      _selectedDaysOfWeek = toUpdate.selectedDaysOfWeek;
+      _selectedDaysOfMonth =
+          toUpdate.selectedMonthDays != null &&
+              toUpdate.selectedMonthDays!.length == 1 &&
+              toUpdate.selectedMonthDays![0].selectedMonth == null
+          ? toUpdate.selectedMonthDays![0].selectedDaysOfMonth
+          : null;
+
+      _selectedDaysOfYear =
+          toUpdate.selectedMonthDays != null &&
+              toUpdate.selectedMonthDays!.length == 1 &&
+              toUpdate.selectedMonthDays![0].selectedMonth == null
+          ? null
+          : toUpdate.selectedMonthDays;
+
+      _activeSelectedMonth = _selectedDaysOfYear != null
+          ? _selectedDaysOfYear![0].selectedMonth
+          : null;
+      if (_selectedDaysOfMonth != null) {
+        _isFirstOfMonthSelected = _selectedDaysOfMonth!.length == 1
+            ? _selectedDaysOfMonth!.first == 1
+                  ? true
+                  : _selectedDaysOfMonth!.first == 31
+                  ? false
+                  : null
+            : null;
+      }
+
+      _recurrenceType = toUpdate.recurrenceType;
+      _fixedSpecificTimes = toUpdate.fixedTimes;
+
+      _randomTimesController.text = toUpdate.randomCount?.toString() ?? "";
+      _randomWindowStart = toUpdate.randomWindowStart;
+      _randomWindowEnd = toUpdate.randomWindowEnd;
+
+      _intervalTimesController.text = toUpdate.intervalEvery?.toString() ?? "";
+      _intervalWindowStart = toUpdate.intervalWindowStart;
+      _intervalWindowEnd = toUpdate.intervalWindowEnd;
+      _intervalUnit = toUpdate.intervalUnit;
+
+      _durationUnit = toUpdate.durationUnit;
+      _durationCountController.text = toUpdate.durationCount?.toString() ?? "";
+
+      _durationOption = toUpdate.isForever
+          ? DurationOption.forever
+          : toUpdate.totalOccurrences != null
+          ? DurationOption.totalTimes
+          : toUpdate.durationCount != null
+          ? DurationOption.duration
+          : toUpdate.durationCount == null && toUpdate.endDate != null
+          ? DurationOption.untilDate
+          : null;
+
+      _totalTimesController.text = toUpdate.totalOccurrences?.toString() ?? "";
+
+      _endDate = toUpdate.endDate;
+    }
   }
 
   final GlobalKey<AnimatedListState> _fixedTimesListKey =
@@ -432,11 +512,11 @@ class _CreateUpdateNotificationPageState
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         title: Text(
-          'Create Notification',
+          '${widget.updateNotification == null ? 'Create' : 'Update'} Notification',
           style: GoogleFonts.outfit(
             fontSize: 28,
             fontWeight: FontWeight.w700,
-            letterSpacing: -0.3,
+            letterSpacing: 0.3,
           ),
         ),
       ),
@@ -499,9 +579,11 @@ class _CreateUpdateNotificationPageState
 
                 Align(
                   alignment: Alignment.center,
-                  child: NotificationOutlinedButton(
-                    label: "Create Notification",
-                    isSelected: true,
+                  child: CreateUpdateElevatedButton(
+                    icon: Icons.check,
+                    label: widget.updateNotification == null
+                        ? "Create Notification"
+                        : "Update Notification",
                     onPressed: () async {
                       try {
                         final permissionStatus =
@@ -521,12 +603,26 @@ class _CreateUpdateNotificationPageState
                           return;
                         }
 
-                        await notificationCubit.addNotification(notification);
+                        if (widget.updateNotification == null) {
+                          await notificationCubit.addNotification(notification);
+                        } else {
+                          notification.id = widget.updateNotification!.id;
+                          notification.createdAt =
+                              widget.updateNotification!.createdAt;
+
+                          await notificationCubit.updateNotification(
+                            notification,
+                          );
+                        }
 
                         log(" Notification added: ${notification.toString()}");
                         //TODO: Make the snackBar look better or pop the page entirely
                         if (!context.mounted) return;
-                        showError("Notification saved successfully.");
+                        if (widget.updateNotification == null) {
+                          showError("Notification saved successfully.");
+                        } else {
+                          showError("Notification updated successfully.");
+                        }
                       } catch (e) {
                         log("Error while creating notification: $e");
                         if (!context.mounted) return;

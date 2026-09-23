@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:sideris/models/notification_rule_model.dart';
+import 'package:sideris/utils/general_utils.dart';
 
 class RecurrenceCalculationResponse {
   final DateTime? nextTrigger;
@@ -540,5 +541,93 @@ class RecurrenceCalculator {
       );
     }
     return RecurrenceCalculationResponse(nextTrigger: result, error: null);
+  }
+
+  static int _dayNumber(DateTime value) {
+    return DateTime.utc(
+      value.year,
+      value.month,
+      value.day,
+    ).difference(DateTime.utc(2005, 8, 10)).inDays;
+  }
+
+  static bool occursOnDay(NotificationRuleModel rule, DateTime day) {
+    final target = dateOnly(day);
+    final start = dateOnly(rule.startDate);
+
+    if (target.isBefore(start)) return false;
+
+    if (!rule.isForever &&
+        rule.endDate != null &&
+        target.isAfter(dateOnly(rule.endDate!))) {
+      return false;
+    }
+
+    if (rule.isOneTime) {
+      return target == start;
+    }
+
+    final every = rule.scheduleEvery;
+    final unit = rule.scheduleUnit;
+
+    if (every == null || every <= 0 || unit == null) {
+      return false;
+    }
+
+    switch (unit) {
+      case ScheduleUnit.day:
+        if (rule.selectedDaysOfWeek != null &&
+            rule.selectedDaysOfWeek!.isNotEmpty &&
+            !rule.selectedDaysOfWeek!.contains(target.weekday)) {
+          return false;
+        }
+
+        return (_dayNumber(target) - _dayNumber(start)) % every == 0;
+
+      case ScheduleUnit.week:
+        final weekdays = rule.selectedDaysOfWeek;
+
+        if (weekdays == null ||
+            weekdays.isEmpty ||
+            !weekdays.contains(target.weekday)) {
+          return false;
+        }
+
+        final startWeek = _dayNumber(start) - (start.weekday - 1);
+        final targetWeek = _dayNumber(target) - (target.weekday - 1);
+
+        return ((targetWeek - startWeek) ~/ 7) % every == 0;
+
+      case ScheduleUnit.month:
+        final monthDays = rule.selectedMonthDays;
+        final selectedDays = monthDays?.isNotEmpty == true
+            ? monthDays!.first.selectedDaysOfMonth
+            : null;
+
+        if (selectedDays == null || !selectedDays.contains(target.day)) {
+          return false;
+        }
+
+        final monthDifference =
+            (target.year - start.year) * 12 + target.month - start.month;
+
+        return monthDifference >= 0 && monthDifference % every == 0;
+
+      case ScheduleUnit.year:
+        final monthDays = rule.selectedMonthDays;
+
+        if (monthDays == null) return false;
+
+        final matchingMonth = monthDays.where(
+          (value) =>
+              value.selectedMonth == target.month &&
+              value.selectedDaysOfMonth?.contains(target.day) == true,
+        );
+
+        if (matchingMonth.isEmpty) return false;
+
+        final yearDifference = target.year - start.year;
+        return yearDifference >= 0 && yearDifference % every == 0;
+    }
   }
 }

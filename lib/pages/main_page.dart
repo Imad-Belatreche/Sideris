@@ -6,10 +6,18 @@ import 'package:sideris/pages/home_page.dart';
 import 'package:sideris/pages/settings_page.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sideris/repositories/notifications_repository.dart';
+import 'package:sideris/services/notification_service.dart';
 import 'package:sideris/widgets/night_sky_background.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+  final NotificationsRepository repository;
+  final NotificationService notificationService;
+  const MainPage({
+    super.key,
+    required this.repository,
+    required this.notificationService,
+  });
 
   @override
   State<MainPage> createState() => _MainPageState();
@@ -21,6 +29,11 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
+    loadData();
+  }
+
+  Future<void> loadData() async {
+    await context.read<NotificationCubit>().loadNotifications();
   }
 
   Widget _buildPage() {
@@ -43,21 +56,46 @@ class _MainPageState extends State<MainPage> {
       floatingActionButton: (_selectedIndex == 0)
           ? FloatingActionButton(
                   onPressed: () async {
-                    //TODO: Navigate to create notification screen
                     await ensureNotificationPermission(context);
-
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => NightSkyBackground(
-                          child:
-                              BlocProvider(
-                                    create: (context) => NotificationCubit(),
-                                    child: const CreateUpdateNotificationPage(),
-                                  )
-                                  .animate()
-                                  .slideY(duration: 400.ms, begin: 0.1)
-                                  .fadeIn(duration: 500.ms),
-                        ),
+                    if (!context.mounted) return;
+                    await Navigator.of(context).push(
+                      PageRouteBuilder(
+                        transitionDuration: 350.ms,
+                        reverseTransitionDuration: 250.ms,
+                        opaque: true,
+                        barrierDismissible: false,
+                        transitionsBuilder:
+                            (context, animation, secondaryAnimation, child) {
+                              return FadeTransition(
+                                opacity: CurvedAnimation(
+                                  parent: animation,
+                                  curve: Curves.fastOutSlowIn,
+                                  reverseCurve: Curves.easeInCubic,
+                                ),
+                                child: SlideTransition(
+                                  position:
+                                      Tween(
+                                        begin: Offset(0, 0.2),
+                                        end: Offset.zero,
+                                      ).animate(
+                                        CurvedAnimation(
+                                          parent: animation,
+                                          curve: Curves.easeOut,
+                                          reverseCurve: Curves.easeIn,
+                                        ),
+                                      ),
+                                  child: child,
+                                ),
+                              );
+                            },
+                        pageBuilder: (_, animation, secondaryAnimation) {
+                          return NightSkyBackground(
+                            child: BlocProvider.value(
+                              value: context.read<NotificationCubit>(),
+                              child: const CreateUpdateNotificationPage(),
+                            ),
+                          );
+                        },
                       ),
                     );
                   },

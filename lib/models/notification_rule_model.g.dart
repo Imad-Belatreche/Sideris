@@ -175,6 +175,11 @@ const NotificationRuleModelSchema = CollectionSchema(
       id: 29,
       name: r'totalOccurrences',
       type: IsarType.long,
+    ),
+    r'updatedAt': PropertySchema(
+      id: 30,
+      name: r'updatedAt',
+      type: IsarType.dateTime,
     )
   },
   estimateSize: _notificationRuleModelEstimateSize,
@@ -335,6 +340,7 @@ void _notificationRuleModelSerialize(
   writer.writeDateTime(offsets[27], object.startDate);
   writer.writeString(offsets[28], object.title);
   writer.writeLong(offsets[29], object.totalOccurrences);
+  writer.writeDateTime(offsets[30], object.updatedAt);
 }
 
 NotificationRuleModel _notificationRuleModelDeserialize(
@@ -348,6 +354,7 @@ NotificationRuleModel _notificationRuleModelDeserialize(
     colorTag: _NotificationRuleModelcolorTagValueEnumMap[
         reader.readStringOrNull(offsets[1])],
     content: reader.readStringOrNull(offsets[2]),
+    createdAt: reader.readDateTimeOrNull(offsets[3]),
     dailyOption: _NotificationRuleModeldailyOptionValueEnumMap[
         reader.readStringOrNull(offsets[4])],
     durationCount: reader.readLongOrNull(offsets[5]),
@@ -386,8 +393,8 @@ NotificationRuleModel _notificationRuleModelDeserialize(
     startDate: reader.readDateTime(offsets[27]),
     title: reader.readString(offsets[28]),
     totalOccurrences: reader.readLongOrNull(offsets[29]),
+    updatedAt: reader.readDateTimeOrNull(offsets[30]),
   );
-  object.createdAt = reader.readDateTime(offsets[3]);
   object.id = id;
   return object;
 }
@@ -407,7 +414,7 @@ P _notificationRuleModelDeserializeProp<P>(
     case 2:
       return (reader.readStringOrNull(offset)) as P;
     case 3:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readDateTimeOrNull(offset)) as P;
     case 4:
       return (_NotificationRuleModeldailyOptionValueEnumMap[
           reader.readStringOrNull(offset)]) as P;
@@ -472,6 +479,8 @@ P _notificationRuleModelDeserializeProp<P>(
       return (reader.readString(offset)) as P;
     case 29:
       return (reader.readLongOrNull(offset)) as P;
+    case 30:
+      return (reader.readDateTimeOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -1208,7 +1217,25 @@ extension NotificationRuleModelQueryFilter on QueryBuilder<
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> createdAtEqualTo(DateTime value) {
+      QAfterFilterCondition> createdAtIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'createdAt',
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
+      QAfterFilterCondition> createdAtIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'createdAt',
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
+      QAfterFilterCondition> createdAtEqualTo(DateTime? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'createdAt',
@@ -1219,7 +1246,7 @@ extension NotificationRuleModelQueryFilter on QueryBuilder<
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel,
       QAfterFilterCondition> createdAtGreaterThan(
-    DateTime value, {
+    DateTime? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -1233,7 +1260,7 @@ extension NotificationRuleModelQueryFilter on QueryBuilder<
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel,
       QAfterFilterCondition> createdAtLessThan(
-    DateTime value, {
+    DateTime? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -1247,8 +1274,8 @@ extension NotificationRuleModelQueryFilter on QueryBuilder<
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel,
       QAfterFilterCondition> createdAtBetween(
-    DateTime lower,
-    DateTime upper, {
+    DateTime? lower,
+    DateTime? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -3781,6 +3808,80 @@ extension NotificationRuleModelQueryFilter on QueryBuilder<
       ));
     });
   }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
+      QAfterFilterCondition> updatedAtIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'updatedAt',
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
+      QAfterFilterCondition> updatedAtIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'updatedAt',
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
+      QAfterFilterCondition> updatedAtEqualTo(DateTime? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'updatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
+      QAfterFilterCondition> updatedAtGreaterThan(
+    DateTime? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'updatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
+      QAfterFilterCondition> updatedAtLessThan(
+    DateTime? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'updatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
+      QAfterFilterCondition> updatedAtBetween(
+    DateTime? lower,
+    DateTime? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'updatedAt',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
 }
 
 extension NotificationRuleModelQueryObject on QueryBuilder<
@@ -4174,6 +4275,20 @@ extension NotificationRuleModelQuerySortBy
       sortByTotalOccurrencesDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'totalOccurrences', Sort.desc);
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
+      sortByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
+      sortByUpdatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.desc);
     });
   }
 }
@@ -4571,6 +4686,20 @@ extension NotificationRuleModelQuerySortThenBy
       return query.addSortBy(r'totalOccurrences', Sort.desc);
     });
   }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
+      thenByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
+      thenByUpdatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.desc);
+    });
+  }
 }
 
 extension NotificationRuleModelQueryWhereDistinct
@@ -4779,6 +4908,13 @@ extension NotificationRuleModelQueryWhereDistinct
       return query.addDistinctBy(r'totalOccurrences');
     });
   }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
+      distinctByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'updatedAt');
+    });
+  }
 }
 
 extension NotificationRuleModelQueryProperty on QueryBuilder<
@@ -4810,7 +4946,7 @@ extension NotificationRuleModelQueryProperty on QueryBuilder<
     });
   }
 
-  QueryBuilder<NotificationRuleModel, DateTime, QQueryOperations>
+  QueryBuilder<NotificationRuleModel, DateTime?, QQueryOperations>
       createdAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'createdAt');
@@ -4996,6 +5132,13 @@ extension NotificationRuleModelQueryProperty on QueryBuilder<
       totalOccurrencesProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'totalOccurrences');
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, DateTime?, QQueryOperations>
+      updatedAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'updatedAt');
     });
   }
 }
