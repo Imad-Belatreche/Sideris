@@ -27,3 +27,7 @@ tz.TZDateTime convertToTZDateTime(DateTime dateTime) {
   final location = tz.local;
   return tz.TZDateTime.from(dateTime, location);
 }
+
+DateTime dateOnly(DateTime value) {
+  return DateTime(value.year, value.month, value.day);
+}
