@@ -1,23 +1,17 @@
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:sideris/cubits/notification/notification_cubit.dart';
 import 'package:sideris/cubits/settings/settings_cubit.dart';
 import 'package:sideris/pages/create_update_notification_page.dart';
 import 'package:sideris/pages/home_page.dart';
 import 'package:sideris/pages/settings_page.dart';
-import 'package:material_ui/material_ui.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sideris/repositories/notifications_repository.dart';
 import 'package:sideris/services/notification_service.dart';
 import 'package:sideris/widgets/night_sky_background.dart';
 
 class MainPage extends StatefulWidget {
-  final NotificationsRepository repository;
   final NotificationService notificationService;
-  const MainPage({
-    super.key,
-    required this.repository,
-    required this.notificationService,
-  });
+  const MainPage({super.key, required this.notificationService});
 
   @override
   State<MainPage> createState() => _MainPageState();
@@ -40,10 +34,7 @@ class _MainPageState extends State<MainPage> {
     if (_selectedIndex == 0) {
       return HomePage(key: ValueKey("home"));
     } else {
-      return BlocProvider(
-        create: (context) => SettingsCubit(),
-        child: SettingsPage(key: ValueKey("settings")),
-      );
+      return SettingsPage(key: ValueKey("settings"));
     }
   }
 
@@ -90,8 +81,15 @@ class _MainPageState extends State<MainPage> {
                             },
                         pageBuilder: (_, animation, secondaryAnimation) {
                           return NightSkyBackground(
-                            child: BlocProvider.value(
-                              value: context.read<NotificationCubit>(),
+                            child: MultiBlocProvider(
+                              providers: [
+                                BlocProvider.value(
+                                  value: context.read<NotificationCubit>(),
+                                ),
+                                BlocProvider.value(
+                                  value: context.read<SettingsCubit>(),
+                                ),
+                              ],
                               child: const CreateUpdateNotificationPage(),
                             ),
                           );
