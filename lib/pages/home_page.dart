@@ -1,11 +1,12 @@
 import 'dart:async';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:sideris/cubits/notification/notification_cubit.dart';
+import 'package:sideris/cubits/settings/settings_cubit.dart';
 import 'package:sideris/models/notification_rule_model.dart';
 import 'package:sideris/pages/create_update_notification_page.dart';
 import 'package:sideris/utils/general_utils.dart';
@@ -382,9 +383,19 @@ class _HomePageState extends State<HomePage> {
                                       pageBuilder:
                                           (_, animation, secondaryAnimation) {
                                             return NightSkyBackground(
-                                              child: BlocProvider.value(
-                                                value: context
-                                                    .read<NotificationCubit>(),
+                                              child: MultiBlocProvider(
+                                                providers: [
+                                                  BlocProvider.value(
+                                                    value: context
+                                                        .read<
+                                                          NotificationCubit
+                                                        >(),
+                                                  ),
+                                                  BlocProvider.value(
+                                                    value: context
+                                                        .read<SettingsCubit>(),
+                                                  ),
+                                                ],
                                                 child:
                                                     CreateUpdateNotificationPage(
                                                       updateNotification:
