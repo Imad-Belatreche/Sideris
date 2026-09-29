@@ -6,7 +6,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:sideris/cubits/notification/notification_cubit.dart';
+import 'package:sideris/cubits/settings/settings_cubit.dart';
 import 'package:sideris/models/notification_rule_model.dart';
+import 'package:sideris/models/settings_model.dart';
 import 'package:sideris/services/permission_service.dart';
 import 'package:sideris/utils/permission_dialog.dart';
 import 'package:sideris/widgets/create_update_elevated_button.dart';
@@ -16,8 +18,6 @@ import 'package:sideris/widgets/notification_outlined_button.dart';
 import 'package:sideris/widgets/notification_radio_card.dart';
 import 'package:sideris/widgets/notification_textfield.dart';
 import 'package:sideris/widgets/text/creation_screen_title.dart';
-
-enum DurationOption { forever, duration, untilDate, totalTimes }
 
 class CreateUpdateNotificationPage extends StatefulWidget {
   final NotificationRuleModel? updateNotification;
@@ -41,7 +41,7 @@ class _CreateUpdateNotificationPageState
 
   DailyOption? _dailyOption = DailyOption.allDays;
 
-  ScheduleUnit? _scheduleUnit = ScheduleUnit.day;
+  ScheduleUnit? _scheduleUnit = ScheduleUnit.daily;
   final TextEditingController _scheduleEveryController =
       TextEditingController();
 
@@ -75,6 +75,8 @@ class _CreateUpdateNotificationPageState
   final TextEditingController _totalTimesController = TextEditingController();
 
   DateTime? _endDate;
+
+  late final SettingsModel settings;
 
   @override
   void dispose() {
@@ -153,7 +155,7 @@ class _CreateUpdateNotificationPageState
       _durationOption = toUpdate.isForever
           ? DurationOption.forever
           : toUpdate.totalOccurrences != null
-          ? DurationOption.totalTimes
+          ? DurationOption.occurrences
           : toUpdate.durationCount != null
           ? DurationOption.duration
           : toUpdate.durationCount == null && toUpdate.endDate != null
@@ -163,7 +165,19 @@ class _CreateUpdateNotificationPageState
       _totalTimesController.text = toUpdate.totalOccurrences?.toString() ?? "";
 
       _endDate = toUpdate.endDate;
+      return;
     }
+
+    settings = context.read<SettingsCubit>().state.settings;
+
+    _titleController.text = settings.defaultTitle;
+    _descriptionController.text = settings.defaultDescription;
+    _isDndEnabled = settings.bypassDND;
+    _recurrenceType = settings.recurrenceType;
+    _repetitionType = settings.repetitionType;
+    _colorTag = settings.colorTag;
+    _scheduleUnit = settings.scheduleUnit;
+    _durationOption = settings.durationOption;
   }
 
   final GlobalKey<AnimatedListState> _fixedTimesListKey =
@@ -210,7 +224,7 @@ class _CreateUpdateNotificationPageState
 
       int? scheduleEvery = int.tryParse(_scheduleEveryController.text.trim());
 
-      if (_scheduleUnit == ScheduleUnit.day) {
+      if (_scheduleUnit == ScheduleUnit.daily) {
         if (scheduleEvery == null || scheduleEvery <= 0) {
           showError("'Repeat every' must be a whole number greater than 0.");
           return null;
@@ -222,7 +236,7 @@ class _CreateUpdateNotificationPageState
         }
       }
 
-      if (_scheduleUnit == ScheduleUnit.week) {
+      if (_scheduleUnit == ScheduleUnit.weekly) {
         if (scheduleEvery == null || scheduleEvery <= 0) {
           showError("'Repeat every' must be a whole number greater than 0.");
           return null;
@@ -234,7 +248,7 @@ class _CreateUpdateNotificationPageState
         }
       }
 
-      if (_scheduleUnit == ScheduleUnit.month) {
+      if (_scheduleUnit == ScheduleUnit.monthly) {
         if (scheduleEvery == null || scheduleEvery <= 0) {
           showError("'Repeat every' must be a whole number greater than 0.");
           return null;
@@ -246,7 +260,7 @@ class _CreateUpdateNotificationPageState
         }
       }
 
-      if (_scheduleUnit == ScheduleUnit.year) {
+      if (_scheduleUnit == ScheduleUnit.yearly) {
         if (scheduleEvery == null || scheduleEvery <= 0) {
           showError("'Repeat every' must be a whole number greater than 0.");
           return null;
@@ -264,24 +278,24 @@ class _CreateUpdateNotificationPageState
           return null;
         }
       }
-      final DailyOption? dailyOption = _scheduleUnit == ScheduleUnit.day
+      final DailyOption? dailyOption = _scheduleUnit == ScheduleUnit.daily
           ? _dailyOption
           : null;
 
-      final List<int>? selectedDaysOfWeek = _scheduleUnit == ScheduleUnit.week
+      final List<int>? selectedDaysOfWeek = _scheduleUnit == ScheduleUnit.weekly
           ? _selectedDaysOfWeek
-          : _scheduleUnit == ScheduleUnit.day &&
+          : _scheduleUnit == ScheduleUnit.daily &&
                 _dailyOption == DailyOption.weekdays
           ? [1, 2, 3, 4, 5]
-          : _scheduleUnit == ScheduleUnit.day &&
+          : _scheduleUnit == ScheduleUnit.daily &&
                 _dailyOption == DailyOption.weekends
           ? [6, 7]
           : null;
 
       final List<MonthDaysRepetition>? selectedMonthDays =
-          _scheduleUnit == ScheduleUnit.year
+          _scheduleUnit == ScheduleUnit.yearly
           ? _selectedDaysOfYear
-          : _scheduleUnit == ScheduleUnit.month
+          : _scheduleUnit == ScheduleUnit.monthly
           ? [
               MonthDaysRepetition(
                 selectedMonth: null,
@@ -415,7 +429,7 @@ class _CreateUpdateNotificationPageState
         return null;
       }
 
-      if (_durationOption == DurationOption.totalTimes &&
+      if (_durationOption == DurationOption.occurrences &&
           (parsedTotalTimes == null || parsedTotalTimes <= 0)) {
         showError("Enter valid total times occurrences.");
         return null;
@@ -440,7 +454,8 @@ class _CreateUpdateNotificationPageState
           ? _endDate
           : null;
 
-      final int? totalOccurrences = _durationOption == DurationOption.totalTimes
+      final int? totalOccurrences =
+          _durationOption == DurationOption.occurrences
           ? parsedTotalTimes
           : null;
 
@@ -548,6 +563,7 @@ class _CreateUpdateNotificationPageState
                   controller: _descriptionController,
                   hintText: 'Add details...',
                   maxLines: 3,
+                  minLines: 3,
                 ),
 
                 SizedBox(height: 16),
@@ -877,37 +893,37 @@ class _CreateUpdateNotificationPageState
             children: [
               NotificationOutlinedButton(
                 label: "Day",
-                isSelected: _scheduleUnit == ScheduleUnit.day,
+                isSelected: _scheduleUnit == ScheduleUnit.daily,
                 onPressed: () {
                   setState(() {
-                    _scheduleUnit = ScheduleUnit.day;
+                    _scheduleUnit = ScheduleUnit.daily;
                   });
                 },
               ),
               NotificationOutlinedButton(
                 label: "Week",
-                isSelected: _scheduleUnit == ScheduleUnit.week,
+                isSelected: _scheduleUnit == ScheduleUnit.weekly,
                 onPressed: () {
                   setState(() {
-                    _scheduleUnit = ScheduleUnit.week;
+                    _scheduleUnit = ScheduleUnit.weekly;
                   });
                 },
               ),
               NotificationOutlinedButton(
                 label: "Month",
-                isSelected: _scheduleUnit == ScheduleUnit.month,
+                isSelected: _scheduleUnit == ScheduleUnit.monthly,
                 onPressed: () {
                   setState(() {
-                    _scheduleUnit = ScheduleUnit.month;
+                    _scheduleUnit = ScheduleUnit.monthly;
                   });
                 },
               ),
               NotificationOutlinedButton(
                 label: "Year",
-                isSelected: _scheduleUnit == ScheduleUnit.year,
+                isSelected: _scheduleUnit == ScheduleUnit.yearly,
                 onPressed: () {
                   setState(() {
-                    _scheduleUnit = ScheduleUnit.year;
+                    _scheduleUnit = ScheduleUnit.yearly;
                   });
                 },
               ),
@@ -1049,7 +1065,7 @@ class _CreateUpdateNotificationPageState
             );
           },
           child:
-              (_scheduleUnit == ScheduleUnit.day &&
+              (_scheduleUnit == ScheduleUnit.daily &&
                   (_dailyOption == DailyOption.weekdays ||
                       _dailyOption == DailyOption.weekends))
               ? SizedBox(height: 0, key: ValueKey<String>("empty"))
@@ -1125,19 +1141,19 @@ class _CreateUpdateNotificationPageState
             );
           },
           child: switch (_scheduleUnit!) {
-            ScheduleUnit.day => KeyedSubtree(
+            ScheduleUnit.daily => KeyedSubtree(
               key: const ValueKey('schedule-day'),
               child: buildDayOptions(),
             ),
-            ScheduleUnit.week => KeyedSubtree(
+            ScheduleUnit.weekly => KeyedSubtree(
               key: const ValueKey('schedule-week'),
               child: buildWeekOptions(),
             ),
-            ScheduleUnit.month => KeyedSubtree(
+            ScheduleUnit.monthly => KeyedSubtree(
               key: const ValueKey('schedule-month'),
               child: buildMonthOptions(),
             ),
-            ScheduleUnit.year => KeyedSubtree(
+            ScheduleUnit.yearly => KeyedSubtree(
               key: const ValueKey('schedule-year'),
               child: buildYearOptions(),
             ),
@@ -1924,21 +1940,21 @@ class _CreateUpdateNotificationPageState
                   NotificationOutlinedButton(
                     label: _durationUnit != null
                         ? "${_durationUnit!.name[0].toUpperCase()}${_durationUnit!.name.substring(1).toLowerCase()}s"
-                        : "${ScheduleUnit.day.name[0].toUpperCase()}${ScheduleUnit.day.name.substring(1).toLowerCase()}s",
+                        : "${ScheduleUnit.daily.name[0].toUpperCase()}${ScheduleUnit.daily.name.substring(1).toLowerCase()}s",
                     isCurrentlySelected: true,
                     onPressed: () {
                       setState(() {
-                        _durationUnit ??= ScheduleUnit.day;
+                        _durationUnit ??= ScheduleUnit.daily;
 
                         switch (_durationUnit!) {
-                          case ScheduleUnit.day:
-                            _durationUnit = ScheduleUnit.week;
-                          case ScheduleUnit.week:
-                            _durationUnit = ScheduleUnit.month;
-                          case ScheduleUnit.month:
-                            _durationUnit = ScheduleUnit.year;
-                          case ScheduleUnit.year:
-                            _durationUnit = ScheduleUnit.day;
+                          case ScheduleUnit.daily:
+                            _durationUnit = ScheduleUnit.weekly;
+                          case ScheduleUnit.weekly:
+                            _durationUnit = ScheduleUnit.monthly;
+                          case ScheduleUnit.monthly:
+                            _durationUnit = ScheduleUnit.yearly;
+                          case ScheduleUnit.yearly:
+                            _durationUnit = ScheduleUnit.daily;
                         }
                       });
                     },
@@ -1983,12 +1999,12 @@ class _CreateUpdateNotificationPageState
             ),
           ),
           NotificationRadioCard(
-            selectedType: DurationOption.totalTimes,
+            selectedType: DurationOption.occurrences,
             label: "N total times",
-            isSelected: _durationOption == DurationOption.totalTimes,
+            isSelected: _durationOption == DurationOption.occurrences,
             onTap: () {
               setState(() {
-                _durationOption = DurationOption.totalTimes;
+                _durationOption = DurationOption.occurrences;
               });
             },
             child: NotificationCard(
