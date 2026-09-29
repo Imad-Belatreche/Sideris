@@ -49,6 +49,7 @@ dependencies:
   flutter_animate: ^4.5.2
   intl: ^0.20.3
   material_ui: ^1.0.0
+  equatable: ^2.1.0
 
 dev_dependencies:
   flutter_test:
