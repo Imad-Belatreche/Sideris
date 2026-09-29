@@ -26,13 +26,13 @@ class RecurrenceCalculator {
     if (durationUnit == null || durationCount == null) return null;
 
     switch (durationUnit) {
-      case ScheduleUnit.day:
+      case ScheduleUnit.daily:
         return startDate.add(Duration(days: durationCount));
-      case ScheduleUnit.week:
+      case ScheduleUnit.weekly:
         return startDate.add(Duration(days: durationCount * 7));
-      case ScheduleUnit.month:
+      case ScheduleUnit.monthly:
         return _addMonths(startDate, durationCount);
-      case ScheduleUnit.year:
+      case ScheduleUnit.yearly:
         return _addMonths(startDate, durationCount * 12);
     }
   }
@@ -159,7 +159,7 @@ class RecurrenceCalculator {
     anchorDate = _timeCropping(anchorDate);
 
     switch (rule.scheduleUnit!) {
-      case ScheduleUnit.day:
+      case ScheduleUnit.daily:
         final selectedWeekdays = rule.selectedDaysOfWeek;
 
         if (selectedWeekdays != null && selectedWeekdays.isNotEmpty) {
@@ -187,7 +187,7 @@ class RecurrenceCalculator {
           selectedWeekdays: selectedWeekdays,
         );
 
-      case ScheduleUnit.week:
+      case ScheduleUnit.weekly:
         if (rule.selectedDaysOfWeek == null ||
             rule.selectedDaysOfWeek!.isEmpty) {
           throw Exception(
@@ -215,7 +215,7 @@ class RecurrenceCalculator {
           selectedWeekdays: rule.selectedDaysOfWeek!,
         );
 
-      case ScheduleUnit.month:
+      case ScheduleUnit.monthly:
         if (rule.selectedMonthDays == null ||
             rule.selectedMonthDays!.isEmpty ||
             rule.selectedMonthDays!.first.selectedDaysOfMonth == null ||
@@ -256,7 +256,7 @@ class RecurrenceCalculator {
           );
         }
 
-      case ScheduleUnit.year:
+      case ScheduleUnit.yearly:
         if (rule.selectedMonthDays == null || rule.selectedMonthDays!.isEmpty) {
           throw Exception(
             'Selected month days must be provided for yearly recurrence.',
@@ -575,7 +575,7 @@ class RecurrenceCalculator {
     }
 
     switch (unit) {
-      case ScheduleUnit.day:
+      case ScheduleUnit.daily:
         if (rule.selectedDaysOfWeek != null &&
             rule.selectedDaysOfWeek!.isNotEmpty &&
             !rule.selectedDaysOfWeek!.contains(target.weekday)) {
@@ -584,7 +584,7 @@ class RecurrenceCalculator {
 
         return (_dayNumber(target) - _dayNumber(start)) % every == 0;
 
-      case ScheduleUnit.week:
+      case ScheduleUnit.weekly:
         final weekdays = rule.selectedDaysOfWeek;
 
         if (weekdays == null ||
@@ -598,7 +598,7 @@ class RecurrenceCalculator {
 
         return ((targetWeek - startWeek) ~/ 7) % every == 0;
 
-      case ScheduleUnit.month:
+      case ScheduleUnit.monthly:
         final monthDays = rule.selectedMonthDays;
         final selectedDays = monthDays?.isNotEmpty == true
             ? monthDays!.first.selectedDaysOfMonth
@@ -613,7 +613,7 @@ class RecurrenceCalculator {
 
         return monthDifference >= 0 && monthDifference % every == 0;
 
-      case ScheduleUnit.year:
+      case ScheduleUnit.yearly:
         final monthDays = rule.selectedMonthDays;
 
         if (monthDays == null) return false;

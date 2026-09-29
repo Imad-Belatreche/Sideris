@@ -6,7 +6,7 @@ void main() {
   NotificationRuleModel createRule({
     RepetitionType repetitionType = RepetitionType.repetitive,
     RecurrenceType? recurrenceType = RecurrenceType.specific,
-    ScheduleUnit? scheduleUnit = ScheduleUnit.day,
+    ScheduleUnit? scheduleUnit = ScheduleUnit.daily,
     DailyOption? dailyOption,
     int? scheduleEvery = 1,
     List<int>? selectedDaysOfWeek,
@@ -432,7 +432,7 @@ void main() {
       final rule = createRule();
 
       final copied = rule.copyWith(
-        scheduleUnit: const Optional<ScheduleUnit?>(ScheduleUnit.week),
+        scheduleUnit: const Optional<ScheduleUnit?>(ScheduleUnit.weekly),
         dailyOption: const Optional<DailyOption?>(null),
         scheduleEvery: const Optional<int?>(2),
         selectedDaysOfWeek: const Optional<List<int>?>([1, 3, 5]),
@@ -441,7 +441,7 @@ void main() {
         ]),
       );
 
-      expect(copied.scheduleUnit, equals(ScheduleUnit.week));
+      expect(copied.scheduleUnit, equals(ScheduleUnit.weekly));
       expect(copied.dailyOption, isNull);
       expect(copied.scheduleEvery, equals(2));
       expect(copied.selectedDaysOfWeek, equals([1, 3, 5]));
@@ -458,7 +458,7 @@ void main() {
         isForever: true,
         endDate: Optional(end),
         totalOccurrences: const Optional<int?>(10),
-        durationUnit: const Optional<ScheduleUnit?>(ScheduleUnit.week),
+        durationUnit: const Optional<ScheduleUnit?>(ScheduleUnit.weekly),
         durationCount: const Optional<int?>(2),
         lastTriggeredAt: Optional(last),
         nextTriggerAt: Optional(next),
@@ -467,7 +467,7 @@ void main() {
       expect(copied.isForever, isTrue);
       expect(copied.endDate, equals(end));
       expect(copied.totalOccurrences, equals(10));
-      expect(copied.durationUnit, equals(ScheduleUnit.week));
+      expect(copied.durationUnit, equals(ScheduleUnit.weekly));
       expect(copied.durationCount, equals(2));
       expect(copied.lastTriggeredAt, equals(last));
       expect(copied.nextTriggerAt, equals(next));
@@ -483,7 +483,7 @@ void main() {
         repetitionType: RepetitionType.oneTime,
         recurrenceType: RecurrenceType.specific,
         fixedTimesMinutes: [570],
-        scheduleUnit: ScheduleUnit.week,
+        scheduleUnit: ScheduleUnit.weekly,
         dailyOption: DailyOption.weekdays,
         scheduleEvery: 2,
         selectedDaysOfWeek: [1, 2],
@@ -620,12 +620,12 @@ void main() {
   group("normalized schedule", () {
     test("day + allDays keeps daily option and clears days of week", () {
       final normalized = createRule(
-        scheduleUnit: ScheduleUnit.day,
+        scheduleUnit: ScheduleUnit.daily,
         dailyOption: DailyOption.allDays,
         selectedDaysOfWeek: [1, 2],
       ).normalized();
 
-      expect(normalized.scheduleUnit, equals(ScheduleUnit.day));
+      expect(normalized.scheduleUnit, equals(ScheduleUnit.daily));
       expect(normalized.dailyOption, equals(DailyOption.allDays));
       expect(normalized.selectedDaysOfWeek, isNull);
       expect(normalized.scheduleEvery, equals(1));
@@ -633,7 +633,7 @@ void main() {
 
     test("day + weekdays keeps both daily option and days of week", () {
       final normalized = createRule(
-        scheduleUnit: ScheduleUnit.day,
+        scheduleUnit: ScheduleUnit.daily,
         dailyOption: DailyOption.weekdays,
         selectedDaysOfWeek: [1, 2, 3, 4, 5],
       ).normalized();
@@ -644,7 +644,7 @@ void main() {
 
     test("day + weekends keeps both daily option and days of week", () {
       final normalized = createRule(
-        scheduleUnit: ScheduleUnit.day,
+        scheduleUnit: ScheduleUnit.daily,
         dailyOption: DailyOption.weekends,
         selectedDaysOfWeek: [6, 7],
       ).normalized();
@@ -655,12 +655,12 @@ void main() {
 
     test("week keeps days of week and clears daily option", () {
       final normalized = createRule(
-        scheduleUnit: ScheduleUnit.week,
+        scheduleUnit: ScheduleUnit.weekly,
         dailyOption: DailyOption.weekdays,
         selectedDaysOfWeek: [1, 3],
       ).normalized();
 
-      expect(normalized.scheduleUnit, equals(ScheduleUnit.week));
+      expect(normalized.scheduleUnit, equals(ScheduleUnit.weekly));
       expect(normalized.dailyOption, isNull);
       expect(normalized.selectedDaysOfWeek, equals([1, 3]));
     });
@@ -670,7 +670,7 @@ void main() {
         MonthDaysRepetition(selectedMonth: null, selectedDaysOfMonth: [1, 15]),
       ];
       final normalized = createRule(
-        scheduleUnit: ScheduleUnit.month,
+        scheduleUnit: ScheduleUnit.monthly,
         dailyOption: DailyOption.weekdays,
         selectedDaysOfWeek: [1],
         selectedMonthDays: monthDays,
@@ -691,7 +691,7 @@ void main() {
         MonthDaysRepetition(selectedMonth: 12, selectedDaysOfMonth: [25]),
       ];
       final normalized = createRule(
-        scheduleUnit: ScheduleUnit.year,
+        scheduleUnit: ScheduleUnit.yearly,
         selectedDaysOfWeek: [1],
         selectedMonthDays: monthDays,
       ).normalized();
@@ -706,14 +706,14 @@ void main() {
       ];
       expect(
         createRule(
-          scheduleUnit: ScheduleUnit.day,
+          scheduleUnit: ScheduleUnit.daily,
           selectedMonthDays: monthDays,
         ).normalized().selectedMonthDays,
         isNull,
       );
       expect(
         createRule(
-          scheduleUnit: ScheduleUnit.week,
+          scheduleUnit: ScheduleUnit.weekly,
           selectedMonthDays: monthDays,
         ).normalized().selectedMonthDays,
         isNull,
@@ -724,7 +724,7 @@ void main() {
   group("normalized duration", () {
     test("normalize forever rule by clearing duration fields", () {
       final rule = createRule()
-        ..durationUnit = ScheduleUnit.week
+        ..durationUnit = ScheduleUnit.weekly
         ..durationCount = 2
         ..endDate = DateTime(2026, 9, 27)
         ..totalOccurrences = 5;
@@ -742,14 +742,14 @@ void main() {
       final end = DateTime(2026, 9, 27);
       final normalized = createRule(
         isForever: false,
-        durationUnit: ScheduleUnit.week,
+        durationUnit: ScheduleUnit.weekly,
         durationCount: 2,
         endDate: end,
         totalOccurrences: 5,
       ).normalized();
 
       expect(normalized.isForever, isFalse);
-      expect(normalized.durationUnit, equals(ScheduleUnit.week));
+      expect(normalized.durationUnit, equals(ScheduleUnit.weekly));
       expect(normalized.durationCount, equals(2));
       expect(normalized.endDate, equals(end));
       expect(normalized.totalOccurrences, equals(5));
