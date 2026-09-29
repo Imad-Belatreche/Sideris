@@ -1,7 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
+import 'package:equatable/equatable.dart';
+import 'package:isar_community/isar.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:isar/isar.dart';
 
 part 'notification_rule_model.g.dart';
 
@@ -17,14 +18,62 @@ enum ColorTag {
 
   final Color value;
 
+  static ColorTag? fromString(String? name) {
+    if (name == null || name == "none") return null;
+    try {
+      return ColorTag.values.byName(name);
+    } on ArgumentError {
+      return null;
+    }
+  }
+
   const ColorTag(this.value);
 }
 
-enum RepetitionType { oneTime, repetitive }
+enum RepetitionType {
+  oneTime,
+  repetitive;
 
-enum RecurrenceType { specific, random, interval }
+  static RepetitionType? fromString(String? name) {
+    if (name == null) return null;
+    try {
+      return RepetitionType.values.byName(name);
+    } on ArgumentError {
+      return null;
+    }
+  }
+}
 
-enum ScheduleUnit { day, week, month, year }
+enum RecurrenceType {
+  specific,
+  random,
+  interval;
+
+  static RecurrenceType? fromString(String? name) {
+    if (name == null) return null;
+    try {
+      return RecurrenceType.values.byName(name);
+    } on ArgumentError {
+      return null;
+    }
+  }
+}
+
+enum ScheduleUnit {
+  daily,
+  weekly,
+  monthly,
+  yearly;
+
+  static ScheduleUnit? fromString(String? name) {
+    if (name == null) return null;
+    try {
+      return ScheduleUnit.values.byName(name);
+    } on ArgumentError {
+      return null;
+    }
+  }
+}
 
 enum IntervalUnit { minute, hour }
 
@@ -48,8 +97,26 @@ class MonthDaysRepetition {
   }
 }
 
-@Collection()
-class NotificationRuleModel {
+enum DurationOption {
+  forever,
+  duration,
+  untilDate,
+  occurrences;
+
+  static DurationOption? fromString(String? name) {
+    if (name == null) return null;
+    try {
+      return DurationOption.values.byName(name);
+    } on ArgumentError {
+      return null;
+    }
+  }
+}
+
+//TODO: Better split into isar entity with toModel and fromModel methods, and model with equatable
+// ignore_for_file: must_be_immutable
+@Collection(inheritance: false)
+class NotificationRuleModel extends Equatable {
   Id id = Isar.autoIncrement;
 
   // These will be in every single type ------------------------------------
@@ -430,8 +497,8 @@ class NotificationRuleModel {
 
     final normalizedSelectedDaysOfWeek =
         repetitive &&
-            (scheduleUnit == ScheduleUnit.week ||
-                (scheduleUnit == ScheduleUnit.day &&
+            (scheduleUnit == ScheduleUnit.weekly ||
+                (scheduleUnit == ScheduleUnit.daily &&
                     dailyOption != null &&
                     (dailyOption == DailyOption.weekdays ||
                         dailyOption == DailyOption.weekends)))
@@ -439,7 +506,9 @@ class NotificationRuleModel {
         : null;
 
     final dailyOpt =
-        (repetitive && scheduleUnit != null && scheduleUnit == ScheduleUnit.day)
+        (repetitive &&
+            scheduleUnit != null &&
+            scheduleUnit == ScheduleUnit.daily)
         ? dailyOption
         : null;
 
@@ -481,8 +550,8 @@ class NotificationRuleModel {
 
       selectedMonthDays: Optional(
         repetitive &&
-                (scheduleUnit == ScheduleUnit.month ||
-                    scheduleUnit == ScheduleUnit.year)
+                (scheduleUnit == ScheduleUnit.monthly ||
+                    scheduleUnit == ScheduleUnit.yearly)
             ? selectedMonthDays
             : null,
       ),
@@ -495,7 +564,42 @@ class NotificationRuleModel {
   }
 
   @override
-  String toString() {
-    return "NotificationRuleModel(id: $id, title: $title, content: $content, startDate: $startDate, colorTag: $colorTag, bypassDnd: $bypassDnd, isActive: $isActive, isScheduled: $isScheduled, recurrenceType: $recurrenceType, repetitionType: $repetitionType, fixedTimesMinutes: $fixedTimesMinutes, intervalUnit: $intervalUnit, intervalEvery: $intervalEvery, intervalWindowStartMinutes: $intervalWindowStartMinutes, intervalWindowEndMinutes: $intervalWindowEndMinutes, scheduleUnit: $scheduleUnit, dailyOption: $dailyOption, scheduleEvery: $scheduleEvery, selectedDaysOfWeek: $selectedDaysOfWeek, selectedMonthDays: $selectedMonthDays, randomCount: $randomCount, randomWindowStartMinutes: $randomWindowStartMinutes, randomWindowEndMinutes: $randomWindowEndMinutes, isForever: $isForever, endDate: $endDate, totalOccurrences: $totalOccurrences, durationUnit: $durationUnit, durationCount: $durationCount, lastTriggeredAt: $lastTriggeredAt, nextTriggerAt: $nextTriggerAt)";
-  }
+  @ignore
+  bool get stringify => true;
+
+  @override
+  @ignore
+  List<Object?> get props => [
+    title,
+    content,
+    startDate,
+    colorTag,
+    bypassDnd,
+    isActive,
+    isScheduled,
+    repetitionType,
+    recurrenceType,
+    fixedTimesMinutes,
+    intervalUnit,
+    intervalEvery,
+    intervalWindowStartMinutes,
+    intervalWindowEndMinutes,
+    scheduleUnit,
+    dailyOption,
+    scheduleEvery,
+    selectedDaysOfWeek,
+    selectedMonthDays,
+    randomCount,
+    randomWindowStartMinutes,
+    randomWindowEndMinutes,
+    isForever,
+    endDate,
+    totalOccurrences,
+    durationUnit,
+    durationCount,
+    lastTriggeredAt,
+    nextTriggerAt,
+    createdAt,
+    updatedAt,
+  ];
 }

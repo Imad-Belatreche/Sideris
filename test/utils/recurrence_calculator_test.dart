@@ -7,7 +7,7 @@ void main() {
   NotificationRuleModel makeRule({
     RepetitionType repetitionType = RepetitionType.repetitive,
     RecurrenceType? recurrenceType = RecurrenceType.specific,
-    ScheduleUnit? scheduleUnit = ScheduleUnit.day,
+    ScheduleUnit? scheduleUnit = ScheduleUnit.daily,
     int? scheduleEvery = 1,
     List<int>? fixedTimesMinutes,
     List<int>? selectedDaysOfWeek,
@@ -71,7 +71,7 @@ void main() {
       expect(
         RecurrenceCalculator.computeDurationEndDate(
           start,
-          ScheduleUnit.day,
+          ScheduleUnit.daily,
           null,
         ),
         isNull,
@@ -85,7 +85,11 @@ void main() {
     test("adds days", () {
       final start = DateTime(2026, 9, 13, 9, 30);
       expect(
-        RecurrenceCalculator.computeDurationEndDate(start, ScheduleUnit.day, 5),
+        RecurrenceCalculator.computeDurationEndDate(
+          start,
+          ScheduleUnit.daily,
+          5,
+        ),
         equals(DateTime(2026, 9, 18, 9, 30)),
       );
     });
@@ -95,7 +99,7 @@ void main() {
       expect(
         RecurrenceCalculator.computeDurationEndDate(
           start,
-          ScheduleUnit.week,
+          ScheduleUnit.weekly,
           2,
         ),
         equals(DateTime(2026, 9, 27, 9)),
@@ -107,7 +111,7 @@ void main() {
       expect(
         RecurrenceCalculator.computeDurationEndDate(
           start,
-          ScheduleUnit.month,
+          ScheduleUnit.monthly,
           3,
         ),
         equals(DateTime(2027, 2, 15, 9)),
@@ -120,7 +124,7 @@ void main() {
       expect(
         RecurrenceCalculator.computeDurationEndDate(
           start,
-          ScheduleUnit.month,
+          ScheduleUnit.monthly,
           1,
         ),
         equals(DateTime(2026, 2, 28, 10, 5)),
@@ -132,7 +136,7 @@ void main() {
       expect(
         RecurrenceCalculator.computeDurationEndDate(
           start,
-          ScheduleUnit.year,
+          ScheduleUnit.yearly,
           1,
         ),
         equals(DateTime(2025, 2, 28, 8)),
@@ -140,7 +144,7 @@ void main() {
       expect(
         RecurrenceCalculator.computeDurationEndDate(
           DateTime(2026, 9, 13, 9),
-          ScheduleUnit.year,
+          ScheduleUnit.yearly,
           2,
         ),
         equals(DateTime(2028, 9, 13, 9)),
@@ -380,7 +384,7 @@ void main() {
       // Pick a weekday that is not today to force forward search.
       final target = (now.weekday % 7) + 1;
       final rule = makeRule(
-        scheduleUnit: ScheduleUnit.week,
+        scheduleUnit: ScheduleUnit.weekly,
         selectedDaysOfWeek: [target],
         fixedTimesMinutes: [toMinutes(minutesAgo(60 * 5))],
       );
@@ -392,7 +396,7 @@ void main() {
 
     test("weekly without days throws", () {
       final rule = makeRule(
-        scheduleUnit: ScheduleUnit.week,
+        scheduleUnit: ScheduleUnit.weekly,
         selectedDaysOfWeek: null,
         fixedTimesMinutes: [600],
       );
@@ -401,7 +405,7 @@ void main() {
         throwsException,
       );
       final empty = makeRule(
-        scheduleUnit: ScheduleUnit.week,
+        scheduleUnit: ScheduleUnit.weekly,
         selectedDaysOfWeek: [],
         fixedTimesMinutes: [600],
       );
@@ -413,7 +417,7 @@ void main() {
 
     test("monthly lands on selected day", () {
       final rule = makeRule(
-        scheduleUnit: ScheduleUnit.month,
+        scheduleUnit: ScheduleUnit.monthly,
         selectedMonthDays: [
           MonthDaysRepetition(selectedMonth: null, selectedDaysOfMonth: [15]),
         ],
@@ -427,7 +431,7 @@ void main() {
 
     test("monthly without days throws", () {
       final rule = makeRule(
-        scheduleUnit: ScheduleUnit.month,
+        scheduleUnit: ScheduleUnit.monthly,
         selectedMonthDays: null,
         fixedTimesMinutes: [600],
       );
@@ -439,7 +443,7 @@ void main() {
 
     test("yearly lands on selected month/day", () {
       final rule = makeRule(
-        scheduleUnit: ScheduleUnit.year,
+        scheduleUnit: ScheduleUnit.yearly,
         selectedMonthDays: [
           MonthDaysRepetition(selectedMonth: 12, selectedDaysOfMonth: [25]),
         ],
@@ -454,7 +458,7 @@ void main() {
 
     test("yearly with invalid month/day throws", () {
       final badMonth = makeRule(
-        scheduleUnit: ScheduleUnit.year,
+        scheduleUnit: ScheduleUnit.yearly,
         selectedMonthDays: [
           MonthDaysRepetition(selectedMonth: 13, selectedDaysOfMonth: [1]),
         ],
@@ -466,7 +470,7 @@ void main() {
       );
 
       final badDay = makeRule(
-        scheduleUnit: ScheduleUnit.year,
+        scheduleUnit: ScheduleUnit.yearly,
         selectedMonthDays: [
           MonthDaysRepetition(selectedMonth: 5, selectedDaysOfMonth: [32]),
         ],
@@ -478,7 +482,7 @@ void main() {
       );
 
       final missing = makeRule(
-        scheduleUnit: ScheduleUnit.year,
+        scheduleUnit: ScheduleUnit.yearly,
         selectedMonthDays: [],
         fixedTimesMinutes: [600],
       );

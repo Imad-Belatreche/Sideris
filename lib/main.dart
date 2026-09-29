@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest.dart';
 import 'package:timezone/timezone.dart' as tz;
+import 'package:sideris/repositories/settings_repository.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,6 +36,8 @@ void main() async {
     ),
   );
 
+  final settingsRepository = SettingsRepository();
+
   await initializeIsar();
   final repository = NotificationsRepository(isar);
   final notificationService = NotificationService(repository: repository);
@@ -42,6 +45,10 @@ void main() async {
   await notificationService.initialize();
 
   runApp(
-    MyApp(repository: repository, notificationService: notificationService),
+    MyApp(
+      settingsRepository: settingsRepository,
+      notificationRepository: repository,
+      notificationService: notificationService,
+    ),
   );
 }

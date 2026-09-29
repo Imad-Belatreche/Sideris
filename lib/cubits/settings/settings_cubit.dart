@@ -6,28 +6,28 @@ part 'settings_state.dart';
 
 //TODO: Think about adding a method of resetting settings to default
 class SettingsCubit extends Cubit<SettingsState> {
-  SettingsCubit()
-    : super(
+  SettingsCubit({required SettingsRepository settingsRepository})
+    : _settingsRepository = settingsRepository,
+      super(
         SettingsState(
           isLoading: false,
           isInitialized: false,
-          settings: SettingsModel(
-            uiLanguage: UiLanguage.english,
-            defaultTitle: "Remind me",
-            defaultDescription: "",
-          ),
+          settings: SettingsModel.initial(),
         ),
       ) {
     getCurrentSettings();
   }
 
-  SettingsRepository settingsRepository = SettingsRepository();
+  final SettingsRepository _settingsRepository;
 
   Future<void> saveSettings(SettingsModel settings) async {
     emit(state.copyWith(isLoading: true));
     try {
-      await settingsRepository.saveSettings(settings);
-      emit(state.copyWith(settings: settings, isLoading: false));
+      await _settingsRepository.saveSettings(settings.toMap());
+
+      final savedSettings = await _settingsRepository.loadSettings();
+
+      emit(state.copyWith(settings: savedSettings, isLoading: false));
     } catch (e) {
       final error = SettingsCubitException(e.toString());
       emit(state.copyWith(errorMessage: error.message, isLoading: false));
@@ -37,7 +37,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   Future<void> getCurrentSettings() async {
     emit(state.copyWith(isLoading: true));
     try {
-      final currentSettings = await settingsRepository.getCurrentSettings();
+      final currentSettings = await _settingsRepository.loadSettings();
       emit(
         state.copyWith(
           settings: currentSettings,
@@ -55,9 +55,9 @@ class SettingsCubit extends Cubit<SettingsState> {
     emit(state.copyWith(isLoading: true));
 
     try {
-      await settingsRepository.resetSettingsToDefault();
+      await _settingsRepository.resetSettingsToDefault();
 
-      final defaultSettings = await settingsRepository.getCurrentSettings();
+      final defaultSettings = await _settingsRepository.loadSettings();
       emit(state.copyWith(settings: defaultSettings, isLoading: false));
     } catch (e) {
       final error = SettingsCubitException(e.toString());

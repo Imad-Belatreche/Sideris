@@ -32,7 +32,7 @@ NotificationRuleModel _makeOneTimeRule({DateTime? startDate, int? id}) {
 NotificationRuleModel _makeRepetitiveRule({
   int? id,
   bool isForever = true,
-  ScheduleUnit scheduleUnit = ScheduleUnit.day,
+  ScheduleUnit scheduleUnit = ScheduleUnit.daily,
   List<int>? fixedTimesMinutes,
   List<int>? selectedDaysOfWeek,
   List<MonthDaysRepetition>? selectedMonthDays,
@@ -183,7 +183,7 @@ void main() {
       final now = DateTime.now();
       final input = _makeRepetitiveRule(
         isForever: false,
-        durationUnit: ScheduleUnit.week,
+        durationUnit: ScheduleUnit.weekly,
         durationCount: 2,
       );
       final saved = input.copyWith(
@@ -212,7 +212,7 @@ void main() {
         bypassDnd: false,
         repetitionType: RepetitionType.oneTime,
         recurrenceType: RecurrenceType.specific,
-        scheduleUnit: ScheduleUnit.week,
+        scheduleUnit: ScheduleUnit.weekly,
       );
       final saved = input.copyWith(nextTriggerAt: Optional(_futureDate()));
 
@@ -324,7 +324,7 @@ void main() {
       final input = _makeRepetitiveRule(
         id: 21,
         isForever: false,
-        durationUnit: ScheduleUnit.month,
+        durationUnit: ScheduleUnit.monthly,
         durationCount: 1,
       );
       final saved = input.copyWith(

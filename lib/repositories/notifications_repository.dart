@@ -1,5 +1,5 @@
 import 'package:sideris/models/notification_rule_model.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 
 class NotificationsRepository {
   final Isar database;

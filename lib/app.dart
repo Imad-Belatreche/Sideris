@@ -1,19 +1,23 @@
-import 'package:sideris/cubits/notification/notification_cubit.dart';
-import 'package:sideris/pages/main_page.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:sideris/cubits/notification/notification_cubit.dart';
+import 'package:sideris/cubits/settings/settings_cubit.dart';
+import 'package:sideris/pages/main_page.dart';
 import 'package:sideris/repositories/notifications_repository.dart';
+import 'package:sideris/repositories/settings_repository.dart';
 import 'package:sideris/services/notification_service.dart';
 
 class MyApp extends StatelessWidget {
-  final NotificationsRepository repository;
+  final SettingsRepository settingsRepository;
+  final NotificationsRepository notificationRepository;
   final NotificationService notificationService;
 
   const MyApp({
     super.key,
-    required this.repository,
+    required this.notificationRepository,
     required this.notificationService,
+    required this.settingsRepository,
   });
 
   @override
@@ -63,15 +67,20 @@ class MyApp extends StatelessWidget {
           backgroundColor: const Color.fromARGB(255, 27, 14, 49),
         ),
       ),
-      home: BlocProvider(
-        create: (context) => NotificationCubit(
-          repository: repository,
-          service: notificationService,
-        ),
-        child: MainPage(
-          repository: repository,
-          notificationService: notificationService,
-        ),
+      home: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => NotificationCubit(
+              repository: notificationRepository,
+              service: notificationService,
+            ),
+          ),
+          BlocProvider(
+            create: (context) =>
+                SettingsCubit(settingsRepository: settingsRepository),
+          ),
+        ],
+        child: MainPage(notificationService: notificationService),
       ),
     );
   }

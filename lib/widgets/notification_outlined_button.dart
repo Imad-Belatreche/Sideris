@@ -16,6 +16,7 @@ class NotificationOutlinedButton extends StatelessWidget {
     this.tailingWidget,
     this.labelStyle,
     this.labelWidget,
+    this.leadingWidget,
   });
 
   final String label;
@@ -30,6 +31,7 @@ class NotificationOutlinedButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final bool isExpanded;
   final Widget? tailingWidget;
+  final Widget? leadingWidget;
   final TextStyle? labelStyle;
 
   @override
@@ -77,7 +79,8 @@ class NotificationOutlinedButton extends StatelessWidget {
                   : MainAxisAlignment.start
             : MainAxisAlignment.center,
         children: [
-          if (isExpanded && icon != null) icon!,
+          ?leadingWidget,
+          ?icon,
           if (labelWidget == null)
             Text(
               label,

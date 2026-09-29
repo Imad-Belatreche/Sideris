@@ -8,15 +8,19 @@ class NotificationTextfield extends StatelessWidget {
     required this.controller,
     required this.hintText,
     required this.maxLines,
+    this.minLines,
     this.keyboardType = TextInputType.text,
     this.isExpanded = true,
     this.isDense = false,
+    this.labelText,
   });
 
   final TextEditingController controller;
   final String hintText;
+  final String? labelText;
   final TextInputType keyboardType;
   final int maxLines;
+  final int? minLines;
   final bool isExpanded;
   final bool isDense;
 
@@ -33,6 +37,7 @@ class NotificationTextfield extends StatelessWidget {
     final textField = TextField(
       controller: controller,
       maxLines: maxLines,
+      minLines: minLines,
       keyboardType: keyboardType,
       inputFormatters: keyboardType == TextInputType.number
           ? [
@@ -42,6 +47,12 @@ class NotificationTextfield extends StatelessWidget {
           : null,
 
       decoration: InputDecoration(
+        labelText: labelText,
+        labelStyle: GoogleFonts.outfit(
+          color: Colors.white70,
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+        ),
         hintText: hintText,
         hintStyle: GoogleFonts.outfit(
           color: Colors.white.withValues(alpha: 0.3),
