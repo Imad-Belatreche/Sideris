@@ -29,11 +29,7 @@ const NotificationRuleModelSchema = CollectionSchema(
       type: IsarType.string,
       enumMap: _NotificationRuleModelcolorTagEnumValueMap,
     ),
-    r'content': PropertySchema(
-      id: 2,
-      name: r'content',
-      type: IsarType.string,
-    ),
+    r'content': PropertySchema(id: 2, name: r'content', type: IsarType.string),
     r'createdAt': PropertySchema(
       id: 3,
       name: r'createdAt',
@@ -87,11 +83,7 @@ const NotificationRuleModelSchema = CollectionSchema(
       name: r'intervalWindowStartMinutes',
       type: IsarType.long,
     ),
-    r'isActive': PropertySchema(
-      id: 13,
-      name: r'isActive',
-      type: IsarType.bool,
-    ),
+    r'isActive': PropertySchema(id: 13, name: r'isActive', type: IsarType.bool),
     r'isForever': PropertySchema(
       id: 14,
       name: r'isForever',
@@ -159,6 +151,7 @@ const NotificationRuleModelSchema = CollectionSchema(
       id: 26,
       name: r'selectedMonthDays',
       type: IsarType.objectList,
+
       target: r'MonthDaysRepetition',
     ),
     r'startDate': PropertySchema(
@@ -166,11 +159,7 @@ const NotificationRuleModelSchema = CollectionSchema(
       name: r'startDate',
       type: IsarType.dateTime,
     ),
-    r'title': PropertySchema(
-      id: 28,
-      name: r'title',
-      type: IsarType.string,
-    ),
+    r'title': PropertySchema(id: 28, name: r'title', type: IsarType.string),
     r'totalOccurrences': PropertySchema(
       id: 29,
       name: r'totalOccurrences',
@@ -180,8 +169,9 @@ const NotificationRuleModelSchema = CollectionSchema(
       id: 30,
       name: r'updatedAt',
       type: IsarType.dateTime,
-    )
+    ),
   },
+
   estimateSize: _notificationRuleModelEstimateSize,
   serialize: _notificationRuleModelSerialize,
   deserialize: _notificationRuleModelDeserialize,
@@ -208,16 +198,17 @@ const NotificationRuleModelSchema = CollectionSchema(
           name: r'nextTriggerAt',
           type: IndexType.value,
           caseSensitive: false,
-        )
+        ),
       ],
-    )
+    ),
   },
   links: {},
   embeddedSchemas: {r'MonthDaysRepetition': MonthDaysRepetitionSchema},
+
   getId: _notificationRuleModelGetId,
   getLinks: _notificationRuleModelGetLinks,
   attach: _notificationRuleModelAttach,
-  version: '3.1.0+1',
+  version: '3.3.2',
 );
 
 int _notificationRuleModelEstimateSize(
@@ -290,7 +281,10 @@ int _notificationRuleModelEstimateSize(
         for (var i = 0; i < list.length; i++) {
           final value = list[i];
           bytesCount += MonthDaysRepetitionSchema.estimateSize(
-              value, offsets, allOffsets);
+            value,
+            offsets,
+            allOffsets,
+          );
         }
       }
     }
@@ -351,20 +345,28 @@ NotificationRuleModel _notificationRuleModelDeserialize(
 ) {
   final object = NotificationRuleModel(
     bypassDnd: reader.readBool(offsets[0]),
-    colorTag: _NotificationRuleModelcolorTagValueEnumMap[
-        reader.readStringOrNull(offsets[1])],
+    colorTag:
+        _NotificationRuleModelcolorTagValueEnumMap[reader.readStringOrNull(
+          offsets[1],
+        )],
     content: reader.readStringOrNull(offsets[2]),
     createdAt: reader.readDateTimeOrNull(offsets[3]),
-    dailyOption: _NotificationRuleModeldailyOptionValueEnumMap[
-        reader.readStringOrNull(offsets[4])],
+    dailyOption:
+        _NotificationRuleModeldailyOptionValueEnumMap[reader.readStringOrNull(
+          offsets[4],
+        )],
     durationCount: reader.readLongOrNull(offsets[5]),
-    durationUnit: _NotificationRuleModeldurationUnitValueEnumMap[
-        reader.readStringOrNull(offsets[6])],
+    durationUnit:
+        _NotificationRuleModeldurationUnitValueEnumMap[reader.readStringOrNull(
+          offsets[6],
+        )],
     endDate: reader.readDateTimeOrNull(offsets[7]),
     fixedTimesMinutes: reader.readLongList(offsets[8]),
     intervalEvery: reader.readLongOrNull(offsets[9]),
-    intervalUnit: _NotificationRuleModelintervalUnitValueEnumMap[
-        reader.readStringOrNull(offsets[10])],
+    intervalUnit:
+        _NotificationRuleModelintervalUnitValueEnumMap[reader.readStringOrNull(
+          offsets[10],
+        )],
     intervalWindowEndMinutes: reader.readLongOrNull(offsets[11]),
     intervalWindowStartMinutes: reader.readLongOrNull(offsets[12]),
     isActive: reader.readBoolOrNull(offsets[13]) ?? true,
@@ -375,14 +377,18 @@ NotificationRuleModel _notificationRuleModelDeserialize(
     randomCount: reader.readLongOrNull(offsets[18]),
     randomWindowEndMinutes: reader.readLongOrNull(offsets[19]),
     randomWindowStartMinutes: reader.readLongOrNull(offsets[20]),
-    recurrenceType: _NotificationRuleModelrecurrenceTypeValueEnumMap[
-        reader.readStringOrNull(offsets[21])],
-    repetitionType: _NotificationRuleModelrepetitionTypeValueEnumMap[
-            reader.readStringOrNull(offsets[22])] ??
+    recurrenceType:
+        _NotificationRuleModelrecurrenceTypeValueEnumMap[reader
+            .readStringOrNull(offsets[21])],
+    repetitionType:
+        _NotificationRuleModelrepetitionTypeValueEnumMap[reader
+            .readStringOrNull(offsets[22])] ??
         RepetitionType.oneTime,
     scheduleEvery: reader.readLongOrNull(offsets[23]),
-    scheduleUnit: _NotificationRuleModelscheduleUnitValueEnumMap[
-        reader.readStringOrNull(offsets[24])],
+    scheduleUnit:
+        _NotificationRuleModelscheduleUnitValueEnumMap[reader.readStringOrNull(
+          offsets[24],
+        )],
     selectedDaysOfWeek: reader.readLongList(offsets[25]),
     selectedMonthDays: reader.readObjectList<MonthDaysRepetition>(
       offsets[26],
@@ -409,20 +415,23 @@ P _notificationRuleModelDeserializeProp<P>(
     case 0:
       return (reader.readBool(offset)) as P;
     case 1:
-      return (_NotificationRuleModelcolorTagValueEnumMap[
-          reader.readStringOrNull(offset)]) as P;
+      return (_NotificationRuleModelcolorTagValueEnumMap[reader
+              .readStringOrNull(offset)])
+          as P;
     case 2:
       return (reader.readStringOrNull(offset)) as P;
     case 3:
       return (reader.readDateTimeOrNull(offset)) as P;
     case 4:
-      return (_NotificationRuleModeldailyOptionValueEnumMap[
-          reader.readStringOrNull(offset)]) as P;
+      return (_NotificationRuleModeldailyOptionValueEnumMap[reader
+              .readStringOrNull(offset)])
+          as P;
     case 5:
       return (reader.readLongOrNull(offset)) as P;
     case 6:
-      return (_NotificationRuleModeldurationUnitValueEnumMap[
-          reader.readStringOrNull(offset)]) as P;
+      return (_NotificationRuleModeldurationUnitValueEnumMap[reader
+              .readStringOrNull(offset)])
+          as P;
     case 7:
       return (reader.readDateTimeOrNull(offset)) as P;
     case 8:
@@ -430,8 +439,9 @@ P _notificationRuleModelDeserializeProp<P>(
     case 9:
       return (reader.readLongOrNull(offset)) as P;
     case 10:
-      return (_NotificationRuleModelintervalUnitValueEnumMap[
-          reader.readStringOrNull(offset)]) as P;
+      return (_NotificationRuleModelintervalUnitValueEnumMap[reader
+              .readStringOrNull(offset)])
+          as P;
     case 11:
       return (reader.readLongOrNull(offset)) as P;
     case 12:
@@ -453,26 +463,30 @@ P _notificationRuleModelDeserializeProp<P>(
     case 20:
       return (reader.readLongOrNull(offset)) as P;
     case 21:
-      return (_NotificationRuleModelrecurrenceTypeValueEnumMap[
-          reader.readStringOrNull(offset)]) as P;
+      return (_NotificationRuleModelrecurrenceTypeValueEnumMap[reader
+              .readStringOrNull(offset)])
+          as P;
     case 22:
-      return (_NotificationRuleModelrepetitionTypeValueEnumMap[
-              reader.readStringOrNull(offset)] ??
-          RepetitionType.oneTime) as P;
+      return (_NotificationRuleModelrepetitionTypeValueEnumMap[reader
+                  .readStringOrNull(offset)] ??
+              RepetitionType.oneTime)
+          as P;
     case 23:
       return (reader.readLongOrNull(offset)) as P;
     case 24:
-      return (_NotificationRuleModelscheduleUnitValueEnumMap[
-          reader.readStringOrNull(offset)]) as P;
+      return (_NotificationRuleModelscheduleUnitValueEnumMap[reader
+              .readStringOrNull(offset)])
+          as P;
     case 25:
       return (reader.readLongList(offset)) as P;
     case 26:
       return (reader.readObjectList<MonthDaysRepetition>(
-        offset,
-        MonthDaysRepetitionSchema.deserialize,
-        allOffsets,
-        MonthDaysRepetition(),
-      )) as P;
+            offset,
+            MonthDaysRepetitionSchema.deserialize,
+            allOffsets,
+            MonthDaysRepetition(),
+          ))
+          as P;
     case 27:
       return (reader.readDateTime(offset)) as P;
     case 28:
@@ -517,16 +531,16 @@ const _NotificationRuleModeldailyOptionValueEnumMap = {
   r'weekends': DailyOption.weekends,
 };
 const _NotificationRuleModeldurationUnitEnumValueMap = {
-  r'day': r'day',
-  r'week': r'week',
-  r'month': r'month',
-  r'year': r'year',
+  r'daily': r'daily',
+  r'weekly': r'weekly',
+  r'monthly': r'monthly',
+  r'yearly': r'yearly',
 };
 const _NotificationRuleModeldurationUnitValueEnumMap = {
-  r'day': ScheduleUnit.day,
-  r'week': ScheduleUnit.week,
-  r'month': ScheduleUnit.month,
-  r'year': ScheduleUnit.year,
+  r'daily': ScheduleUnit.daily,
+  r'weekly': ScheduleUnit.weekly,
+  r'monthly': ScheduleUnit.monthly,
+  r'yearly': ScheduleUnit.yearly,
 };
 const _NotificationRuleModelintervalUnitEnumValueMap = {
   r'minute': r'minute',
@@ -555,16 +569,16 @@ const _NotificationRuleModelrepetitionTypeValueEnumMap = {
   r'repetitive': RepetitionType.repetitive,
 };
 const _NotificationRuleModelscheduleUnitEnumValueMap = {
-  r'day': r'day',
-  r'week': r'week',
-  r'month': r'month',
-  r'year': r'year',
+  r'daily': r'daily',
+  r'weekly': r'weekly',
+  r'monthly': r'monthly',
+  r'yearly': r'yearly',
 };
 const _NotificationRuleModelscheduleUnitValueEnumMap = {
-  r'day': ScheduleUnit.day,
-  r'week': ScheduleUnit.week,
-  r'month': ScheduleUnit.month,
-  r'year': ScheduleUnit.year,
+  r'daily': ScheduleUnit.daily,
+  r'weekly': ScheduleUnit.weekly,
+  r'monthly': ScheduleUnit.monthly,
+  r'yearly': ScheduleUnit.yearly,
 };
 
 Id _notificationRuleModelGetId(NotificationRuleModel object) {
@@ -572,49 +586,56 @@ Id _notificationRuleModelGetId(NotificationRuleModel object) {
 }
 
 List<IsarLinkBase<dynamic>> _notificationRuleModelGetLinks(
-    NotificationRuleModel object) {
+  NotificationRuleModel object,
+) {
   return [];
 }
 
 void _notificationRuleModelAttach(
-    IsarCollection<dynamic> col, Id id, NotificationRuleModel object) {
+  IsarCollection<dynamic> col,
+  Id id,
+  NotificationRuleModel object,
+) {
   object.id = id;
 }
 
 extension NotificationRuleModelQueryWhereSort
     on QueryBuilder<NotificationRuleModel, NotificationRuleModel, QWhere> {
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhere>
-      anyId() {
+  anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhere>
-      anyIsActiveIsScheduledNextTriggerAt() {
+  anyIsActiveIsScheduledNextTriggerAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         const IndexWhereClause.any(
-            indexName: r'isActive_isScheduled_nextTriggerAt'),
+          indexName: r'isActive_isScheduled_nextTriggerAt',
+        ),
       );
     });
   }
 }
 
-extension NotificationRuleModelQueryWhere on QueryBuilder<NotificationRuleModel,
-    NotificationRuleModel, QWhereClause> {
+extension NotificationRuleModelQueryWhere
+    on
+        QueryBuilder<
+          NotificationRuleModel,
+          NotificationRuleModel,
+          QWhereClause
+        > {
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
-      idEqualTo(Id id) {
+  idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: id,
-        upper: id,
-      ));
+      return query.addWhereClause(IdWhereClause.between(lower: id, upper: id));
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
-      idNotEqualTo(Id id) {
+  idNotEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -637,7 +658,7 @@ extension NotificationRuleModelQueryWhere on QueryBuilder<NotificationRuleModel,
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
-      idGreaterThan(Id id, {bool include = false}) {
+  idGreaterThan(Id id, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -646,7 +667,7 @@ extension NotificationRuleModelQueryWhere on QueryBuilder<NotificationRuleModel,
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
-      idLessThan(Id id, {bool include = false}) {
+  idLessThan(Id id, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -655,224 +676,272 @@ extension NotificationRuleModelQueryWhere on QueryBuilder<NotificationRuleModel,
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
-      idBetween(
+  idBetween(
     Id lowerId,
     Id upperId, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: lowerId,
-        includeLower: includeLower,
-        upper: upperId,
-        includeUpper: includeUpper,
-      ));
+      return query.addWhereClause(
+        IdWhereClause.between(
+          lower: lowerId,
+          includeLower: includeLower,
+          upper: upperId,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
-      isActiveEqualToAnyIsScheduledNextTriggerAt(bool isActive) {
+  isActiveEqualToAnyIsScheduledNextTriggerAt(bool isActive) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'isActive_isScheduled_nextTriggerAt',
-        value: [isActive],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(
+          indexName: r'isActive_isScheduled_nextTriggerAt',
+          value: [isActive],
+        ),
+      );
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
-      isActiveNotEqualToAnyIsScheduledNextTriggerAt(bool isActive) {
+  isActiveNotEqualToAnyIsScheduledNextTriggerAt(bool isActive) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'isActive_isScheduled_nextTriggerAt',
-              lower: [],
-              upper: [isActive],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'isActive_isScheduled_nextTriggerAt',
-              lower: [isActive],
-              includeLower: false,
-              upper: [],
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'isActive_isScheduled_nextTriggerAt',
+                lower: [],
+                upper: [isActive],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'isActive_isScheduled_nextTriggerAt',
+                lower: [isActive],
+                includeLower: false,
+                upper: [],
+              ),
+            );
       } else {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'isActive_isScheduled_nextTriggerAt',
-              lower: [isActive],
-              includeLower: false,
-              upper: [],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'isActive_isScheduled_nextTriggerAt',
-              lower: [],
-              upper: [isActive],
-              includeUpper: false,
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'isActive_isScheduled_nextTriggerAt',
+                lower: [isActive],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'isActive_isScheduled_nextTriggerAt',
+                lower: [],
+                upper: [isActive],
+                includeUpper: false,
+              ),
+            );
       }
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
-      isActiveIsScheduledEqualToAnyNextTriggerAt(
-          bool isActive, bool isScheduled) {
+  isActiveIsScheduledEqualToAnyNextTriggerAt(bool isActive, bool isScheduled) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'isActive_isScheduled_nextTriggerAt',
-        value: [isActive, isScheduled],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(
+          indexName: r'isActive_isScheduled_nextTriggerAt',
+          value: [isActive, isScheduled],
+        ),
+      );
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
-      isActiveEqualToIsScheduledNotEqualToAnyNextTriggerAt(
-          bool isActive, bool isScheduled) {
+  isActiveEqualToIsScheduledNotEqualToAnyNextTriggerAt(
+    bool isActive,
+    bool isScheduled,
+  ) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'isActive_isScheduled_nextTriggerAt',
-              lower: [isActive],
-              upper: [isActive, isScheduled],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'isActive_isScheduled_nextTriggerAt',
-              lower: [isActive, isScheduled],
-              includeLower: false,
-              upper: [isActive],
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'isActive_isScheduled_nextTriggerAt',
+                lower: [isActive],
+                upper: [isActive, isScheduled],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'isActive_isScheduled_nextTriggerAt',
+                lower: [isActive, isScheduled],
+                includeLower: false,
+                upper: [isActive],
+              ),
+            );
       } else {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'isActive_isScheduled_nextTriggerAt',
-              lower: [isActive, isScheduled],
-              includeLower: false,
-              upper: [isActive],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'isActive_isScheduled_nextTriggerAt',
-              lower: [isActive],
-              upper: [isActive, isScheduled],
-              includeUpper: false,
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'isActive_isScheduled_nextTriggerAt',
+                lower: [isActive, isScheduled],
+                includeLower: false,
+                upper: [isActive],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'isActive_isScheduled_nextTriggerAt',
+                lower: [isActive],
+                upper: [isActive, isScheduled],
+                includeUpper: false,
+              ),
+            );
       }
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
-      isActiveIsScheduledEqualToNextTriggerAtIsNull(
-          bool isActive, bool isScheduled) {
+  isActiveIsScheduledEqualToNextTriggerAtIsNull(
+    bool isActive,
+    bool isScheduled,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'isActive_isScheduled_nextTriggerAt',
-        value: [isActive, isScheduled, null],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(
+          indexName: r'isActive_isScheduled_nextTriggerAt',
+          value: [isActive, isScheduled, null],
+        ),
+      );
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
-      isActiveIsScheduledEqualToNextTriggerAtIsNotNull(
-          bool isActive, bool isScheduled) {
+  isActiveIsScheduledEqualToNextTriggerAtIsNotNull(
+    bool isActive,
+    bool isScheduled,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'isActive_isScheduled_nextTriggerAt',
-        lower: [isActive, isScheduled, null],
-        includeLower: false,
-        upper: [
-          isActive,
-          isScheduled,
-        ],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'isActive_isScheduled_nextTriggerAt',
+          lower: [isActive, isScheduled, null],
+          includeLower: false,
+          upper: [isActive, isScheduled],
+        ),
+      );
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
-      isActiveIsScheduledNextTriggerAtEqualTo(
-          bool isActive, bool isScheduled, DateTime? nextTriggerAt) {
+  isActiveIsScheduledNextTriggerAtEqualTo(
+    bool isActive,
+    bool isScheduled,
+    DateTime? nextTriggerAt,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'isActive_isScheduled_nextTriggerAt',
-        value: [isActive, isScheduled, nextTriggerAt],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(
+          indexName: r'isActive_isScheduled_nextTriggerAt',
+          value: [isActive, isScheduled, nextTriggerAt],
+        ),
+      );
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
-      isActiveIsScheduledEqualToNextTriggerAtNotEqualTo(
-          bool isActive, bool isScheduled, DateTime? nextTriggerAt) {
+  isActiveIsScheduledEqualToNextTriggerAtNotEqualTo(
+    bool isActive,
+    bool isScheduled,
+    DateTime? nextTriggerAt,
+  ) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'isActive_isScheduled_nextTriggerAt',
-              lower: [isActive, isScheduled],
-              upper: [isActive, isScheduled, nextTriggerAt],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'isActive_isScheduled_nextTriggerAt',
-              lower: [isActive, isScheduled, nextTriggerAt],
-              includeLower: false,
-              upper: [isActive, isScheduled],
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'isActive_isScheduled_nextTriggerAt',
+                lower: [isActive, isScheduled],
+                upper: [isActive, isScheduled, nextTriggerAt],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'isActive_isScheduled_nextTriggerAt',
+                lower: [isActive, isScheduled, nextTriggerAt],
+                includeLower: false,
+                upper: [isActive, isScheduled],
+              ),
+            );
       } else {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'isActive_isScheduled_nextTriggerAt',
-              lower: [isActive, isScheduled, nextTriggerAt],
-              includeLower: false,
-              upper: [isActive, isScheduled],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'isActive_isScheduled_nextTriggerAt',
-              lower: [isActive, isScheduled],
-              upper: [isActive, isScheduled, nextTriggerAt],
-              includeUpper: false,
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'isActive_isScheduled_nextTriggerAt',
+                lower: [isActive, isScheduled, nextTriggerAt],
+                includeLower: false,
+                upper: [isActive, isScheduled],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'isActive_isScheduled_nextTriggerAt',
+                lower: [isActive, isScheduled],
+                upper: [isActive, isScheduled, nextTriggerAt],
+                includeUpper: false,
+              ),
+            );
       }
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
-      isActiveIsScheduledEqualToNextTriggerAtGreaterThan(
+  isActiveIsScheduledEqualToNextTriggerAtGreaterThan(
     bool isActive,
     bool isScheduled,
     DateTime? nextTriggerAt, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'isActive_isScheduled_nextTriggerAt',
-        lower: [isActive, isScheduled, nextTriggerAt],
-        includeLower: include,
-        upper: [isActive, isScheduled],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'isActive_isScheduled_nextTriggerAt',
+          lower: [isActive, isScheduled, nextTriggerAt],
+          includeLower: include,
+          upper: [isActive, isScheduled],
+        ),
+      );
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
-      isActiveIsScheduledEqualToNextTriggerAtLessThan(
+  isActiveIsScheduledEqualToNextTriggerAtLessThan(
     bool isActive,
     bool isScheduled,
     DateTime? nextTriggerAt, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'isActive_isScheduled_nextTriggerAt',
-        lower: [isActive, isScheduled],
-        upper: [isActive, isScheduled, nextTriggerAt],
-        includeUpper: include,
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'isActive_isScheduled_nextTriggerAt',
+          lower: [isActive, isScheduled],
+          upper: [isActive, isScheduled, nextTriggerAt],
+          includeUpper: include,
+        ),
+      );
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
-      isActiveIsScheduledEqualToNextTriggerAtBetween(
+  isActiveIsScheduledEqualToNextTriggerAtBetween(
     bool isActive,
     bool isScheduled,
     DateTime? lowerNextTriggerAt,
@@ -881,95 +950,132 @@ extension NotificationRuleModelQueryWhere on QueryBuilder<NotificationRuleModel,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'isActive_isScheduled_nextTriggerAt',
-        lower: [isActive, isScheduled, lowerNextTriggerAt],
-        includeLower: includeLower,
-        upper: [isActive, isScheduled, upperNextTriggerAt],
-        includeUpper: includeUpper,
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'isActive_isScheduled_nextTriggerAt',
+          lower: [isActive, isScheduled, lowerNextTriggerAt],
+          includeLower: includeLower,
+          upper: [isActive, isScheduled, upperNextTriggerAt],
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 }
 
-extension NotificationRuleModelQueryFilter on QueryBuilder<
-    NotificationRuleModel, NotificationRuleModel, QFilterCondition> {
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> bypassDndEqualTo(bool value) {
+extension NotificationRuleModelQueryFilter
+    on
+        QueryBuilder<
+          NotificationRuleModel,
+          NotificationRuleModel,
+          QFilterCondition
+        > {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  bypassDndEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'bypassDnd',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'bypassDnd', value: value),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> colorTagIsNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  colorTagIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'colorTag',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'colorTag'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> colorTagIsNotNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  colorTagIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'colorTag',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'colorTag'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> colorTagEqualTo(
-    ColorTag? value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  colorTagEqualTo(ColorTag? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'colorTag',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'colorTag',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> colorTagGreaterThan(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  colorTagGreaterThan(
     ColorTag? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'colorTag',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'colorTag',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> colorTagLessThan(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  colorTagLessThan(
     ColorTag? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'colorTag',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'colorTag',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> colorTagBetween(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  colorTagBetween(
     ColorTag? lower,
     ColorTag? upper, {
     bool includeLower = true,
@@ -977,155 +1083,206 @@ extension NotificationRuleModelQueryFilter on QueryBuilder<
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'colorTag',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'colorTag',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> colorTagStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  colorTagStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'colorTag',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'colorTag',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> colorTagEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  colorTagEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'colorTag',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'colorTag',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-          QAfterFilterCondition>
-      colorTagContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  colorTagContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'colorTag',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'colorTag',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-          QAfterFilterCondition>
-      colorTagMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  colorTagMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'colorTag',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'colorTag',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> colorTagIsEmpty() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  colorTagIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'colorTag',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'colorTag', value: ''),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> colorTagIsNotEmpty() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  colorTagIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'colorTag',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'colorTag', value: ''),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> contentIsNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  contentIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'content',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'content'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> contentIsNotNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  contentIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'content',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'content'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> contentEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  contentEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'content',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'content',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> contentGreaterThan(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  contentGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'content',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'content',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> contentLessThan(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  contentLessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'content',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'content',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> contentBetween(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  contentBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -1133,229 +1290,303 @@ extension NotificationRuleModelQueryFilter on QueryBuilder<
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'content',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'content',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> contentStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  contentStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'content',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'content',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> contentEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  contentEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'content',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'content',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-          QAfterFilterCondition>
-      contentContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  contentContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'content',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'content',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-          QAfterFilterCondition>
-      contentMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  contentMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'content',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'content',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> contentIsEmpty() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  contentIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'content',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'content', value: ''),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> contentIsNotEmpty() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  contentIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'content',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'content', value: ''),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> createdAtIsNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  createdAtIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'createdAt',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'createdAt'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> createdAtIsNotNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  createdAtIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'createdAt',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'createdAt'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> createdAtEqualTo(DateTime? value) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  createdAtEqualTo(DateTime? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'createdAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'createdAt', value: value),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> createdAtGreaterThan(
-    DateTime? value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  createdAtGreaterThan(DateTime? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'createdAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'createdAt',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> createdAtLessThan(
-    DateTime? value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  createdAtLessThan(DateTime? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'createdAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'createdAt',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> createdAtBetween(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  createdAtBetween(
     DateTime? lower,
     DateTime? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'createdAt',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'createdAt',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> dailyOptionIsNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  dailyOptionIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'dailyOption',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'dailyOption'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> dailyOptionIsNotNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  dailyOptionIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'dailyOption',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'dailyOption'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> dailyOptionEqualTo(
-    DailyOption? value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  dailyOptionEqualTo(DailyOption? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dailyOption',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'dailyOption',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> dailyOptionGreaterThan(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  dailyOptionGreaterThan(
     DailyOption? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'dailyOption',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'dailyOption',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> dailyOptionLessThan(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  dailyOptionLessThan(
     DailyOption? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'dailyOption',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'dailyOption',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> dailyOptionBetween(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  dailyOptionBetween(
     DailyOption? lower,
     DailyOption? upper, {
     bool includeLower = true,
@@ -1363,229 +1594,303 @@ extension NotificationRuleModelQueryFilter on QueryBuilder<
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'dailyOption',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'dailyOption',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> dailyOptionStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  dailyOptionStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'dailyOption',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'dailyOption',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> dailyOptionEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  dailyOptionEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'dailyOption',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'dailyOption',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-          QAfterFilterCondition>
-      dailyOptionContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  dailyOptionContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'dailyOption',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'dailyOption',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-          QAfterFilterCondition>
-      dailyOptionMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  dailyOptionMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'dailyOption',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'dailyOption',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> dailyOptionIsEmpty() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  dailyOptionIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dailyOption',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'dailyOption', value: ''),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> dailyOptionIsNotEmpty() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  dailyOptionIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'dailyOption',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'dailyOption', value: ''),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> durationCountIsNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  durationCountIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'durationCount',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'durationCount'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> durationCountIsNotNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  durationCountIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'durationCount',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'durationCount'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> durationCountEqualTo(int? value) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  durationCountEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'durationCount',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'durationCount', value: value),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> durationCountGreaterThan(
-    int? value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  durationCountGreaterThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'durationCount',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'durationCount',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> durationCountLessThan(
-    int? value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  durationCountLessThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'durationCount',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'durationCount',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> durationCountBetween(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  durationCountBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'durationCount',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'durationCount',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> durationUnitIsNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  durationUnitIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'durationUnit',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'durationUnit'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> durationUnitIsNotNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  durationUnitIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'durationUnit',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'durationUnit'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> durationUnitEqualTo(
-    ScheduleUnit? value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  durationUnitEqualTo(ScheduleUnit? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'durationUnit',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'durationUnit',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> durationUnitGreaterThan(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  durationUnitGreaterThan(
     ScheduleUnit? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'durationUnit',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'durationUnit',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> durationUnitLessThan(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  durationUnitLessThan(
     ScheduleUnit? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'durationUnit',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'durationUnit',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> durationUnitBetween(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  durationUnitBetween(
     ScheduleUnit? lower,
     ScheduleUnit? upper, {
     bool includeLower = true,
@@ -1593,297 +1898,357 @@ extension NotificationRuleModelQueryFilter on QueryBuilder<
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'durationUnit',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'durationUnit',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> durationUnitStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  durationUnitStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'durationUnit',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'durationUnit',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> durationUnitEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  durationUnitEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'durationUnit',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'durationUnit',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-          QAfterFilterCondition>
-      durationUnitContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  durationUnitContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'durationUnit',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'durationUnit',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-          QAfterFilterCondition>
-      durationUnitMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  durationUnitMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'durationUnit',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'durationUnit',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> durationUnitIsEmpty() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  durationUnitIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'durationUnit',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'durationUnit', value: ''),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> durationUnitIsNotEmpty() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  durationUnitIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'durationUnit',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'durationUnit', value: ''),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> endDateIsNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  endDateIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'endDate',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'endDate'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> endDateIsNotNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  endDateIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'endDate',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'endDate'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> endDateEqualTo(DateTime? value) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  endDateEqualTo(DateTime? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'endDate',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'endDate', value: value),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> endDateGreaterThan(
-    DateTime? value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  endDateGreaterThan(DateTime? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'endDate',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'endDate',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> endDateLessThan(
-    DateTime? value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  endDateLessThan(DateTime? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'endDate',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'endDate',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> endDateBetween(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  endDateBetween(
     DateTime? lower,
     DateTime? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'endDate',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'endDate',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> fixedTimesMinutesIsNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  fixedTimesMinutesIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'fixedTimesMinutes',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'fixedTimesMinutes'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> fixedTimesMinutesIsNotNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  fixedTimesMinutesIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'fixedTimesMinutes',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'fixedTimesMinutes'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> fixedTimesMinutesElementEqualTo(int value) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  fixedTimesMinutesElementEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'fixedTimesMinutes',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'fixedTimesMinutes', value: value),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> fixedTimesMinutesElementGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  fixedTimesMinutesElementGreaterThan(int value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'fixedTimesMinutes',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'fixedTimesMinutes',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> fixedTimesMinutesElementLessThan(
-    int value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  fixedTimesMinutesElementLessThan(int value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'fixedTimesMinutes',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'fixedTimesMinutes',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> fixedTimesMinutesElementBetween(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  fixedTimesMinutesElementBetween(
     int lower,
     int upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'fixedTimesMinutes',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> fixedTimesMinutesLengthEqualTo(int length) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'fixedTimesMinutes',
-        length,
-        true,
-        length,
-        true,
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'fixedTimesMinutes',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
       );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> fixedTimesMinutesIsEmpty() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  fixedTimesMinutesLengthEqualTo(int length) {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'fixedTimesMinutes',
-        0,
-        true,
-        0,
-        true,
-      );
+      return query.listLength(r'fixedTimesMinutes', length, true, length, true);
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> fixedTimesMinutesIsNotEmpty() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  fixedTimesMinutesIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'fixedTimesMinutes',
-        0,
-        false,
-        999999,
-        true,
-      );
+      return query.listLength(r'fixedTimesMinutes', 0, true, 0, true);
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> fixedTimesMinutesLengthLessThan(
-    int length, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  fixedTimesMinutesIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'fixedTimesMinutes',
-        0,
-        true,
-        length,
-        include,
-      );
+      return query.listLength(r'fixedTimesMinutes', 0, false, 999999, true);
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> fixedTimesMinutesLengthGreaterThan(
-    int length, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  fixedTimesMinutesLengthLessThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'fixedTimesMinutes', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  fixedTimesMinutesLengthGreaterThan(int length, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
         r'fixedTimesMinutes',
@@ -1895,8 +2260,12 @@ extension NotificationRuleModelQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> fixedTimesMinutesLengthBetween(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  fixedTimesMinutesLengthBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -1913,202 +2282,267 @@ extension NotificationRuleModelQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> idEqualTo(Id value) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'id', value: value),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> idGreaterThan(
-    Id value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  idGreaterThan(Id value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'id',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> idLessThan(
-    Id value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  idLessThan(Id value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'id',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> idBetween(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  idBetween(
     Id lower,
     Id upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'id',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'id',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> intervalEveryIsNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  intervalEveryIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'intervalEvery',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'intervalEvery'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> intervalEveryIsNotNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  intervalEveryIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'intervalEvery',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'intervalEvery'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> intervalEveryEqualTo(int? value) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  intervalEveryEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'intervalEvery',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'intervalEvery', value: value),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> intervalEveryGreaterThan(
-    int? value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  intervalEveryGreaterThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'intervalEvery',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'intervalEvery',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> intervalEveryLessThan(
-    int? value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  intervalEveryLessThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'intervalEvery',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'intervalEvery',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> intervalEveryBetween(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  intervalEveryBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'intervalEvery',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'intervalEvery',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> intervalUnitIsNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  intervalUnitIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'intervalUnit',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'intervalUnit'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> intervalUnitIsNotNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  intervalUnitIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'intervalUnit',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'intervalUnit'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> intervalUnitEqualTo(
-    IntervalUnit? value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  intervalUnitEqualTo(IntervalUnit? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'intervalUnit',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'intervalUnit',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> intervalUnitGreaterThan(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  intervalUnitGreaterThan(
     IntervalUnit? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'intervalUnit',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'intervalUnit',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> intervalUnitLessThan(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  intervalUnitLessThan(
     IntervalUnit? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'intervalUnit',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'intervalUnit',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> intervalUnitBetween(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  intervalUnitBetween(
     IntervalUnit? lower,
     IntervalUnit? upper, {
     bool includeLower = true,
@@ -2116,703 +2550,938 @@ extension NotificationRuleModelQueryFilter on QueryBuilder<
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'intervalUnit',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'intervalUnit',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> intervalUnitStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  intervalUnitStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'intervalUnit',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'intervalUnit',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> intervalUnitEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  intervalUnitEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'intervalUnit',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'intervalUnit',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-          QAfterFilterCondition>
-      intervalUnitContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  intervalUnitContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'intervalUnit',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'intervalUnit',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-          QAfterFilterCondition>
-      intervalUnitMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  intervalUnitMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'intervalUnit',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'intervalUnit',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> intervalUnitIsEmpty() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  intervalUnitIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'intervalUnit',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'intervalUnit', value: ''),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> intervalUnitIsNotEmpty() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  intervalUnitIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'intervalUnit',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'intervalUnit', value: ''),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> intervalWindowEndMinutesIsNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  intervalWindowEndMinutesIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'intervalWindowEndMinutes',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'intervalWindowEndMinutes'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> intervalWindowEndMinutesIsNotNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  intervalWindowEndMinutesIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'intervalWindowEndMinutes',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'intervalWindowEndMinutes'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> intervalWindowEndMinutesEqualTo(int? value) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  intervalWindowEndMinutesEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'intervalWindowEndMinutes',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'intervalWindowEndMinutes',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> intervalWindowEndMinutesGreaterThan(
-    int? value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  intervalWindowEndMinutesGreaterThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'intervalWindowEndMinutes',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'intervalWindowEndMinutes',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> intervalWindowEndMinutesLessThan(
-    int? value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  intervalWindowEndMinutesLessThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'intervalWindowEndMinutes',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'intervalWindowEndMinutes',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> intervalWindowEndMinutesBetween(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  intervalWindowEndMinutesBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'intervalWindowEndMinutes',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'intervalWindowEndMinutes',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> intervalWindowStartMinutesIsNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  intervalWindowStartMinutesIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'intervalWindowStartMinutes',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'intervalWindowStartMinutes'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> intervalWindowStartMinutesIsNotNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  intervalWindowStartMinutesIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'intervalWindowStartMinutes',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(
+          property: r'intervalWindowStartMinutes',
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> intervalWindowStartMinutesEqualTo(int? value) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  intervalWindowStartMinutesEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'intervalWindowStartMinutes',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'intervalWindowStartMinutes',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> intervalWindowStartMinutesGreaterThan(
-    int? value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  intervalWindowStartMinutesGreaterThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'intervalWindowStartMinutes',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'intervalWindowStartMinutes',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> intervalWindowStartMinutesLessThan(
-    int? value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  intervalWindowStartMinutesLessThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'intervalWindowStartMinutes',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'intervalWindowStartMinutes',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> intervalWindowStartMinutesBetween(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  intervalWindowStartMinutesBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'intervalWindowStartMinutes',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'intervalWindowStartMinutes',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> isActiveEqualTo(bool value) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  isActiveEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'isActive',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'isActive', value: value),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> isForeverEqualTo(bool value) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  isForeverEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'isForever',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'isForever', value: value),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> isScheduledEqualTo(bool value) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  isScheduledEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'isScheduled',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'isScheduled', value: value),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> lastTriggeredAtIsNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  lastTriggeredAtIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'lastTriggeredAt',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'lastTriggeredAt'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> lastTriggeredAtIsNotNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  lastTriggeredAtIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'lastTriggeredAt',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'lastTriggeredAt'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> lastTriggeredAtEqualTo(DateTime? value) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  lastTriggeredAtEqualTo(DateTime? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'lastTriggeredAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'lastTriggeredAt', value: value),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> lastTriggeredAtGreaterThan(
-    DateTime? value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  lastTriggeredAtGreaterThan(DateTime? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'lastTriggeredAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'lastTriggeredAt',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> lastTriggeredAtLessThan(
-    DateTime? value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  lastTriggeredAtLessThan(DateTime? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'lastTriggeredAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'lastTriggeredAt',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> lastTriggeredAtBetween(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  lastTriggeredAtBetween(
     DateTime? lower,
     DateTime? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'lastTriggeredAt',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'lastTriggeredAt',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> nextTriggerAtIsNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  nextTriggerAtIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'nextTriggerAt',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'nextTriggerAt'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> nextTriggerAtIsNotNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  nextTriggerAtIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'nextTriggerAt',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'nextTriggerAt'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> nextTriggerAtEqualTo(DateTime? value) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  nextTriggerAtEqualTo(DateTime? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'nextTriggerAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'nextTriggerAt', value: value),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> nextTriggerAtGreaterThan(
-    DateTime? value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  nextTriggerAtGreaterThan(DateTime? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'nextTriggerAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'nextTriggerAt',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> nextTriggerAtLessThan(
-    DateTime? value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  nextTriggerAtLessThan(DateTime? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'nextTriggerAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'nextTriggerAt',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> nextTriggerAtBetween(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  nextTriggerAtBetween(
     DateTime? lower,
     DateTime? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'nextTriggerAt',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'nextTriggerAt',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> randomCountIsNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  randomCountIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'randomCount',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'randomCount'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> randomCountIsNotNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  randomCountIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'randomCount',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'randomCount'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> randomCountEqualTo(int? value) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  randomCountEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'randomCount',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'randomCount', value: value),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> randomCountGreaterThan(
-    int? value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  randomCountGreaterThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'randomCount',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'randomCount',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> randomCountLessThan(
-    int? value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  randomCountLessThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'randomCount',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'randomCount',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> randomCountBetween(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  randomCountBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'randomCount',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'randomCount',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> randomWindowEndMinutesIsNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  randomWindowEndMinutesIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'randomWindowEndMinutes',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'randomWindowEndMinutes'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> randomWindowEndMinutesIsNotNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  randomWindowEndMinutesIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'randomWindowEndMinutes',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'randomWindowEndMinutes'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> randomWindowEndMinutesEqualTo(int? value) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  randomWindowEndMinutesEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'randomWindowEndMinutes',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'randomWindowEndMinutes',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> randomWindowEndMinutesGreaterThan(
-    int? value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  randomWindowEndMinutesGreaterThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'randomWindowEndMinutes',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'randomWindowEndMinutes',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> randomWindowEndMinutesLessThan(
-    int? value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  randomWindowEndMinutesLessThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'randomWindowEndMinutes',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'randomWindowEndMinutes',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> randomWindowEndMinutesBetween(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  randomWindowEndMinutesBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'randomWindowEndMinutes',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'randomWindowEndMinutes',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> randomWindowStartMinutesIsNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  randomWindowStartMinutesIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'randomWindowStartMinutes',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'randomWindowStartMinutes'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> randomWindowStartMinutesIsNotNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  randomWindowStartMinutesIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'randomWindowStartMinutes',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'randomWindowStartMinutes'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> randomWindowStartMinutesEqualTo(int? value) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  randomWindowStartMinutesEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'randomWindowStartMinutes',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'randomWindowStartMinutes',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> randomWindowStartMinutesGreaterThan(
-    int? value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  randomWindowStartMinutesGreaterThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'randomWindowStartMinutes',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'randomWindowStartMinutes',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> randomWindowStartMinutesLessThan(
-    int? value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  randomWindowStartMinutesLessThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'randomWindowStartMinutes',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'randomWindowStartMinutes',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> randomWindowStartMinutesBetween(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  randomWindowStartMinutesBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'randomWindowStartMinutes',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'randomWindowStartMinutes',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> recurrenceTypeIsNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  recurrenceTypeIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'recurrenceType',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'recurrenceType'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> recurrenceTypeIsNotNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  recurrenceTypeIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'recurrenceType',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'recurrenceType'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> recurrenceTypeEqualTo(
-    RecurrenceType? value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  recurrenceTypeEqualTo(RecurrenceType? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'recurrenceType',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'recurrenceType',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> recurrenceTypeGreaterThan(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  recurrenceTypeGreaterThan(
     RecurrenceType? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'recurrenceType',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'recurrenceType',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> recurrenceTypeLessThan(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  recurrenceTypeLessThan(
     RecurrenceType? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'recurrenceType',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'recurrenceType',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> recurrenceTypeBetween(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  recurrenceTypeBetween(
     RecurrenceType? lower,
     RecurrenceType? upper, {
     bool includeLower = true,
@@ -2820,137 +3489,180 @@ extension NotificationRuleModelQueryFilter on QueryBuilder<
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'recurrenceType',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'recurrenceType',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> recurrenceTypeStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  recurrenceTypeStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'recurrenceType',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'recurrenceType',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> recurrenceTypeEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  recurrenceTypeEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'recurrenceType',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'recurrenceType',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-          QAfterFilterCondition>
-      recurrenceTypeContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  recurrenceTypeContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'recurrenceType',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'recurrenceType',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-          QAfterFilterCondition>
-      recurrenceTypeMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  recurrenceTypeMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'recurrenceType',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'recurrenceType',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> recurrenceTypeIsEmpty() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  recurrenceTypeIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'recurrenceType',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'recurrenceType', value: ''),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> recurrenceTypeIsNotEmpty() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  recurrenceTypeIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'recurrenceType',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'recurrenceType', value: ''),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> repetitionTypeEqualTo(
-    RepetitionType value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  repetitionTypeEqualTo(RepetitionType value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'repetitionType',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'repetitionType',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> repetitionTypeGreaterThan(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  repetitionTypeGreaterThan(
     RepetitionType value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'repetitionType',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'repetitionType',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> repetitionTypeLessThan(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  repetitionTypeLessThan(
     RepetitionType value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'repetitionType',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'repetitionType',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> repetitionTypeBetween(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  repetitionTypeBetween(
     RepetitionType lower,
     RepetitionType upper, {
     bool includeLower = true,
@@ -2958,229 +3670,303 @@ extension NotificationRuleModelQueryFilter on QueryBuilder<
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'repetitionType',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'repetitionType',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> repetitionTypeStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  repetitionTypeStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'repetitionType',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'repetitionType',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> repetitionTypeEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  repetitionTypeEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'repetitionType',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'repetitionType',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-          QAfterFilterCondition>
-      repetitionTypeContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  repetitionTypeContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'repetitionType',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'repetitionType',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-          QAfterFilterCondition>
-      repetitionTypeMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  repetitionTypeMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'repetitionType',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'repetitionType',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> repetitionTypeIsEmpty() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  repetitionTypeIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'repetitionType',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'repetitionType', value: ''),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> repetitionTypeIsNotEmpty() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  repetitionTypeIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'repetitionType',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'repetitionType', value: ''),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> scheduleEveryIsNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  scheduleEveryIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'scheduleEvery',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'scheduleEvery'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> scheduleEveryIsNotNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  scheduleEveryIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'scheduleEvery',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'scheduleEvery'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> scheduleEveryEqualTo(int? value) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  scheduleEveryEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'scheduleEvery',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'scheduleEvery', value: value),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> scheduleEveryGreaterThan(
-    int? value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  scheduleEveryGreaterThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'scheduleEvery',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'scheduleEvery',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> scheduleEveryLessThan(
-    int? value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  scheduleEveryLessThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'scheduleEvery',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'scheduleEvery',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> scheduleEveryBetween(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  scheduleEveryBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'scheduleEvery',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'scheduleEvery',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> scheduleUnitIsNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  scheduleUnitIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'scheduleUnit',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'scheduleUnit'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> scheduleUnitIsNotNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  scheduleUnitIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'scheduleUnit',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'scheduleUnit'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> scheduleUnitEqualTo(
-    ScheduleUnit? value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  scheduleUnitEqualTo(ScheduleUnit? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'scheduleUnit',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'scheduleUnit',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> scheduleUnitGreaterThan(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  scheduleUnitGreaterThan(
     ScheduleUnit? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'scheduleUnit',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'scheduleUnit',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> scheduleUnitLessThan(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  scheduleUnitLessThan(
     ScheduleUnit? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'scheduleUnit',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'scheduleUnit',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> scheduleUnitBetween(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  scheduleUnitBetween(
     ScheduleUnit? lower,
     ScheduleUnit? upper, {
     bool includeLower = true,
@@ -3188,165 +3974,216 @@ extension NotificationRuleModelQueryFilter on QueryBuilder<
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'scheduleUnit',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'scheduleUnit',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> scheduleUnitStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  scheduleUnitStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'scheduleUnit',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'scheduleUnit',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> scheduleUnitEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  scheduleUnitEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'scheduleUnit',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'scheduleUnit',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-          QAfterFilterCondition>
-      scheduleUnitContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  scheduleUnitContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'scheduleUnit',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'scheduleUnit',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-          QAfterFilterCondition>
-      scheduleUnitMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  scheduleUnitMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'scheduleUnit',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'scheduleUnit',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> scheduleUnitIsEmpty() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  scheduleUnitIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'scheduleUnit',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'scheduleUnit', value: ''),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> scheduleUnitIsNotEmpty() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  scheduleUnitIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'scheduleUnit',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'scheduleUnit', value: ''),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> selectedDaysOfWeekIsNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  selectedDaysOfWeekIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'selectedDaysOfWeek',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'selectedDaysOfWeek'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> selectedDaysOfWeekIsNotNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  selectedDaysOfWeekIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'selectedDaysOfWeek',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'selectedDaysOfWeek'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> selectedDaysOfWeekElementEqualTo(int value) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  selectedDaysOfWeekElementEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'selectedDaysOfWeek',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'selectedDaysOfWeek', value: value),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> selectedDaysOfWeekElementGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  selectedDaysOfWeekElementGreaterThan(int value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'selectedDaysOfWeek',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'selectedDaysOfWeek',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> selectedDaysOfWeekElementLessThan(
-    int value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  selectedDaysOfWeekElementLessThan(int value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'selectedDaysOfWeek',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'selectedDaysOfWeek',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> selectedDaysOfWeekElementBetween(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  selectedDaysOfWeekElementBetween(
     int lower,
     int upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'selectedDaysOfWeek',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'selectedDaysOfWeek',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> selectedDaysOfWeekLengthEqualTo(int length) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  selectedDaysOfWeekLengthEqualTo(int length) {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
         r'selectedDaysOfWeek',
@@ -3358,53 +4195,45 @@ extension NotificationRuleModelQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> selectedDaysOfWeekIsEmpty() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  selectedDaysOfWeekIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'selectedDaysOfWeek',
-        0,
-        true,
-        0,
-        true,
-      );
+      return query.listLength(r'selectedDaysOfWeek', 0, true, 0, true);
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> selectedDaysOfWeekIsNotEmpty() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  selectedDaysOfWeekIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'selectedDaysOfWeek',
-        0,
-        false,
-        999999,
-        true,
-      );
+      return query.listLength(r'selectedDaysOfWeek', 0, false, 999999, true);
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> selectedDaysOfWeekLengthLessThan(
-    int length, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  selectedDaysOfWeekLengthLessThan(int length, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'selectedDaysOfWeek',
-        0,
-        true,
-        length,
-        include,
-      );
+      return query.listLength(r'selectedDaysOfWeek', 0, true, length, include);
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> selectedDaysOfWeekLengthGreaterThan(
-    int length, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  selectedDaysOfWeekLengthGreaterThan(int length, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
         r'selectedDaysOfWeek',
@@ -3416,8 +4245,12 @@ extension NotificationRuleModelQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> selectedDaysOfWeekLengthBetween(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  selectedDaysOfWeekLengthBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -3434,84 +4267,82 @@ extension NotificationRuleModelQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> selectedMonthDaysIsNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  selectedMonthDaysIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'selectedMonthDays',
-      ));
-    });
-  }
-
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> selectedMonthDaysIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'selectedMonthDays',
-      ));
-    });
-  }
-
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> selectedMonthDaysLengthEqualTo(int length) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'selectedMonthDays',
-        length,
-        true,
-        length,
-        true,
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'selectedMonthDays'),
       );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> selectedMonthDaysIsEmpty() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  selectedMonthDaysIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'selectedMonthDays',
-        0,
-        true,
-        0,
-        true,
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'selectedMonthDays'),
       );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> selectedMonthDaysIsNotEmpty() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  selectedMonthDaysLengthEqualTo(int length) {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'selectedMonthDays',
-        0,
-        false,
-        999999,
-        true,
-      );
+      return query.listLength(r'selectedMonthDays', length, true, length, true);
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> selectedMonthDaysLengthLessThan(
-    int length, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  selectedMonthDaysIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'selectedMonthDays',
-        0,
-        true,
-        length,
-        include,
-      );
+      return query.listLength(r'selectedMonthDays', 0, true, 0, true);
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> selectedMonthDaysLengthGreaterThan(
-    int length, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  selectedMonthDaysIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'selectedMonthDays', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  selectedMonthDaysLengthLessThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'selectedMonthDays', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  selectedMonthDaysLengthGreaterThan(int length, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
         r'selectedMonthDays',
@@ -3523,8 +4354,12 @@ extension NotificationRuleModelQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> selectedMonthDaysLengthBetween(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  selectedMonthDaysLengthBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -3541,110 +4376,144 @@ extension NotificationRuleModelQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> startDateEqualTo(DateTime value) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  startDateEqualTo(DateTime value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'startDate',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'startDate', value: value),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> startDateGreaterThan(
-    DateTime value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  startDateGreaterThan(DateTime value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'startDate',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'startDate',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> startDateLessThan(
-    DateTime value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  startDateLessThan(DateTime value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'startDate',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'startDate',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> startDateBetween(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  startDateBetween(
     DateTime lower,
     DateTime upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'startDate',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'startDate',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> titleEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  titleEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'title',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'title',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> titleGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'title',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> titleLessThan(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  titleGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'title',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'title',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> titleBetween(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  titleLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'title',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  titleBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -3652,641 +4521,724 @@ extension NotificationRuleModelQueryFilter on QueryBuilder<
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'title',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'title',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> titleStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  titleStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'title',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'title',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> titleEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  titleEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'title',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'title',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-          QAfterFilterCondition>
-      titleContains(String value, {bool caseSensitive = true}) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  titleContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'title',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'title',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-          QAfterFilterCondition>
-      titleMatches(String pattern, {bool caseSensitive = true}) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  titleMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'title',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'title',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> titleIsEmpty() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  titleIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'title',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'title', value: ''),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> titleIsNotEmpty() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  titleIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'title',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'title', value: ''),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> totalOccurrencesIsNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  totalOccurrencesIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'totalOccurrences',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'totalOccurrences'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> totalOccurrencesIsNotNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  totalOccurrencesIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'totalOccurrences',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'totalOccurrences'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> totalOccurrencesEqualTo(int? value) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  totalOccurrencesEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'totalOccurrences',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'totalOccurrences', value: value),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> totalOccurrencesGreaterThan(
-    int? value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  totalOccurrencesGreaterThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'totalOccurrences',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'totalOccurrences',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> totalOccurrencesLessThan(
-    int? value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  totalOccurrencesLessThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'totalOccurrences',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'totalOccurrences',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> totalOccurrencesBetween(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  totalOccurrencesBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'totalOccurrences',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'totalOccurrences',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> updatedAtIsNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  updatedAtIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'updatedAt',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'updatedAt'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> updatedAtIsNotNull() {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  updatedAtIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'updatedAt',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'updatedAt'),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> updatedAtEqualTo(DateTime? value) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  updatedAtEqualTo(DateTime? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'updatedAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'updatedAt', value: value),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> updatedAtGreaterThan(
-    DateTime? value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  updatedAtGreaterThan(DateTime? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'updatedAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'updatedAt',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> updatedAtLessThan(
-    DateTime? value, {
-    bool include = false,
-  }) {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  updatedAtLessThan(DateTime? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'updatedAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'updatedAt',
+          value: value,
+        ),
+      );
     });
   }
 
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-      QAfterFilterCondition> updatedAtBetween(
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  updatedAtBetween(
     DateTime? lower,
     DateTime? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'updatedAt',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'updatedAt',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 }
 
-extension NotificationRuleModelQueryObject on QueryBuilder<
-    NotificationRuleModel, NotificationRuleModel, QFilterCondition> {
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel,
-          QAfterFilterCondition>
-      selectedMonthDaysElement(FilterQuery<MonthDaysRepetition> q) {
+extension NotificationRuleModelQueryObject
+    on
+        QueryBuilder<
+          NotificationRuleModel,
+          NotificationRuleModel,
+          QFilterCondition
+        > {
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  selectedMonthDaysElement(FilterQuery<MonthDaysRepetition> q) {
     return QueryBuilder.apply(this, (query) {
       return query.object(q, r'selectedMonthDays');
     });
   }
 }
 
-extension NotificationRuleModelQueryLinks on QueryBuilder<NotificationRuleModel,
-    NotificationRuleModel, QFilterCondition> {}
+extension NotificationRuleModelQueryLinks
+    on
+        QueryBuilder<
+          NotificationRuleModel,
+          NotificationRuleModel,
+          QFilterCondition
+        > {}
 
 extension NotificationRuleModelQuerySortBy
     on QueryBuilder<NotificationRuleModel, NotificationRuleModel, QSortBy> {
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByBypassDnd() {
+  sortByBypassDnd() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'bypassDnd', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByBypassDndDesc() {
+  sortByBypassDndDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'bypassDnd', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByColorTag() {
+  sortByColorTag() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'colorTag', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByColorTagDesc() {
+  sortByColorTagDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'colorTag', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByContent() {
+  sortByContent() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'content', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByContentDesc() {
+  sortByContentDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'content', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByCreatedAt() {
+  sortByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByCreatedAtDesc() {
+  sortByCreatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByDailyOption() {
+  sortByDailyOption() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dailyOption', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByDailyOptionDesc() {
+  sortByDailyOptionDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dailyOption', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByDurationCount() {
+  sortByDurationCount() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'durationCount', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByDurationCountDesc() {
+  sortByDurationCountDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'durationCount', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByDurationUnit() {
+  sortByDurationUnit() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'durationUnit', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByDurationUnitDesc() {
+  sortByDurationUnitDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'durationUnit', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByEndDate() {
+  sortByEndDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'endDate', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByEndDateDesc() {
+  sortByEndDateDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'endDate', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByIntervalEvery() {
+  sortByIntervalEvery() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'intervalEvery', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByIntervalEveryDesc() {
+  sortByIntervalEveryDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'intervalEvery', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByIntervalUnit() {
+  sortByIntervalUnit() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'intervalUnit', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByIntervalUnitDesc() {
+  sortByIntervalUnitDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'intervalUnit', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByIntervalWindowEndMinutes() {
+  sortByIntervalWindowEndMinutes() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'intervalWindowEndMinutes', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByIntervalWindowEndMinutesDesc() {
+  sortByIntervalWindowEndMinutesDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'intervalWindowEndMinutes', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByIntervalWindowStartMinutes() {
+  sortByIntervalWindowStartMinutes() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'intervalWindowStartMinutes', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByIntervalWindowStartMinutesDesc() {
+  sortByIntervalWindowStartMinutesDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'intervalWindowStartMinutes', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByIsActive() {
+  sortByIsActive() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isActive', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByIsActiveDesc() {
+  sortByIsActiveDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isActive', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByIsForever() {
+  sortByIsForever() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isForever', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByIsForeverDesc() {
+  sortByIsForeverDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isForever', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByIsScheduled() {
+  sortByIsScheduled() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isScheduled', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByIsScheduledDesc() {
+  sortByIsScheduledDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isScheduled', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByLastTriggeredAt() {
+  sortByLastTriggeredAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lastTriggeredAt', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByLastTriggeredAtDesc() {
+  sortByLastTriggeredAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lastTriggeredAt', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByNextTriggerAt() {
+  sortByNextTriggerAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nextTriggerAt', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByNextTriggerAtDesc() {
+  sortByNextTriggerAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nextTriggerAt', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByRandomCount() {
+  sortByRandomCount() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'randomCount', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByRandomCountDesc() {
+  sortByRandomCountDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'randomCount', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByRandomWindowEndMinutes() {
+  sortByRandomWindowEndMinutes() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'randomWindowEndMinutes', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByRandomWindowEndMinutesDesc() {
+  sortByRandomWindowEndMinutesDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'randomWindowEndMinutes', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByRandomWindowStartMinutes() {
+  sortByRandomWindowStartMinutes() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'randomWindowStartMinutes', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByRandomWindowStartMinutesDesc() {
+  sortByRandomWindowStartMinutesDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'randomWindowStartMinutes', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByRecurrenceType() {
+  sortByRecurrenceType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'recurrenceType', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByRecurrenceTypeDesc() {
+  sortByRecurrenceTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'recurrenceType', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByRepetitionType() {
+  sortByRepetitionType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'repetitionType', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByRepetitionTypeDesc() {
+  sortByRepetitionTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'repetitionType', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByScheduleEvery() {
+  sortByScheduleEvery() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'scheduleEvery', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByScheduleEveryDesc() {
+  sortByScheduleEveryDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'scheduleEvery', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByScheduleUnit() {
+  sortByScheduleUnit() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'scheduleUnit', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByScheduleUnitDesc() {
+  sortByScheduleUnitDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'scheduleUnit', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByStartDate() {
+  sortByStartDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'startDate', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByStartDateDesc() {
+  sortByStartDateDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'startDate', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByTitle() {
+  sortByTitle() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByTitleDesc() {
+  sortByTitleDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByTotalOccurrences() {
+  sortByTotalOccurrences() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'totalOccurrences', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByTotalOccurrencesDesc() {
+  sortByTotalOccurrencesDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'totalOccurrences', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByUpdatedAt() {
+  sortByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'updatedAt', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      sortByUpdatedAtDesc() {
+  sortByUpdatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'updatedAt', Sort.desc);
     });
@@ -4296,406 +5248,406 @@ extension NotificationRuleModelQuerySortBy
 extension NotificationRuleModelQuerySortThenBy
     on QueryBuilder<NotificationRuleModel, NotificationRuleModel, QSortThenBy> {
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByBypassDnd() {
+  thenByBypassDnd() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'bypassDnd', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByBypassDndDesc() {
+  thenByBypassDndDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'bypassDnd', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByColorTag() {
+  thenByColorTag() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'colorTag', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByColorTagDesc() {
+  thenByColorTagDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'colorTag', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByContent() {
+  thenByContent() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'content', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByContentDesc() {
+  thenByContentDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'content', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByCreatedAt() {
+  thenByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByCreatedAtDesc() {
+  thenByCreatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByDailyOption() {
+  thenByDailyOption() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dailyOption', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByDailyOptionDesc() {
+  thenByDailyOptionDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dailyOption', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByDurationCount() {
+  thenByDurationCount() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'durationCount', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByDurationCountDesc() {
+  thenByDurationCountDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'durationCount', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByDurationUnit() {
+  thenByDurationUnit() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'durationUnit', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByDurationUnitDesc() {
+  thenByDurationUnitDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'durationUnit', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByEndDate() {
+  thenByEndDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'endDate', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByEndDateDesc() {
+  thenByEndDateDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'endDate', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenById() {
+  thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByIdDesc() {
+  thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByIntervalEvery() {
+  thenByIntervalEvery() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'intervalEvery', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByIntervalEveryDesc() {
+  thenByIntervalEveryDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'intervalEvery', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByIntervalUnit() {
+  thenByIntervalUnit() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'intervalUnit', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByIntervalUnitDesc() {
+  thenByIntervalUnitDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'intervalUnit', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByIntervalWindowEndMinutes() {
+  thenByIntervalWindowEndMinutes() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'intervalWindowEndMinutes', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByIntervalWindowEndMinutesDesc() {
+  thenByIntervalWindowEndMinutesDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'intervalWindowEndMinutes', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByIntervalWindowStartMinutes() {
+  thenByIntervalWindowStartMinutes() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'intervalWindowStartMinutes', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByIntervalWindowStartMinutesDesc() {
+  thenByIntervalWindowStartMinutesDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'intervalWindowStartMinutes', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByIsActive() {
+  thenByIsActive() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isActive', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByIsActiveDesc() {
+  thenByIsActiveDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isActive', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByIsForever() {
+  thenByIsForever() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isForever', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByIsForeverDesc() {
+  thenByIsForeverDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isForever', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByIsScheduled() {
+  thenByIsScheduled() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isScheduled', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByIsScheduledDesc() {
+  thenByIsScheduledDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isScheduled', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByLastTriggeredAt() {
+  thenByLastTriggeredAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lastTriggeredAt', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByLastTriggeredAtDesc() {
+  thenByLastTriggeredAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lastTriggeredAt', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByNextTriggerAt() {
+  thenByNextTriggerAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nextTriggerAt', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByNextTriggerAtDesc() {
+  thenByNextTriggerAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nextTriggerAt', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByRandomCount() {
+  thenByRandomCount() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'randomCount', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByRandomCountDesc() {
+  thenByRandomCountDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'randomCount', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByRandomWindowEndMinutes() {
+  thenByRandomWindowEndMinutes() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'randomWindowEndMinutes', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByRandomWindowEndMinutesDesc() {
+  thenByRandomWindowEndMinutesDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'randomWindowEndMinutes', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByRandomWindowStartMinutes() {
+  thenByRandomWindowStartMinutes() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'randomWindowStartMinutes', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByRandomWindowStartMinutesDesc() {
+  thenByRandomWindowStartMinutesDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'randomWindowStartMinutes', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByRecurrenceType() {
+  thenByRecurrenceType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'recurrenceType', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByRecurrenceTypeDesc() {
+  thenByRecurrenceTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'recurrenceType', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByRepetitionType() {
+  thenByRepetitionType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'repetitionType', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByRepetitionTypeDesc() {
+  thenByRepetitionTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'repetitionType', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByScheduleEvery() {
+  thenByScheduleEvery() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'scheduleEvery', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByScheduleEveryDesc() {
+  thenByScheduleEveryDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'scheduleEvery', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByScheduleUnit() {
+  thenByScheduleUnit() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'scheduleUnit', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByScheduleUnitDesc() {
+  thenByScheduleUnitDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'scheduleUnit', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByStartDate() {
+  thenByStartDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'startDate', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByStartDateDesc() {
+  thenByStartDateDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'startDate', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByTitle() {
+  thenByTitle() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByTitleDesc() {
+  thenByTitleDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByTotalOccurrences() {
+  thenByTotalOccurrences() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'totalOccurrences', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByTotalOccurrencesDesc() {
+  thenByTotalOccurrencesDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'totalOccurrences', Sort.desc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByUpdatedAt() {
+  thenByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'updatedAt', Sort.asc);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-      thenByUpdatedAtDesc() {
+  thenByUpdatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'updatedAt', Sort.desc);
     });
@@ -4705,220 +5657,229 @@ extension NotificationRuleModelQuerySortThenBy
 extension NotificationRuleModelQueryWhereDistinct
     on QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct> {
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-      distinctByBypassDnd() {
+  distinctByBypassDnd() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'bypassDnd');
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-      distinctByColorTag({bool caseSensitive = true}) {
+  distinctByColorTag({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'colorTag', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-      distinctByContent({bool caseSensitive = true}) {
+  distinctByContent({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'content', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-      distinctByCreatedAt() {
+  distinctByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'createdAt');
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-      distinctByDailyOption({bool caseSensitive = true}) {
+  distinctByDailyOption({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'dailyOption', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-      distinctByDurationCount() {
+  distinctByDurationCount() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'durationCount');
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-      distinctByDurationUnit({bool caseSensitive = true}) {
+  distinctByDurationUnit({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'durationUnit', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-      distinctByEndDate() {
+  distinctByEndDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'endDate');
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-      distinctByFixedTimesMinutes() {
+  distinctByFixedTimesMinutes() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'fixedTimesMinutes');
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-      distinctByIntervalEvery() {
+  distinctByIntervalEvery() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'intervalEvery');
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-      distinctByIntervalUnit({bool caseSensitive = true}) {
+  distinctByIntervalUnit({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'intervalUnit', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-      distinctByIntervalWindowEndMinutes() {
+  distinctByIntervalWindowEndMinutes() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'intervalWindowEndMinutes');
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-      distinctByIntervalWindowStartMinutes() {
+  distinctByIntervalWindowStartMinutes() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'intervalWindowStartMinutes');
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-      distinctByIsActive() {
+  distinctByIsActive() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isActive');
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-      distinctByIsForever() {
+  distinctByIsForever() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isForever');
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-      distinctByIsScheduled() {
+  distinctByIsScheduled() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isScheduled');
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-      distinctByLastTriggeredAt() {
+  distinctByLastTriggeredAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'lastTriggeredAt');
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-      distinctByNextTriggerAt() {
+  distinctByNextTriggerAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'nextTriggerAt');
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-      distinctByRandomCount() {
+  distinctByRandomCount() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'randomCount');
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-      distinctByRandomWindowEndMinutes() {
+  distinctByRandomWindowEndMinutes() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'randomWindowEndMinutes');
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-      distinctByRandomWindowStartMinutes() {
+  distinctByRandomWindowStartMinutes() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'randomWindowStartMinutes');
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-      distinctByRecurrenceType({bool caseSensitive = true}) {
+  distinctByRecurrenceType({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'recurrenceType',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'recurrenceType',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-      distinctByRepetitionType({bool caseSensitive = true}) {
+  distinctByRepetitionType({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'repetitionType',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'repetitionType',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-      distinctByScheduleEvery() {
+  distinctByScheduleEvery() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'scheduleEvery');
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-      distinctByScheduleUnit({bool caseSensitive = true}) {
+  distinctByScheduleUnit({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'scheduleUnit', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-      distinctBySelectedDaysOfWeek() {
+  distinctBySelectedDaysOfWeek() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'selectedDaysOfWeek');
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-      distinctByStartDate() {
+  distinctByStartDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'startDate');
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-      distinctByTitle({bool caseSensitive = true}) {
+  distinctByTitle({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'title', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-      distinctByTotalOccurrences() {
+  distinctByTotalOccurrences() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'totalOccurrences');
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-      distinctByUpdatedAt() {
+  distinctByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'updatedAt');
     });
   }
 }
 
-extension NotificationRuleModelQueryProperty on QueryBuilder<
-    NotificationRuleModel, NotificationRuleModel, QQueryProperty> {
+extension NotificationRuleModelQueryProperty
+    on
+        QueryBuilder<
+          NotificationRuleModel,
+          NotificationRuleModel,
+          QQueryProperty
+        > {
   QueryBuilder<NotificationRuleModel, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
@@ -4926,217 +5887,221 @@ extension NotificationRuleModelQueryProperty on QueryBuilder<
   }
 
   QueryBuilder<NotificationRuleModel, bool, QQueryOperations>
-      bypassDndProperty() {
+  bypassDndProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'bypassDnd');
     });
   }
 
   QueryBuilder<NotificationRuleModel, ColorTag?, QQueryOperations>
-      colorTagProperty() {
+  colorTagProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'colorTag');
     });
   }
 
   QueryBuilder<NotificationRuleModel, String?, QQueryOperations>
-      contentProperty() {
+  contentProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'content');
     });
   }
 
   QueryBuilder<NotificationRuleModel, DateTime?, QQueryOperations>
-      createdAtProperty() {
+  createdAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'createdAt');
     });
   }
 
   QueryBuilder<NotificationRuleModel, DailyOption?, QQueryOperations>
-      dailyOptionProperty() {
+  dailyOptionProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'dailyOption');
     });
   }
 
   QueryBuilder<NotificationRuleModel, int?, QQueryOperations>
-      durationCountProperty() {
+  durationCountProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'durationCount');
     });
   }
 
   QueryBuilder<NotificationRuleModel, ScheduleUnit?, QQueryOperations>
-      durationUnitProperty() {
+  durationUnitProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'durationUnit');
     });
   }
 
   QueryBuilder<NotificationRuleModel, DateTime?, QQueryOperations>
-      endDateProperty() {
+  endDateProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'endDate');
     });
   }
 
   QueryBuilder<NotificationRuleModel, List<int>?, QQueryOperations>
-      fixedTimesMinutesProperty() {
+  fixedTimesMinutesProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'fixedTimesMinutes');
     });
   }
 
   QueryBuilder<NotificationRuleModel, int?, QQueryOperations>
-      intervalEveryProperty() {
+  intervalEveryProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'intervalEvery');
     });
   }
 
   QueryBuilder<NotificationRuleModel, IntervalUnit?, QQueryOperations>
-      intervalUnitProperty() {
+  intervalUnitProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'intervalUnit');
     });
   }
 
   QueryBuilder<NotificationRuleModel, int?, QQueryOperations>
-      intervalWindowEndMinutesProperty() {
+  intervalWindowEndMinutesProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'intervalWindowEndMinutes');
     });
   }
 
   QueryBuilder<NotificationRuleModel, int?, QQueryOperations>
-      intervalWindowStartMinutesProperty() {
+  intervalWindowStartMinutesProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'intervalWindowStartMinutes');
     });
   }
 
   QueryBuilder<NotificationRuleModel, bool, QQueryOperations>
-      isActiveProperty() {
+  isActiveProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isActive');
     });
   }
 
   QueryBuilder<NotificationRuleModel, bool, QQueryOperations>
-      isForeverProperty() {
+  isForeverProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isForever');
     });
   }
 
   QueryBuilder<NotificationRuleModel, bool, QQueryOperations>
-      isScheduledProperty() {
+  isScheduledProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isScheduled');
     });
   }
 
   QueryBuilder<NotificationRuleModel, DateTime?, QQueryOperations>
-      lastTriggeredAtProperty() {
+  lastTriggeredAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'lastTriggeredAt');
     });
   }
 
   QueryBuilder<NotificationRuleModel, DateTime?, QQueryOperations>
-      nextTriggerAtProperty() {
+  nextTriggerAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'nextTriggerAt');
     });
   }
 
   QueryBuilder<NotificationRuleModel, int?, QQueryOperations>
-      randomCountProperty() {
+  randomCountProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'randomCount');
     });
   }
 
   QueryBuilder<NotificationRuleModel, int?, QQueryOperations>
-      randomWindowEndMinutesProperty() {
+  randomWindowEndMinutesProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'randomWindowEndMinutes');
     });
   }
 
   QueryBuilder<NotificationRuleModel, int?, QQueryOperations>
-      randomWindowStartMinutesProperty() {
+  randomWindowStartMinutesProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'randomWindowStartMinutes');
     });
   }
 
   QueryBuilder<NotificationRuleModel, RecurrenceType?, QQueryOperations>
-      recurrenceTypeProperty() {
+  recurrenceTypeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'recurrenceType');
     });
   }
 
   QueryBuilder<NotificationRuleModel, RepetitionType, QQueryOperations>
-      repetitionTypeProperty() {
+  repetitionTypeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'repetitionType');
     });
   }
 
   QueryBuilder<NotificationRuleModel, int?, QQueryOperations>
-      scheduleEveryProperty() {
+  scheduleEveryProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'scheduleEvery');
     });
   }
 
   QueryBuilder<NotificationRuleModel, ScheduleUnit?, QQueryOperations>
-      scheduleUnitProperty() {
+  scheduleUnitProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'scheduleUnit');
     });
   }
 
   QueryBuilder<NotificationRuleModel, List<int>?, QQueryOperations>
-      selectedDaysOfWeekProperty() {
+  selectedDaysOfWeekProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'selectedDaysOfWeek');
     });
   }
 
-  QueryBuilder<NotificationRuleModel, List<MonthDaysRepetition>?,
-      QQueryOperations> selectedMonthDaysProperty() {
+  QueryBuilder<
+    NotificationRuleModel,
+    List<MonthDaysRepetition>?,
+    QQueryOperations
+  >
+  selectedMonthDaysProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'selectedMonthDays');
     });
   }
 
   QueryBuilder<NotificationRuleModel, DateTime, QQueryOperations>
-      startDateProperty() {
+  startDateProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'startDate');
     });
   }
 
   QueryBuilder<NotificationRuleModel, String, QQueryOperations>
-      titleProperty() {
+  titleProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'title');
     });
   }
 
   QueryBuilder<NotificationRuleModel, int?, QQueryOperations>
-      totalOccurrencesProperty() {
+  totalOccurrencesProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'totalOccurrences');
     });
   }
 
   QueryBuilder<NotificationRuleModel, DateTime?, QQueryOperations>
-      updatedAtProperty() {
+  updatedAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'updatedAt');
     });
@@ -5163,8 +6128,9 @@ const MonthDaysRepetitionSchema = Schema(
       id: 1,
       name: r'selectedMonth',
       type: IsarType.long,
-    )
+    ),
   },
+
   estimateSize: _monthDaysRepetitionEstimateSize,
   serialize: _monthDaysRepetitionSerialize,
   deserialize: _monthDaysRepetitionDeserialize,
@@ -5225,84 +6191,88 @@ P _monthDaysRepetitionDeserializeProp<P>(
   }
 }
 
-extension MonthDaysRepetitionQueryFilter on QueryBuilder<MonthDaysRepetition,
-    MonthDaysRepetition, QFilterCondition> {
+extension MonthDaysRepetitionQueryFilter
+    on
+        QueryBuilder<
+          MonthDaysRepetition,
+          MonthDaysRepetition,
+          QFilterCondition
+        > {
   QueryBuilder<MonthDaysRepetition, MonthDaysRepetition, QAfterFilterCondition>
-      selectedDaysOfMonthIsNull() {
+  selectedDaysOfMonthIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'selectedDaysOfMonth',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'selectedDaysOfMonth'),
+      );
     });
   }
 
   QueryBuilder<MonthDaysRepetition, MonthDaysRepetition, QAfterFilterCondition>
-      selectedDaysOfMonthIsNotNull() {
+  selectedDaysOfMonthIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'selectedDaysOfMonth',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'selectedDaysOfMonth'),
+      );
     });
   }
 
   QueryBuilder<MonthDaysRepetition, MonthDaysRepetition, QAfterFilterCondition>
-      selectedDaysOfMonthElementEqualTo(int value) {
+  selectedDaysOfMonthElementEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'selectedDaysOfMonth',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'selectedDaysOfMonth', value: value),
+      );
     });
   }
 
   QueryBuilder<MonthDaysRepetition, MonthDaysRepetition, QAfterFilterCondition>
-      selectedDaysOfMonthElementGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
+  selectedDaysOfMonthElementGreaterThan(int value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'selectedDaysOfMonth',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'selectedDaysOfMonth',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<MonthDaysRepetition, MonthDaysRepetition, QAfterFilterCondition>
-      selectedDaysOfMonthElementLessThan(
-    int value, {
-    bool include = false,
-  }) {
+  selectedDaysOfMonthElementLessThan(int value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'selectedDaysOfMonth',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'selectedDaysOfMonth',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<MonthDaysRepetition, MonthDaysRepetition, QAfterFilterCondition>
-      selectedDaysOfMonthElementBetween(
+  selectedDaysOfMonthElementBetween(
     int lower,
     int upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'selectedDaysOfMonth',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'selectedDaysOfMonth',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<MonthDaysRepetition, MonthDaysRepetition, QAfterFilterCondition>
-      selectedDaysOfMonthLengthEqualTo(int length) {
+  selectedDaysOfMonthLengthEqualTo(int length) {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
         r'selectedDaysOfMonth',
@@ -5315,52 +6285,28 @@ extension MonthDaysRepetitionQueryFilter on QueryBuilder<MonthDaysRepetition,
   }
 
   QueryBuilder<MonthDaysRepetition, MonthDaysRepetition, QAfterFilterCondition>
-      selectedDaysOfMonthIsEmpty() {
+  selectedDaysOfMonthIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'selectedDaysOfMonth',
-        0,
-        true,
-        0,
-        true,
-      );
+      return query.listLength(r'selectedDaysOfMonth', 0, true, 0, true);
     });
   }
 
   QueryBuilder<MonthDaysRepetition, MonthDaysRepetition, QAfterFilterCondition>
-      selectedDaysOfMonthIsNotEmpty() {
+  selectedDaysOfMonthIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'selectedDaysOfMonth',
-        0,
-        false,
-        999999,
-        true,
-      );
+      return query.listLength(r'selectedDaysOfMonth', 0, false, 999999, true);
     });
   }
 
   QueryBuilder<MonthDaysRepetition, MonthDaysRepetition, QAfterFilterCondition>
-      selectedDaysOfMonthLengthLessThan(
-    int length, {
-    bool include = false,
-  }) {
+  selectedDaysOfMonthLengthLessThan(int length, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'selectedDaysOfMonth',
-        0,
-        true,
-        length,
-        include,
-      );
+      return query.listLength(r'selectedDaysOfMonth', 0, true, length, include);
     });
   }
 
   QueryBuilder<MonthDaysRepetition, MonthDaysRepetition, QAfterFilterCondition>
-      selectedDaysOfMonthLengthGreaterThan(
-    int length, {
-    bool include = false,
-  }) {
+  selectedDaysOfMonthLengthGreaterThan(int length, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
         r'selectedDaysOfMonth',
@@ -5373,7 +6319,7 @@ extension MonthDaysRepetitionQueryFilter on QueryBuilder<MonthDaysRepetition,
   }
 
   QueryBuilder<MonthDaysRepetition, MonthDaysRepetition, QAfterFilterCondition>
-      selectedDaysOfMonthLengthBetween(
+  selectedDaysOfMonthLengthBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -5391,79 +6337,83 @@ extension MonthDaysRepetitionQueryFilter on QueryBuilder<MonthDaysRepetition,
   }
 
   QueryBuilder<MonthDaysRepetition, MonthDaysRepetition, QAfterFilterCondition>
-      selectedMonthIsNull() {
+  selectedMonthIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'selectedMonth',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'selectedMonth'),
+      );
     });
   }
 
   QueryBuilder<MonthDaysRepetition, MonthDaysRepetition, QAfterFilterCondition>
-      selectedMonthIsNotNull() {
+  selectedMonthIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'selectedMonth',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'selectedMonth'),
+      );
     });
   }
 
   QueryBuilder<MonthDaysRepetition, MonthDaysRepetition, QAfterFilterCondition>
-      selectedMonthEqualTo(int? value) {
+  selectedMonthEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'selectedMonth',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'selectedMonth', value: value),
+      );
     });
   }
 
   QueryBuilder<MonthDaysRepetition, MonthDaysRepetition, QAfterFilterCondition>
-      selectedMonthGreaterThan(
-    int? value, {
-    bool include = false,
-  }) {
+  selectedMonthGreaterThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'selectedMonth',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'selectedMonth',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<MonthDaysRepetition, MonthDaysRepetition, QAfterFilterCondition>
-      selectedMonthLessThan(
-    int? value, {
-    bool include = false,
-  }) {
+  selectedMonthLessThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'selectedMonth',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'selectedMonth',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<MonthDaysRepetition, MonthDaysRepetition, QAfterFilterCondition>
-      selectedMonthBetween(
+  selectedMonthBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'selectedMonth',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'selectedMonth',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 }
 
-extension MonthDaysRepetitionQueryObject on QueryBuilder<MonthDaysRepetition,
-    MonthDaysRepetition, QFilterCondition> {}
+extension MonthDaysRepetitionQueryObject
+    on
+        QueryBuilder<
+          MonthDaysRepetition,
+          MonthDaysRepetition,
+          QFilterCondition
+        > {}
