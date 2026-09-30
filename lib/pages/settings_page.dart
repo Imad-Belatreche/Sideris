@@ -1,9 +1,10 @@
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:recase/recase.dart';
 import 'package:sideris/cubits/settings/settings_cubit.dart';
+import 'package:sideris/l10n/app_font.dart';
+import 'package:sideris/l10n/enum_labels.dart';
+import 'package:sideris/l10n/l10n.dart';
 import 'package:sideris/models/notification_rule_model.dart';
 import 'package:sideris/models/settings_model.dart';
 import 'package:sideris/widgets/create_update_elevated_button.dart';
@@ -65,8 +66,11 @@ class _SettingsPageState extends State<SettingsPage> {
     required List<T> values,
     required T value,
     required String label,
+    required String Function(T value) valueLabel,
     required ValueChanged onChanged,
   }) {
+    final font = appFontOf(context);
+
     return NotificationOutlinedButton(
       label: "",
       isExpanded: true,
@@ -99,14 +103,11 @@ class _SettingsPageState extends State<SettingsPage> {
         children: [
           Text(
             label,
-            style: GoogleFonts.outfit(
-              color: Colors.white,
-              fontWeight: FontWeight.w500,
-            ),
+            style: font(color: Colors.white, fontWeight: FontWeight.w500),
           ),
           Text(
-            ReCase(value.name).titleCase,
-            style: GoogleFonts.outfit(color: Colors.white70),
+            valueLabel(value),
+            style: font(color: Colors.white70),
           ).animate(key: ValueKey(value)).fadeIn(duration: 250.ms),
         ],
       ),
@@ -115,6 +116,8 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final font = appFontOf(context);
+
     return SafeArea(
       child: CustomScrollView(
         shrinkWrap: true,
@@ -124,8 +127,8 @@ class _SettingsPageState extends State<SettingsPage> {
             backgroundColor: Colors.transparent,
             title:
                 Text(
-                      "Settings",
-                      style: GoogleFonts.outfit(
+                      context.l10n.settingsPageTitle,
+                      style: font(
                         fontSize: 28,
                         fontWeight: FontWeight.w700,
                         letterSpacing: -0.3,
@@ -153,7 +156,9 @@ class _SettingsPageState extends State<SettingsPage> {
                 if (state.errorMessage != null) {
                   return Center(
                     child: Text(
-                      "An error happened while loading settings: ${state.errorMessage}",
+                      context.l10n.settingsPageLoadingError(
+                        state.errorMessage!,
+                      ),
                       style: Theme.of(context).textTheme.headlineMedium,
                     ),
                   );
@@ -165,7 +170,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Theme",
+                        context.l10n.settingsPageTheme,
                         style: Theme.of(context).textTheme.headlineLarge,
                       ),
                       SizedBox(height: 10),
@@ -190,7 +195,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       SizedBox(height: 16),
 
                       Text(
-                        "Language",
+                        context.l10n.settingsPageLanguage,
                         style: Theme.of(context).textTheme.headlineLarge,
                       ),
                       SizedBox(height: 10),
@@ -215,23 +220,24 @@ class _SettingsPageState extends State<SettingsPage> {
                       SizedBox(height: 16),
 
                       Text(
-                        "Default notification template",
+                        context.l10n.settingsPageDefaultNotificationTemplate,
                         style: Theme.of(context).textTheme.headlineLarge,
                       ),
                       SizedBox(height: 12),
 
                       NotificationTextfield(
                         controller: _defaultTitleController,
-                        labelText: "Title",
-                        hintText: "Title",
+                        labelText: context.l10n.fieldTitle,
+                        hintText: context.l10n.fieldTitle,
                         maxLines: 1,
                       ),
                       SizedBox(height: 12),
 
                       NotificationTextfield(
                         controller: _defaultDescriptionController,
-                        labelText: "Description",
-                        hintText: "(Default is empty)",
+                        labelText: context.l10n.fieldDescription,
+                        hintText:
+                            context.l10n.settingsPageDefaultDescriptionHint,
                         maxLines: 3,
                       ),
                       SizedBox(height: 12),
@@ -241,7 +247,8 @@ class _SettingsPageState extends State<SettingsPage> {
                         icon: Icons.category_outlined,
                         values: RepetitionType.values,
                         value: repetitionType ?? RepetitionType.oneTime,
-                        label: "Default Repetition",
+                        label: context.l10n.settingsPageDefaultRepetition,
+                        valueLabel: (value) => value.label(context.l10n),
                         onChanged: (value) {
                           setState(() {
                             repetitionType = value;
@@ -254,7 +261,8 @@ class _SettingsPageState extends State<SettingsPage> {
                         icon: Icons.loop_outlined,
                         values: ScheduleUnit.values,
                         value: scheduleUnit ?? ScheduleUnit.daily,
-                        label: "Default Recurrence",
+                        label: context.l10n.settingsPageDefaultRecurrence,
+                        valueLabel: (value) => value.label(context.l10n),
                         onChanged: (value) {
                           setState(() {
                             scheduleUnit = value;
@@ -268,7 +276,8 @@ class _SettingsPageState extends State<SettingsPage> {
                         icon: Icons.access_time,
                         values: RecurrenceType.values,
                         value: recurrenceType ?? RecurrenceType.specific,
-                        label: "Default Timing",
+                        label: context.l10n.settingsPageDefaultTiming,
+                        valueLabel: (value) => value.label(context.l10n),
                         onChanged: (value) {
                           setState(() {
                             recurrenceType = value;
@@ -282,7 +291,8 @@ class _SettingsPageState extends State<SettingsPage> {
                         icon: Icons.access_time_filled_outlined,
                         values: DurationOption.values,
                         value: durationOption ?? DurationOption.forever,
-                        label: "Default Duration",
+                        label: context.l10n.settingsPageDefaultDuration,
+                        valueLabel: (value) => value.label(context.l10n),
                         onChanged: (value) {
                           setState(() {
                             durationOption = value;
@@ -313,7 +323,7 @@ class _SettingsPageState extends State<SettingsPage> {
             hasScrollBody: false,
             child: Center(
               child: CreateUpdateElevatedButton(
-                label: "Save",
+                label: context.l10n.actionSave,
                 icon: Icons.check,
                 onPressed: () async {
                   final base = _draft;
@@ -337,7 +347,6 @@ class _SettingsPageState extends State<SettingsPage> {
                     bypassDND: bypassDND ?? base.bypassDND,
                     colorTag: colorTag,
                   );
-
                   await settingsCubit.saveSettings(newSettings);
 
                   if (!context.mounted) return;
@@ -356,7 +365,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         context,
                       ).scaffoldBackgroundColor,
                       content: Text(
-                        "Settings have been saved",
+                        context.l10n.settingsPageSavedSettings,
                         style: Theme.of(
                           context,
                         ).textTheme.bodySmall!.apply(color: Colors.white),
