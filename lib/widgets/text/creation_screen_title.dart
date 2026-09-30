@@ -1,4 +1,4 @@
-import 'package:google_fonts/google_fonts.dart';
+import 'package:sideris/l10n/app_font.dart';
 import 'package:material_ui/material_ui.dart';
 
 class CreationScreenTitle extends StatelessWidget {
@@ -8,11 +8,12 @@ class CreationScreenTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      title.toUpperCase(),
-      style: GoogleFonts.outfit(
+      title,
+      style: appFontOf(context)(
         fontSize: 18,
         color: Colors.white30,
         fontWeight: FontWeight.w500,
+        letterSpacing: 0.4,
       ),
     );
   }

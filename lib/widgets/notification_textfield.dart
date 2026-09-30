@@ -1,5 +1,5 @@
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:sideris/l10n/app_font.dart';
 import 'package:material_ui/material_ui.dart';
 
 class NotificationTextfield extends StatelessWidget {
@@ -48,13 +48,13 @@ class NotificationTextfield extends StatelessWidget {
 
       decoration: InputDecoration(
         labelText: labelText,
-        labelStyle: GoogleFonts.outfit(
+        labelStyle: appFontOf(context)(
           color: Colors.white70,
           fontSize: 18,
           fontWeight: FontWeight.w600,
         ),
         hintText: hintText,
-        hintStyle: GoogleFonts.outfit(
+        hintStyle: appFontOf(context)(
           color: Colors.white.withValues(alpha: 0.3),
           fontSize: 16,
           fontWeight: FontWeight.w400,
