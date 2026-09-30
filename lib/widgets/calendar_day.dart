@@ -1,9 +1,9 @@
 import 'dart:ui';
 
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:sideris/cubits/notification/notification_cubit.dart';
+import 'package:sideris/l10n/app_font.dart';
 import 'package:sideris/utils/general_utils.dart';
 import 'package:sideris/widgets/notification_outlined_button.dart';
 
@@ -99,15 +99,18 @@ class CalendarDay extends StatelessWidget {
     );
   }
 
-  List<String> getDayNames() {
+  List<String> getDayNames(String locale) {
     return List.generate(
       7,
-      (index) => DateFormat.E().format(DateTime(2021, 1, index + 4)),
+      (index) => DateFormat.E(locale).format(DateTime(2021, 1, index + 4)),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final font = appFontOf(context);
+    final locale = Localizations.localeOf(context).toString();
+
     return ClipRRect(
       borderRadius: BorderRadiusGeometry.circular(12),
       child: BackdropFilter(
@@ -142,11 +145,8 @@ class CalendarDay extends StatelessWidget {
                       icon: Icon(Icons.keyboard_double_arrow_left, size: 30),
                     ),
                     Text(
-                      DateFormat.yMMM().format(currentDate),
-                      style: GoogleFonts.outfit(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 20,
-                      ),
+                      DateFormat.yMMM(locale).format(currentDate),
+                      style: font(fontWeight: FontWeight.w600, fontSize: 20),
                     ),
                     IconButton(
                       onPressed: onRightPressed,
@@ -168,11 +168,11 @@ class CalendarDay extends StatelessWidget {
                 mainAxisSpacing: 5,
                 crossAxisSpacing: 5,
                 children: [
-                  for (var weekName in getDayNames())
+                  for (var weekName in getDayNames(locale))
                     Text(
                       weekName,
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.outfit(
+                      style: font(
                         fontSize: 17,
                         letterSpacing: 1,
                         color: Colors.white.withAlpha(210),
