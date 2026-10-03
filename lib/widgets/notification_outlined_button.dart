@@ -94,13 +94,7 @@ class NotificationOutlinedButton extends StatelessWidget {
           else
             labelWidget!,
 
-          if (tailingWidget != null)
-            Expanded(
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: tailingWidget!,
-              ),
-            ),
+          if (tailingWidget != null) ...[Spacer(), tailingWidget!],
         ],
       ),
     );
