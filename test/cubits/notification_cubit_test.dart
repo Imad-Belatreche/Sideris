@@ -84,6 +84,7 @@ void main() {
     when(
       () => mockService.refreshScheduledNotifications(),
     ).thenAnswer((_) async => []);
+    when(() => mockService.cancelNotification(any())).thenAnswer((_) async {});
   });
 
   tearDown(() => cubit.close());
@@ -231,19 +232,41 @@ void main() {
       expect(captured.scheduleUnit, isNull);
     });
 
-    test("throws NotificationException when nextTrigger has error", () async {
-      final now = DateTime.now();
-      final input = _makeOneTimeRule(
-        startDate: now.subtract(const Duration(days: 1)),
-      );
+    test(
+      "keeps rule inactive without throwing when nextTrigger has error",
+      () async {
+        final now = DateTime.now();
+        final input = _makeOneTimeRule(
+          startDate: now.subtract(const Duration(days: 1)),
+        );
+        final saved = input.copyWith(
+          isActive: false,
+          isScheduled: false,
+          nextTriggerAt: Optional<DateTime?>(null),
+        )..id = 14;
 
-      expect(
-        () => cubit.addNotification(input),
-        throwsA(isA<NotificationException>()),
-      );
+        when(() => mockRepo.addNotification(any())).thenAnswer((_) async => 14);
+        when(
+          () => mockRepo.getNotificationById(14),
+        ).thenAnswer((_) async => saved);
+        when(
+          () => mockRepo.getAllNotifications(),
+        ).thenAnswer((_) async => [saved]);
 
-      verifyNever(() => mockRepo.addNotification(any()));
-    });
+        final result = await cubit.addNotification(input);
+
+        expect(result.id, equals(14));
+        expect(result.nextTriggerAt, isNull);
+        expect(cubit.state.errorMessage, isNull);
+
+        final captured =
+            verify(() => mockRepo.addNotification(captureAny())).captured.single
+                as NotificationRuleModel;
+        expect(captured.isActive, isFalse);
+        expect(captured.isScheduled, isFalse);
+        expect(captured.nextTriggerAt, isNull);
+      },
+    );
 
     test("throws when repo.insert returns -1", () async {
       when(() => mockRepo.addNotification(any())).thenAnswer((_) async => -1);
@@ -314,6 +337,7 @@ void main() {
       await cubit.updateNotification(input);
 
       verify(() => mockRepo.updateNotification(any())).called(1);
+      verify(() => mockService.cancelNotification(20)).called(1);
       verify(() => mockService.refreshScheduledNotifications()).called(1);
       expect(cubit.state.notifications, equals([saved]));
       expect(cubit.state.isLoading, isFalse);
