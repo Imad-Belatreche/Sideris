@@ -1,5 +1,6 @@
-import 'package:google_fonts/google_fonts.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:sideris/l10n/app_font.dart';
+import 'package:sideris/l10n/l10n.dart';
 import 'package:sideris/widgets/notification_card.dart';
 
 class DndSwitch extends StatelessWidget {
@@ -17,6 +18,7 @@ class DndSwitch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final selected = isSelected ?? false;
+    final font = appFontOf(context);
 
     return NotificationCard(
       isSelected: selected,
@@ -41,18 +43,16 @@ class DndSwitch extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Override Do Not Disturb',
-                style: GoogleFonts.outfit(
+                context.l10n.dndSwitchTitle,
+                style: font(
                   fontWeight: FontWeight.bold,
                   fontSize: 15,
                   color: Colors.white,
                 ),
               ),
               Text(
-                'Bypass device DND mode',
-                style: GoogleFonts.outfit(
-                  color: Colors.white.withValues(alpha: 0.6),
-                ),
+                context.l10n.dndSwitchSubtitle,
+                style: font(color: Colors.white.withValues(alpha: 0.6)),
               ),
             ],
           ),

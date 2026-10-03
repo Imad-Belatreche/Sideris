@@ -1,5 +1,5 @@
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:sideris/l10n/app_font.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:sideris/widgets/notification_card.dart';
 
@@ -49,7 +49,7 @@ class NotificationRadioCard<T> extends StatelessWidget {
                 ],
                 Text(
                   label,
-                  style: GoogleFonts.outfit(
+                  style: appFontOf(context)(
                     fontSize: 15,
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                     color: isSelected ? Colors.white : Colors.white70,

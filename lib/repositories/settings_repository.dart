@@ -2,10 +2,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sideris/models/settings_model.dart';
 
 class SettingsRepository {
-  final SharedPreferencesAsync _prefs;
+  final SharedPreferencesAsync prefs;
 
   SettingsRepository({SharedPreferencesAsync? prefs})
-    : _prefs =
+    : prefs =
           prefs ?? SharedPreferencesAsync(options: SharedPreferencesOptions());
 
   Future saveSettings(Map settings) async {
@@ -14,16 +14,16 @@ class SettingsRepository {
     settings.forEach((key, value) {
       if (value == null) return;
       if (value is bool) {
-        futures.add(_prefs.setBool(key, value));
+        futures.add(prefs.setBool(key, value));
       } else if (value is String) {
-        futures.add(_prefs.setString(key, value));
+        futures.add(prefs.setString(key, value));
       } else if (value is int) {
-        futures.add(_prefs.setInt(key, value));
+        futures.add(prefs.setInt(key, value));
       } else if (value is double) {
-        futures.add(_prefs.setDouble(key, value));
+        futures.add(prefs.setDouble(key, value));
       } else if (value is List) {
         futures.add(
-          _prefs.setStringList(key, value.map((e) => e.toString()).toList()),
+          prefs.setStringList(key, value.map((e) => e.toString()).toList()),
         );
       } else {
         throw ArgumentError(
@@ -47,15 +47,15 @@ class SettingsRepository {
       scheduleUnit,
       durationOption,
     ] = await Future.wait([
-      _prefs.getString("uiLanguage"),
-      _prefs.getString("defaultTitle"),
-      _prefs.getString("defaultDescription"),
-      _prefs.getString("repetitionType"),
-      _prefs.getString("recurrenceType"),
-      _prefs.getString("colorTag"),
-      _prefs.getBool("bypassDND"),
-      _prefs.getString("scheduleUnit"),
-      _prefs.getString("durationOption"),
+      prefs.getString("uiLanguage"),
+      prefs.getString("defaultTitle"),
+      prefs.getString("defaultDescription"),
+      prefs.getString("repetitionType"),
+      prefs.getString("recurrenceType"),
+      prefs.getString("colorTag"),
+      prefs.getBool("bypassDND"),
+      prefs.getString("scheduleUnit"),
+      prefs.getString("durationOption"),
     ]);
 
     return SettingsModel.fromMap({

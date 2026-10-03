@@ -1,7 +1,9 @@
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:sideris/l10n/app_font.dart';
+import 'package:sideris/l10n/enum_labels.dart';
+import 'package:sideris/l10n/l10n.dart';
 import 'package:sideris/models/notification_rule_model.dart';
 
 class NotificationListing extends StatelessWidget {
@@ -10,6 +12,8 @@ class NotificationListing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final font = appFontOf(context);
+    final l10n = context.l10n;
     final accent = notification.colorTag?.value ?? Colors.white70;
     final isActive = notification.isActive;
     final nextTrigger =
@@ -49,7 +53,7 @@ class NotificationListing extends StatelessWidget {
                                   notification.title,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.outfit(
+                                  style: font(
                                     color: Colors.white,
                                     fontSize: 18,
                                     fontWeight: FontWeight.w700,
@@ -71,7 +75,7 @@ class NotificationListing extends StatelessWidget {
                                               notification.content!,
                                               maxLines: 2,
                                               overflow: TextOverflow.fade,
-                                              style: GoogleFonts.outfit(
+                                              style: font(
                                                 color: Colors.white70,
                                                 fontSize: 14,
                                               ),
@@ -103,19 +107,19 @@ class NotificationListing extends StatelessWidget {
                                     RepetitionType.repetitive)
                                   _InfoPill(
                                     icon: Icons.hourglass_bottom_rounded,
-                                    label: _durationLabel(),
+                                    label: _durationLabel(context),
                                   ),
                                 if (notification.bypassDnd)
-                                  const _InfoPill(
+                                  _InfoPill(
                                     icon: Icons.do_not_disturb_on_outlined,
-                                    label: 'Bypass DND',
+                                    label: l10n.listingBypassDnd,
                                   ),
 
                                 Text(
-                                  _secondaryDetails(),
+                                  _secondaryDetails(context),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.outfit(
+                                  style: font(
                                     color: Colors.white38,
                                     fontSize: 12,
                                   ),
@@ -142,8 +146,13 @@ class NotificationListing extends StatelessWidget {
   }
 
   String _scheduleLabel(BuildContext context) {
+    final l10n = context.l10n;
+    final locale = Localizations.localeOf(context).toString();
+
     if (notification.isOneTime) {
-      return 'Once  •  ${DateFormat('EEE, MMM d').format(notification.startDate)}';
+      return l10n.listingScheduleOnce(
+        DateFormat('EEE, MMM d', locale).format(notification.startDate),
+      );
     }
 
     if (notification.isSpecific &&
@@ -151,11 +160,14 @@ class NotificationListing extends StatelessWidget {
       final times = notification.fixedTimes!
           .map((time) => time.format(context))
           .join(', ');
-      final unit = _pretty(notification.scheduleUnit?.name ?? 'day');
+      final unit = (notification.scheduleUnit ?? ScheduleUnit.daily).unit(
+        notification.scheduleEvery ?? 1,
+        l10n,
+      );
       final every = notification.scheduleEvery ?? 1;
       return every == 1
-          ? 'Every $unit  •  $times'
-          : 'Every $every $unit\n$times';
+          ? l10n.listingScheduleEveryUnit(unit, times)
+          : l10n.listingScheduleEveryCount(every, unit, times);
     }
 
     if (notification.isRandom &&
@@ -163,7 +175,11 @@ class NotificationListing extends StatelessWidget {
         notification.randomCount! > 0 &&
         notification.randomWindowStart != null &&
         notification.randomWindowEnd != null) {
-      return 'Random  •  ${notification.randomCount ?? 0} times\n${notification.randomWindowStart!.format(context)} - ${notification.randomWindowEnd!.format(context)}';
+      return l10n.listingScheduleRandom(
+        notification.randomCount!,
+        notification.randomWindowStart!.format(context),
+        notification.randomWindowEnd!.format(context),
+      );
     }
 
     if (notification.isInterval &&
@@ -172,43 +188,75 @@ class NotificationListing extends StatelessWidget {
         notification.intervalUnit != null &&
         notification.intervalWindowStart != null &&
         notification.intervalWindowEnd != null) {
-      final unit = _pretty(notification.intervalUnit?.name ?? 'hour');
-      return 'Every ${notification.intervalEvery ?? 1} $unit\n${notification.intervalWindowStart!.format(context)} - ${notification.intervalWindowEnd!.format(context)}';
+      final unit = notification.intervalUnit!.unit(
+        notification.intervalEvery!,
+        l10n,
+      );
+      return l10n.listingScheduleInterval(
+        notification.intervalEvery!,
+        unit,
+        notification.intervalWindowStart!.format(context),
+        notification.intervalWindowEnd!.format(context),
+      );
     }
 
-    return 'Scheduled notification';
+    return l10n.listingScheduleFallback;
   }
 
-  String _durationLabel() {
-    if (notification.isForever) return 'Forever';
+  String _durationLabel(BuildContext context) {
+    final l10n = context.l10n;
+    final locale = Localizations.localeOf(context).toString();
+
+    if (notification.isForever) return l10n.durationOptionForever;
     if (notification.endDate != null) {
-      return 'Until ${DateFormat('MMM d, yyyy').format(notification.endDate!)}';
+      return l10n.listingDurationUntil(
+        DateFormat('MMM d, yyyy', locale).format(notification.endDate!),
+      );
     }
     if (notification.totalOccurrences != null) {
-      return 'Remaining ${notification.totalOccurrences} ${notification.totalOccurrences == 1 ? 'time' : "times"}';
+      return l10n.listingDurationRemaining(notification.totalOccurrences!);
     }
-    return 'Limited duration';
+    return l10n.listingDurationLimited;
   }
 
-  String _secondaryDetails() {
+  String _secondaryDetails(BuildContext context) {
+    final l10n = context.l10n;
+    final locale = Localizations.localeOf(context).toString();
     final details = <String>[];
-    if (notification.isScheduled) details.add('Scheduled');
+
+    if (notification.isScheduled) details.add(l10n.listingDetailScheduled);
     if (notification.totalOccurrences != null) {
-      details.add('${notification.totalOccurrences} occurrences');
+      details.add(
+        l10n.listingDetailOccurrences(notification.totalOccurrences!),
+      );
     }
     if (notification.lastTriggeredAt != null) {
       details.add(
-        'Last sent ${DateFormat('MMM d, HH:mm').format(notification.lastTriggeredAt!)}',
+        l10n.listingDetailLastSent(
+          DateFormat(
+            'MMM d, HH:mm',
+            locale,
+          ).format(notification.lastTriggeredAt!),
+        ),
       );
     }
+
     return details.isEmpty
         ? notification.updatedAt == null
-              ? 'Created ${DateFormat('MMM d, yyyy').format(notification.createdAt!)}'
-              : 'Updated ${DateFormat('MMM d, yyyy').format(notification.updatedAt!)}'
-        : details.join('  •  ');
+              ? l10n.listingDetailCreated(
+                  DateFormat(
+                    'MMM d, yyyy',
+                    locale,
+                  ).format(notification.createdAt!),
+                )
+              : l10n.listingDetailUpdated(
+                  DateFormat(
+                    'MMM d, yyyy',
+                    locale,
+                  ).format(notification.updatedAt!),
+                )
+        : details.join(l10n.listingSeparator);
   }
-
-  String _pretty(String value) => value[0].toUpperCase() + value.substring(1);
 }
 
 class _AccentDot extends StatelessWidget {
@@ -241,10 +289,14 @@ class _StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final font = appFontOf(context);
+    final l10n = context.l10n;
     final icon = isNotificationActive
         ? Icons.notifications_active_outlined
         : Icons.notifications_off_outlined;
-    final label = isNotificationActive ? 'ACTIVE' : 'PAUSED';
+    final label = isNotificationActive
+        ? l10n.listingStatusActive
+        : l10n.listingStatusPaused;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
       decoration: BoxDecoration(
@@ -265,7 +317,7 @@ class _StatusBadge extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             label,
-            style: GoogleFonts.outfit(
+            style: font(
               color: Colors.white54,
               fontSize: 9,
               fontWeight: FontWeight.w700,
@@ -285,6 +337,8 @@ class _InfoPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final font = appFontOf(context);
+
     return Chip(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadiusGeometry.circular(10),
@@ -301,7 +355,7 @@ class _InfoPill extends StatelessWidget {
           Expanded(
             child: Text(
               label,
-              style: GoogleFonts.outfit(color: Colors.white60, fontSize: 11),
+              style: font(color: Colors.white60, fontSize: 11),
               // overflow: TextOverflow.fade,
               softWrap: true,
               maxLines: 3,
@@ -325,12 +379,15 @@ class _NextTrigger extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final font = appFontOf(context);
+    final l10n = context.l10n;
+    final locale = Localizations.localeOf(context).toString();
     final time = trigger == null
         ? '--:--'
-        : DateFormat('HH:mm').format(trigger!);
+        : DateFormat('HH:mm', locale).format(trigger!);
     final relative = trigger == null
-        ? 'Not scheduled'
-        : _relativeTime(trigger!);
+        ? l10n.listingNotScheduled
+        : _relativeTime(trigger!, l10n);
 
     final difference = trigger?.difference(DateTime.now());
 
@@ -340,7 +397,7 @@ class _NextTrigger extends StatelessWidget {
       children: [
         Text(
           time,
-          style: GoogleFonts.outfit(
+          style: font(
             color: Colors.white,
             fontSize: 25,
             fontWeight: FontWeight.w700,
@@ -355,8 +412,8 @@ class _NextTrigger extends StatelessWidget {
             const SizedBox(width: 4),
             if (difference != null && !difference.isNegative) ...[
               Text(
-                "in",
-                style: GoogleFonts.outfit(
+                l10n.listingRelativeIn,
+                style: font(
                   color: accent,
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
@@ -366,7 +423,7 @@ class _NextTrigger extends StatelessWidget {
             ],
             Text(
               relative,
-              style: GoogleFonts.outfit(
+              style: font(
                 color: accent,
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
@@ -375,8 +432,8 @@ class _NextTrigger extends StatelessWidget {
             if (difference != null && difference.isNegative) ...[
               const SizedBox(width: 4),
               Text(
-                "ago",
-                style: GoogleFonts.outfit(
+                l10n.listingRelativeAgo,
+                style: font(
                   color: accent,
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
@@ -389,10 +446,10 @@ class _NextTrigger extends StatelessWidget {
     );
   }
 
-  String _relativeTime(DateTime value) {
+  String _relativeTime(DateTime value, AppLocalizations l10n) {
     final difference = value.difference(DateTime.now());
     final totalMinutes = difference.inMinutes.abs();
-    if (totalMinutes == 0) return 'Now';
+    if (totalMinutes == 0) return l10n.listingRelativeNow;
 
     var remainingMinutes = totalMinutes;
     final days = remainingMinutes ~/ Duration.minutesPerDay;
@@ -401,29 +458,16 @@ class _NextTrigger extends StatelessWidget {
     final hours = remainingMinutes ~/ Duration.minutesPerHour;
     final minutes = remainingMinutes % Duration.minutesPerHour;
 
+    if (years > 0) return l10n.listingRelativeYears(years);
+    if (days > 0) return l10n.listingRelativeDays(days);
+
     final parts = <String>[];
-    if (years > 0) {
-      parts.add('$years ${years == 1 ? 'year' : 'years'}');
-      final label = parts.join(' ');
-      return label;
-    }
-
-    if (days > 0) {
-      parts.add('$days ${days == 1 ? 'day' : 'days'}');
-      final label = parts.join(' ');
-      return label;
-    }
-
-    if (hours > 0) {
-      parts.add('$hours ${hours == 1 ? 'hour' : 'hours'}');
-    }
-
+    if (hours > 0) parts.add(l10n.listingRelativeHours(hours));
     if (minutes > 0) {
-      parts.add("\n");
-      parts.add('$minutes ${minutes == 1 ? 'min' : 'mins'}');
+      if (parts.isNotEmpty) parts.add("\n");
+      parts.add(l10n.listingRelativeMinutes(minutes));
     }
 
-    final label = parts.join(' ');
-    return label;
+    return parts.join(' ');
   }
 }

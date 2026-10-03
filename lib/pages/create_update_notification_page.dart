@@ -2,11 +2,13 @@ import 'dart:developer';
 
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:sideris/cubits/notification/notification_cubit.dart';
 import 'package:sideris/cubits/settings/settings_cubit.dart';
+import 'package:sideris/l10n/app_font.dart';
+import 'package:sideris/l10n/enum_labels.dart';
+import 'package:sideris/l10n/l10n.dart';
 import 'package:sideris/models/notification_rule_model.dart';
 import 'package:sideris/models/settings_model.dart';
 import 'package:sideris/services/permission_service.dart';
@@ -188,7 +190,7 @@ class _CreateUpdateNotificationPageState
 
     final title = _titleController.text.trim();
     if (title.isEmpty) {
-      showError("Title cannot be empty.");
+      showError(context.l10n.validationTitleEmpty);
       return null;
     }
 
@@ -198,13 +200,13 @@ class _CreateUpdateNotificationPageState
     }
 
     if (_startDate == null) {
-      showError("Please select a start date and time.");
+      showError(context.l10n.validationStartDateRequired);
       return null;
     }
 
     if (_repetitionType == RepetitionType.oneTime) {
       if (_startDate != null && _startDate!.isBefore(DateTime.now())) {
-        showError("Selected date and time cannot be in the past.");
+        showError(context.l10n.validationDateInPast);
         return null;
       }
 
@@ -218,7 +220,7 @@ class _CreateUpdateNotificationPageState
       );
     } else if (_repetitionType == RepetitionType.repetitive) {
       if (_recurrenceType == null) {
-        showError("Select a daily timing method.");
+        showError(context.l10n.validationDailyTimingRequired);
         return null;
       }
 
@@ -226,7 +228,7 @@ class _CreateUpdateNotificationPageState
 
       if (_scheduleUnit == ScheduleUnit.daily) {
         if (scheduleEvery == null || scheduleEvery <= 0) {
-          showError("'Repeat every' must be a whole number greater than 0.");
+          showError(context.l10n.validationRepeatEveryInvalid);
           return null;
         }
 
@@ -238,31 +240,32 @@ class _CreateUpdateNotificationPageState
 
       if (_scheduleUnit == ScheduleUnit.weekly) {
         if (scheduleEvery == null || scheduleEvery <= 0) {
-          showError("'Repeat every' must be a whole number greater than 0.");
+          showError(context.l10n.validationRepeatEveryInvalid);
           return null;
         }
 
         if (_selectedDaysOfWeek == null || _selectedDaysOfWeek!.isEmpty) {
-          showError("Select at least one day of the week.");
+          showError(context.l10n.validationSelectDayOfWeek);
           return null;
         }
       }
 
       if (_scheduleUnit == ScheduleUnit.monthly) {
         if (scheduleEvery == null || scheduleEvery <= 0) {
-          showError("'Repeat every' must be a whole number greater than 0.");
+          showError(context.l10n.validationRepeatEveryInvalid);
           return null;
         }
 
         if (_selectedDaysOfMonth == null || _selectedDaysOfMonth!.isEmpty) {
-          showError("Select at least one day of the month.");
+          showError(context.l10n.validationSelectDayOfMonth);
           return null;
         }
       }
 
       if (_scheduleUnit == ScheduleUnit.yearly) {
         if (scheduleEvery == null || scheduleEvery <= 0) {
-          showError("'Repeat every' must be a whole number greater than 0.");
+          showError(context.l10n.validationRepeatEveryInvalid);
+
           return null;
         }
 
@@ -274,7 +277,7 @@ class _CreateUpdateNotificationPageState
                   selection.selectedDaysOfMonth == null ||
                   selection.selectedDaysOfMonth!.isEmpty,
             )) {
-          showError("Select at least one month and one day.");
+          showError(context.l10n.validationSelectMonthAndDay);
           return null;
         }
       }
@@ -308,39 +311,33 @@ class _CreateUpdateNotificationPageState
       int? intervalCount;
       if (_recurrenceType == RecurrenceType.specific) {
         if (_fixedSpecificTimes == null || _fixedSpecificTimes!.isEmpty) {
-          showError(
-            "You must add at least one time for `At selected times` type",
-          );
+          showError(context.l10n.validationAtLeastOneTime);
           return null;
         }
         // Show error when duplicated times
         if (_fixedSpecificTimes!.length !=
             _fixedSpecificTimes!.toSet().length) {
-          showError(
-            "You cannot add duplicate times for `At selected times` type",
-          );
+          showError(context.l10n.validationNoDuplicateTimes);
           return null;
         }
       } else if (_recurrenceType == RecurrenceType.random) {
         if (_randomTimesController.text.trim().isEmpty) {
-          showError(
-            "You must set the `How many times` field for `Random times` type",
-          );
+          showError(context.l10n.validationHowManyTimesRequired);
           return null;
         }
         randomCount = int.tryParse(_randomTimesController.text.trim());
         if (randomCount == null) {
-          showError("The `How many times` field must be a number");
+          showError(context.l10n.validationHowManyTimesNotNumber);
           return null;
         }
 
         if (randomCount <= 0) {
-          showError("Number of random notifications must be greater than 0.");
+          showError(context.l10n.validationRandomCountPositive);
           return null;
         }
 
         if (_randomWindowStart == null || _randomWindowEnd == null) {
-          showError("Select random notification start and end times.");
+          showError(context.l10n.validationRandomWindowRequired);
           return null;
         }
 
@@ -350,40 +347,34 @@ class _CreateUpdateNotificationPageState
             _randomWindowEnd!.hour * 60 + _randomWindowEnd!.minute;
 
         if (startMinutes >= endMinutes) {
-          showError("Random times start time must be before end time.");
+          showError(context.l10n.validationRandomWindowOrder);
           return null;
         }
 
         final availableMinutes = endMinutes - startMinutes + 1;
         if (randomCount > availableMinutes) {
-          showError(
-            "Random times notification count cannot exceed available minutes in window.",
-          );
+          showError(context.l10n.validationRandomCountExceedsWindow);
           return null;
         }
       } else {
         if (_intervalTimesController.text.trim().isEmpty) {
-          showError(
-            "You must set the `Every` field for `At regular intervals` type",
-          );
+          showError(context.l10n.validationEveryRequired);
           return null;
         }
         intervalCount = int.tryParse(_intervalTimesController.text.trim());
 
         if (intervalCount == null || intervalCount <= 0) {
-          showError(
-            "At regular intervals must be a whole number greater than 0.",
-          );
+          showError(context.l10n.validationIntervalPositive);
           return null;
         }
 
         if (_intervalUnit == null) {
-          showError("Select an interval unit.");
+          showError(context.l10n.validationIntervalUnitRequired);
           return null;
         }
 
         if (_intervalWindowStart == null || _intervalWindowEnd == null) {
-          showError("Select interval start and end times.");
+          showError(context.l10n.validationIntervalWindowRequired);
           return null;
         }
 
@@ -393,7 +384,7 @@ class _CreateUpdateNotificationPageState
             _intervalWindowEnd!.hour * 60 + _intervalWindowEnd!.minute;
 
         if (startMinutes >= endMinutes) {
-          showError("At regular intervals start time must be before end time.");
+          showError(context.l10n.validationIntervalWindowOrder);
           return null;
         }
       }
@@ -406,12 +397,12 @@ class _CreateUpdateNotificationPageState
         });
 
       if (_durationOption == null) {
-        showError("Select a duration type");
+        showError(context.l10n.validationDurationTypeRequired);
         return null;
       }
 
       if (_durationOption == DurationOption.duration && _durationUnit == null) {
-        showError("Select a duration unit.");
+        showError(context.l10n.validationDurationUnitRequired);
         return null;
       }
 
@@ -425,18 +416,18 @@ class _CreateUpdateNotificationPageState
 
       if (_durationOption == DurationOption.duration &&
           (parsedDurationCount == null || parsedDurationCount <= 0)) {
-        showError("Enter a valid duration.");
+        showError(context.l10n.validationDurationInvalid);
         return null;
       }
 
       if (_durationOption == DurationOption.occurrences &&
           (parsedTotalTimes == null || parsedTotalTimes <= 0)) {
-        showError("Enter valid total times occurrences.");
+        showError(context.l10n.validationOccurrencesInvalid);
         return null;
       }
 
       if (_durationOption == DurationOption.untilDate && _endDate == null) {
-        showError("Select an end date for the notification.");
+        showError(context.l10n.validationEndDateRequired);
         return null;
       }
 
@@ -520,6 +511,7 @@ class _CreateUpdateNotificationPageState
   @override
   Widget build(BuildContext context) {
     final notificationCubit = context.read<NotificationCubit>();
+    final font = appFontOf(context);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -527,8 +519,10 @@ class _CreateUpdateNotificationPageState
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         title: Text(
-          '${widget.updateNotification == null ? 'Create' : 'Update'} Notification',
-          style: GoogleFonts.outfit(
+          widget.updateNotification == null
+              ? context.l10n.notificationPageCreateTitle
+              : context.l10n.notificationPageUpdateTitle,
+          style: font(
             fontSize: 28,
             fontWeight: FontWeight.w700,
             letterSpacing: 0.3,
@@ -545,34 +539,38 @@ class _CreateUpdateNotificationPageState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const CreationScreenTitle(title: "Title"),
+                CreationScreenTitle(title: context.l10n.fieldTitle),
                 SizedBox(height: 5),
                 NotificationTextfield(
                   controller: _titleController,
-                  hintText: 'Notification title',
+                  hintText: context.l10n.notificationPageTitleHint,
                   maxLines: 1,
                 ),
 
                 SizedBox(height: 16),
 
                 CreationScreenTitle(
-                  title: "${"Content".toUpperCase()} (optional)",
+                  title: context.l10n.notificationPageContentTitle,
                 ),
                 SizedBox(height: 5),
                 NotificationTextfield(
                   controller: _descriptionController,
-                  hintText: 'Add details...',
+                  hintText: context.l10n.notificationPageContentHint,
                   maxLines: 3,
                   minLines: 3,
                 ),
 
                 SizedBox(height: 16),
 
-                const CreationScreenTitle(title: "Color Tag"),
+                CreationScreenTitle(
+                  title: context.l10n.notificationPageColorTag,
+                ),
                 SizedBox(height: 5),
                 buildColorTagSelector(),
 
-                const CreationScreenTitle(title: "Repetition Type"),
+                CreationScreenTitle(
+                  title: context.l10n.notificationPageRepetitionType,
+                ),
                 SizedBox(height: 5),
                 buildRepetitionTypeSelector(),
 
@@ -587,7 +585,9 @@ class _CreateUpdateNotificationPageState
 
                 SizedBox(height: 16),
 
-                const CreationScreenTitle(title: "Options"),
+                CreationScreenTitle(
+                  title: context.l10n.notificationPageOptions,
+                ),
                 SizedBox(height: 5),
                 buildOptions(),
 
@@ -598,9 +598,10 @@ class _CreateUpdateNotificationPageState
                   child: CreateUpdateElevatedButton(
                     icon: Icons.check,
                     label: widget.updateNotification == null
-                        ? "Create Notification"
-                        : "Update Notification",
+                        ? context.l10n.actionCreateNotification
+                        : context.l10n.actionUpdateNotification,
                     onPressed: () async {
+                      final l10n = context.l10n;
                       try {
                         final permissionStatus =
                             await ensureNotificationPermission(context);
@@ -608,9 +609,7 @@ class _CreateUpdateNotificationPageState
                             !permissionStatus.isNotificationPermissionGranted ||
                             !permissionStatus.isExactAlarmPermissionGranted ||
                             !permissionStatus.isDndAccessPermissionGranted) {
-                          showError(
-                            "Required permissions are not granted. Please enable them in settings.",
-                          );
+                          showError(l10n.validationPermissionsNotGranted);
                           return;
                         }
 
@@ -635,14 +634,16 @@ class _CreateUpdateNotificationPageState
                         //TODO: Make the snackBar look better or pop the page entirely
                         if (!context.mounted) return;
                         if (widget.updateNotification == null) {
-                          showError("Notification saved successfully.");
+                          showError(context.l10n.notificationPageSaved);
                         } else {
-                          showError("Notification updated successfully.");
+                          showError(context.l10n.notificationPageUpdated);
                         }
                       } catch (e) {
                         log("Error while creating notification: $e");
                         if (!context.mounted) return;
-                        showError("Error while creating notification: $e");
+                        showError(
+                          context.l10n.notificationPageSaveError(e.toString()),
+                        );
                       }
                     },
                   ),
@@ -737,7 +738,7 @@ class _CreateUpdateNotificationPageState
       spacing: 10,
       children: [
         NotificationOutlinedButton(
-          label: "One-time",
+          label: context.l10n.repetitionTypeOneTime,
           isSelected: _repetitionType == RepetitionType.oneTime,
           onPressed: () {
             setState(() {
@@ -750,7 +751,7 @@ class _CreateUpdateNotificationPageState
         ),
 
         NotificationOutlinedButton(
-          label: "Repetitive",
+          label: context.l10n.repetitionTypeRepetitive,
           isSelected: _repetitionType == RepetitionType.repetitive,
           onPressed: () {
             setState(() {
@@ -791,18 +792,20 @@ class _CreateUpdateNotificationPageState
   }
 
   Widget buildOneTime({required String key}) {
+    final locale = Localizations.localeOf(context).toString();
+
     return Column(
       key: ValueKey<String>(key),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const CreationScreenTitle(title: "Date & Time"),
+        CreationScreenTitle(title: context.l10n.notificationPageDateAndTime),
 
         ///TODO: Maybe using a single button for whole date?
         /// First shows the date picker then the time picker
         NotificationOutlinedButton(
           label: _startDate != null
-              ? DateFormat.yMMMd().format(_startDate!)
-              : "Select Date",
+              ? DateFormat.yMMMd(locale).format(_startDate!)
+              : context.l10n.actionSelectDate,
           isExpanded: true,
           isSelected: _startDate != null,
           icon: const Icon(
@@ -836,8 +839,8 @@ class _CreateUpdateNotificationPageState
           label:
               (_startDate != null &&
                   (_startDate!.hour != 0 || _startDate!.minute != 0))
-              ? DateFormat.jm().format(_startDate!)
-              : "Select Time",
+              ? DateFormat.jm(locale).format(_startDate!)
+              : context.l10n.actionSelectTime,
           isExpanded: true,
           isSelected:
               _startDate != null &&
@@ -850,7 +853,11 @@ class _CreateUpdateNotificationPageState
           onPressed: () async {
             if (_startDate == null) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Please select a date first.")),
+                SnackBar(
+                  content: Text(
+                    context.l10n.notificationPageSelectDateFirstSnackBar,
+                  ),
+                ),
               );
               return;
             }
@@ -862,7 +869,6 @@ class _CreateUpdateNotificationPageState
                 minute: TimeOfDay.now().minute + 1,
               ),
             );
-
             if (pickedTime != null) {
               setState(() {
                 _startDate = DateTime(
@@ -881,18 +887,21 @@ class _CreateUpdateNotificationPageState
   }
 
   Widget buildRepetitive({required String key}) {
+    final font = appFontOf(context);
+    final locale = Localizations.localeOf(context).toString();
+
     return Column(
       key: ValueKey<String>(key),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const CreationScreenTitle(title: "Schedule"),
+        CreationScreenTitle(title: context.l10n.notificationPageSchedule),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
             spacing: 10,
             children: [
               NotificationOutlinedButton(
-                label: "Day",
+                label: ScheduleUnit.daily.shortLabel(context.l10n),
                 isSelected: _scheduleUnit == ScheduleUnit.daily,
                 onPressed: () {
                   setState(() {
@@ -901,7 +910,7 @@ class _CreateUpdateNotificationPageState
                 },
               ),
               NotificationOutlinedButton(
-                label: "Week",
+                label: ScheduleUnit.weekly.shortLabel(context.l10n),
                 isSelected: _scheduleUnit == ScheduleUnit.weekly,
                 onPressed: () {
                   setState(() {
@@ -910,7 +919,7 @@ class _CreateUpdateNotificationPageState
                 },
               ),
               NotificationOutlinedButton(
-                label: "Month",
+                label: ScheduleUnit.monthly.shortLabel(context.l10n),
                 isSelected: _scheduleUnit == ScheduleUnit.monthly,
                 onPressed: () {
                   setState(() {
@@ -919,7 +928,7 @@ class _CreateUpdateNotificationPageState
                 },
               ),
               NotificationOutlinedButton(
-                label: "Year",
+                label: ScheduleUnit.yearly.shortLabel(context.l10n),
                 isSelected: _scheduleUnit == ScheduleUnit.yearly,
                 onPressed: () {
                   setState(() {
@@ -941,8 +950,8 @@ class _CreateUpdateNotificationPageState
                 children: [
                   Icon(Icons.play_arrow, color: Colors.white38, size: 18),
                   Text(
-                    "Start".toUpperCase(),
-                    style: GoogleFonts.outfit(
+                    context.l10n.actionStart,
+                    style: font(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: Colors.white38,
@@ -958,7 +967,7 @@ class _CreateUpdateNotificationPageState
                 children: [
                   Expanded(
                     child: NotificationOutlinedButton(
-                      label: "From now",
+                      label: context.l10n.notificationPageStartFromNow,
                       isExpanded: true,
                       isSelected:
                           _startDate != null &&
@@ -978,8 +987,8 @@ class _CreateUpdateNotificationPageState
                       label:
                           _startDate != null &&
                               _startDate!.isAfter(DateTime.now())
-                          ? DateFormat.yMd().add_jm().format(_startDate!)
-                          : "Pick date & time",
+                          ? DateFormat.yMd(locale).add_jm().format(_startDate!)
+                          : context.l10n.notificationPagePickDateAndTime,
                       isExpanded: true,
                       isSelected:
                           _startDate != null &&
@@ -1025,17 +1034,21 @@ class _CreateUpdateNotificationPageState
                               });
                             } else {
                               if (!mounted) return;
-                              showError(
-                                "Selected date and time cannot be in the past.",
-                              );
+                              showError(context.l10n.validationDateInPast);
                             }
                           } else {
                             if (!mounted) return;
-                            showError("Time selection canceled.");
+                            showError(
+                              context
+                                  .l10n
+                                  .notificationPageTimeSelectionCanceled,
+                            );
                           }
                         } else {
                           if (!mounted) return;
-                          showError("Date selection canceled.");
+                          showError(
+                            context.l10n.notificationPageDateSelectionCanceled,
+                          );
                         }
                       },
                     ),
@@ -1077,8 +1090,8 @@ class _CreateUpdateNotificationPageState
                     spacing: 10,
                     children: [
                       Text(
-                        "Repeat every",
-                        style: GoogleFonts.outfit(
+                        context.l10n.notificationPageRepeatEvery,
+                        style: font(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: Colors.white70,
@@ -1111,8 +1124,8 @@ class _CreateUpdateNotificationPageState
                         },
                         child: Text(
                           key: ValueKey<String>(_scheduleUnit!.name),
-                          "${_scheduleUnit!.name[0].toUpperCase()}${_scheduleUnit!.name.substring(1)} (s)",
-                          style: GoogleFonts.outfit(
+                          _scheduleUnit!.label(context.l10n),
+                          style: font(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: Colors.white70,
@@ -1161,13 +1174,13 @@ class _CreateUpdateNotificationPageState
         ),
 
         SizedBox(height: 16),
-        CreationScreenTitle(title: "Daily timing"),
+        CreationScreenTitle(title: context.l10n.notificationPageDailyTiming),
         SizedBox(height: 5),
 
         buildDailyTiming(),
 
         SizedBox(height: 16),
-        CreationScreenTitle(title: "Duration"),
+        CreationScreenTitle(title: context.l10n.notificationPageDuration),
         SizedBox(height: 5),
 
         buildDurationOptions(),
@@ -1182,7 +1195,7 @@ class _CreateUpdateNotificationPageState
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         NotificationOutlinedButton(
-          label: "All days",
+          label: DailyOption.allDays.label(context.l10n),
           isExpanded: false,
           isSelected: _dailyOption == DailyOption.allDays,
           centerText: true,
@@ -1194,7 +1207,7 @@ class _CreateUpdateNotificationPageState
           },
         ),
         NotificationOutlinedButton(
-          label: "Weekdays",
+          label: DailyOption.weekdays.label(context.l10n),
           isExpanded: false,
           isSelected: _dailyOption == DailyOption.weekdays,
           centerText: true,
@@ -1206,7 +1219,7 @@ class _CreateUpdateNotificationPageState
           },
         ),
         NotificationOutlinedButton(
-          label: "Weekends",
+          label: DailyOption.weekends.label(context.l10n),
           isExpanded: false,
           isSelected: _dailyOption == DailyOption.weekends,
           centerText: true,
@@ -1222,8 +1235,13 @@ class _CreateUpdateNotificationPageState
   }
 
   Widget buildWeekOptions() {
-    final normalDaysOfWeek = ["Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri"];
-    final englishDaysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    final locale = Localizations.localeOf(context).toString();
+
+    // Monday-first, localized narrow weekday names.
+    final daysOfWeek = <int>[1, 2, 3, 4, 5, 6, 7].map((day) {
+      final date = DateTime(2024, 1, day);
+      return (index: day, label: DateFormat.E(locale).format(date));
+    }).toList();
 
     final selectedDaysOfWeek = _selectedDaysOfWeek ??= <int>[];
 
@@ -1232,23 +1250,21 @@ class _CreateUpdateNotificationPageState
       child: Row(
         spacing: 0,
         children: [
-          for (var day in normalDaysOfWeek)
+          for (final day in daysOfWeek)
             NotificationOutlinedButton(
-              label: day,
+              label: day.label,
               isExpanded: false,
-              isSelected: selectedDaysOfWeek.contains(
-                englishDaysOfWeek.indexOf(day) + 1,
-              ),
+              isSelected: selectedDaysOfWeek.contains(day.index),
               centerText: true,
               isRounded: true,
+              minimumSize: Size(70, 70),
               icon: null,
               onPressed: () {
                 setState(() {
-                  final dayIndex = englishDaysOfWeek.indexOf(day) + 1;
-                  if (selectedDaysOfWeek.contains(dayIndex)) {
-                    selectedDaysOfWeek.remove(dayIndex);
+                  if (selectedDaysOfWeek.contains(day.index)) {
+                    selectedDaysOfWeek.remove(day.index);
                   } else {
-                    selectedDaysOfWeek.add(dayIndex);
+                    selectedDaysOfWeek.add(day.index);
                   }
 
                   _selectedDaysOfWeek = selectedDaysOfWeek;
@@ -1261,6 +1277,7 @@ class _CreateUpdateNotificationPageState
   }
 
   Widget buildMonthOptions() {
+    final font = appFontOf(context);
     final selectedDaysOfMonth = _selectedDaysOfMonth ??= <int>[];
     return NotificationCard(
       child: Column(
@@ -1271,7 +1288,7 @@ class _CreateUpdateNotificationPageState
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               NotificationOutlinedButton(
-                label: "First day of month",
+                label: context.l10n.notificationPageFirstDayOfMonth,
                 isExpanded: false,
                 isSelected:
                     _isFirstOfMonthSelected != null &&
@@ -1296,7 +1313,7 @@ class _CreateUpdateNotificationPageState
                 },
               ),
               NotificationOutlinedButton(
-                label: "Last day of month",
+                label: context.l10n.notificationPageLastDayOfMonth,
                 isExpanded: false,
                 isSelected:
                     _isFirstOfMonthSelected != null &&
@@ -1358,8 +1375,8 @@ class _CreateUpdateNotificationPageState
           ),
           SizedBox(height: 5),
           Text(
-            "If you select 29, 30 or 31, the notification will not trigger in months that do not have those days.",
-            style: GoogleFonts.outfit(
+            context.l10n.notificationPageMonthlyDaysNotice,
+            style: font(
               fontStyle: FontStyle.italic,
               fontSize: 12,
               fontWeight: FontWeight.w400,
@@ -1372,11 +1389,13 @@ class _CreateUpdateNotificationPageState
   }
 
   Widget buildYearOptions() {
+    final font = appFontOf(context);
+    final locale = Localizations.localeOf(context).toString();
     final monthNumbers = List.generate(12, (int index) => index + 1);
 
     final months = [
       for (var month in monthNumbers)
-        DateFormat.MMM().format(DateTime(2026, month)),
+        DateFormat.MMM(locale).format(DateTime(2026, month)),
     ];
 
     final daysInActiveMonth = _activeSelectedMonth != null
@@ -1385,184 +1404,228 @@ class _CreateUpdateNotificationPageState
 
     final selectedDaysOfYear = _selectedDaysOfYear ??= <MonthDaysRepetition>[];
 
-    return NotificationCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            "Month (s)",
-            style: GoogleFonts.outfit(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Colors.white70,
-            ),
-          ),
-          SizedBox(height: 5),
-          Wrap(
-            spacing: 8,
-            children: [
-              for (var index = 0; index < monthNumbers.length; index++)
-                NotificationOutlinedButton(
-                  label: months[index],
-                  centerText: true,
-                  isSelected:
-                      _activeSelectedMonth == monthNumbers[index] ||
-                      selectedDaysOfYear.any(
-                        (selection) =>
-                            selection.selectedMonth == monthNumbers[index] &&
-                            selection.selectedDaysOfMonth != null &&
-                            selection.selectedDaysOfMonth!.isNotEmpty,
-                      ),
-                  isCurrentlySelected:
-                      _activeSelectedMonth == monthNumbers[index],
-                  minimumSize: const Size(20, 20),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  onPressed: () {
-                    final month = monthNumbers[index];
-
-                    setState(() {
-                      _activeSelectedMonth = month;
-                    });
-
-                    log(
-                      "The whole selected days of year: ${_selectedDaysOfYear.toString()}",
-                    );
-                  },
-                ),
-            ],
-          ),
-          SizedBox(height: 10),
-          if (_activeSelectedMonth != null) ...[
+    return SizedBox(
+      width: double.infinity,
+      child: NotificationCard(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
             Text(
-              "Day (s)",
-              style: GoogleFonts.outfit(
+              context.l10n.notificationPageMonths,
+              style: font(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: Colors.white70,
               ),
             ),
-            Row(
+            SizedBox(height: 5),
+            Wrap(
               spacing: 8,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                NotificationOutlinedButton(
-                  label: "First day of month",
-                  isExpanded: false,
-                  isSelected: selectedDaysOfYear.any(
-                    (selection) =>
-                        selection.selectedMonth == _activeSelectedMonth &&
-                        selection.selectedDaysOfMonth?.contains(1) == true,
+                for (var index = 0; index < monthNumbers.length; index++)
+                  NotificationOutlinedButton(
+                    label: months[index],
+                    centerText: true,
+                    isSelected:
+                        _activeSelectedMonth == monthNumbers[index] ||
+                        selectedDaysOfYear.any(
+                          (selection) =>
+                              selection.selectedMonth == monthNumbers[index] &&
+                              selection.selectedDaysOfMonth != null &&
+                              selection.selectedDaysOfMonth!.isNotEmpty,
+                        ),
+                    isCurrentlySelected:
+                        _activeSelectedMonth == monthNumbers[index],
+                    minimumSize: const Size(20, 20),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    onPressed: () {
+                      final month = monthNumbers[index];
+
+                      setState(() {
+                        _activeSelectedMonth = month;
+                      });
+
+                      log(
+                        "The whole selected days of year: ${_selectedDaysOfYear.toString()}",
+                      );
+                    },
                   ),
-                  centerText: true,
-                  icon: null,
-                  onPressed: () {
-                    setState(() {
-                      final selectedDays = _selectedDaysForActiveMonth();
-                      if (selectedDays.contains(1)) {
-                        selectedDays.remove(1);
-                      } else {
-                        selectedDays.add(1);
-                      }
-                    });
-                  },
-                ),
-                NotificationOutlinedButton(
-                  label: "Last day of month",
-                  isExpanded: false,
-                  isSelected: selectedDaysOfYear.any(
-                    (selection) =>
-                        selection.selectedMonth == _activeSelectedMonth &&
-                        selection.selectedDaysOfMonth?.contains(
-                              daysInActiveMonth,
-                            ) ==
-                            true,
-                  ),
-                  centerText: true,
-                  icon: null,
-                  onPressed: () {
-                    setState(() {
-                      final selectedDays = _selectedDaysForActiveMonth();
-                      if (selectedDays.contains(daysInActiveMonth)) {
-                        selectedDays.remove(daysInActiveMonth);
-                      } else {
-                        selectedDays.add(daysInActiveMonth);
-                      }
-                    });
-                  },
-                ),
               ],
             ),
-            SizedBox(height: 16),
-            Align(
-              alignment: Alignment.center,
-              child: Wrap(
-                spacing: 4,
-                runSpacing: 4,
-                children: [
-                  for (var day = 1; day <= daysInActiveMonth; day++)
-                    NotificationOutlinedButton(
-                      label: day.toString(),
-                      centerText: true,
-                      isRounded: true,
-                      isSelected: selectedDaysOfYear.any(
-                        (element) =>
-                            element.selectedMonth == _activeSelectedMonth &&
-                            element.selectedDaysOfMonth != null &&
-                            element.selectedDaysOfMonth!.contains(day),
-                      ),
-                      minimumSize: const Size(20, 20),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          if (!selectedDaysOfYear.any(
-                            (element) =>
-                                element.selectedMonth == _activeSelectedMonth,
-                          )) {
-                            selectedDaysOfYear.add(
-                              MonthDaysRepetition(
-                                selectedMonth: _activeSelectedMonth,
-                                selectedDaysOfMonth: [],
+            SizedBox(height: 10),
+            AnimatedSwitcher(
+              duration: 350.ms,
+              reverseDuration: 350.ms,
+              layoutBuilder: (currentChild, previousChildren) {
+                return Stack(
+                  alignment: Alignment.topCenter,
+                  children: [...previousChildren, ?currentChild],
+                );
+              },
+              transitionBuilder: (child, animation) {
+                return SizeTransition(
+                  sizeFactor: animation,
+                  axis: Axis.vertical,
+                  child: FadeTransition(opacity: animation, child: child),
+                );
+              },
+              child: _activeSelectedMonth != null
+                  ? Column(
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          context.l10n.notificationPageDays,
+                          style: font(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white70,
+                          ),
+                        ),
+                        Row(
+                          spacing: 8,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            NotificationOutlinedButton(
+                              label:
+                                  context.l10n.notificationPageFirstDayOfMonth,
+                              isExpanded: false,
+                              isSelected: selectedDaysOfYear.any(
+                                (selection) =>
+                                    selection.selectedMonth ==
+                                        _activeSelectedMonth &&
+                                    selection.selectedDaysOfMonth?.contains(
+                                          1,
+                                        ) ==
+                                        true,
                               ),
-                            );
-                          }
-
-                          final selectedDays =
-                              selectedDaysOfYear
-                                      .firstWhere(
+                              centerText: true,
+                              icon: null,
+                              onPressed: () {
+                                setState(() {
+                                  final selectedDays =
+                                      _selectedDaysForActiveMonth();
+                                  if (selectedDays.contains(1)) {
+                                    selectedDays.remove(1);
+                                  } else {
+                                    selectedDays.add(1);
+                                  }
+                                });
+                              },
+                            ),
+                            NotificationOutlinedButton(
+                              label:
+                                  context.l10n.notificationPageLastDayOfMonth,
+                              isExpanded: false,
+                              isSelected: selectedDaysOfYear.any(
+                                (selection) =>
+                                    selection.selectedMonth ==
+                                        _activeSelectedMonth &&
+                                    selection.selectedDaysOfMonth?.contains(
+                                          daysInActiveMonth,
+                                        ) ==
+                                        true,
+                              ),
+                              centerText: true,
+                              icon: null,
+                              onPressed: () {
+                                setState(() {
+                                  final selectedDays =
+                                      _selectedDaysForActiveMonth();
+                                  if (selectedDays.contains(
+                                    daysInActiveMonth,
+                                  )) {
+                                    selectedDays.remove(daysInActiveMonth);
+                                  } else {
+                                    selectedDays.add(daysInActiveMonth);
+                                  }
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 16),
+                        Align(
+                          alignment: Alignment.center,
+                          child: Wrap(
+                            spacing: 4,
+                            runSpacing: 4,
+                            children: [
+                              for (var day = 1; day <= daysInActiveMonth; day++)
+                                NotificationOutlinedButton(
+                                  label: day.toString(),
+                                  centerText: true,
+                                  isRounded: true,
+                                  isSelected: selectedDaysOfYear.any(
+                                    (element) =>
+                                        element.selectedMonth ==
+                                            _activeSelectedMonth &&
+                                        element.selectedDaysOfMonth != null &&
+                                        element.selectedDaysOfMonth!.contains(
+                                          day,
+                                        ),
+                                  ),
+                                  minimumSize: const Size(20, 20),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 8,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      if (!selectedDaysOfYear.any(
                                         (element) =>
                                             element.selectedMonth ==
                                             _activeSelectedMonth,
-                                      )
-                                      .selectedDaysOfMonth ??=
-                                  <int>[];
+                                      )) {
+                                        selectedDaysOfYear.add(
+                                          MonthDaysRepetition(
+                                            selectedMonth: _activeSelectedMonth,
+                                            selectedDaysOfMonth: [],
+                                          ),
+                                        );
+                                      }
 
-                          if (selectedDays.contains(day)) {
-                            selectedDays.remove(day);
-                          } else {
-                            selectedDays.add(day);
-                          }
-                          _selectedDaysOfYear = selectedDaysOfYear;
-                        });
-                      },
-                    ),
-                ],
-              ),
+                                      final selectedDays =
+                                          selectedDaysOfYear
+                                                  .firstWhere(
+                                                    (element) =>
+                                                        element.selectedMonth ==
+                                                        _activeSelectedMonth,
+                                                  )
+                                                  .selectedDaysOfMonth ??=
+                                              <int>[];
+
+                                      if (selectedDays.contains(day)) {
+                                        selectedDays.remove(day);
+                                      } else {
+                                        selectedDays.add(day);
+                                      }
+                                      _selectedDaysOfYear = selectedDaysOfYear;
+                                    });
+                                  },
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    )
+                  : null,
             ),
           ],
-        ],
+        ),
       ),
     );
   }
 
   Widget buildDailyTiming() {
+    final font = appFontOf(context);
+
     return RadioGroup<RecurrenceType>(
       groupValue: _recurrenceType,
       onChanged: (RecurrenceType? value) {
@@ -1576,7 +1639,7 @@ class _CreateUpdateNotificationPageState
         children: [
           NotificationRadioCard(
             selectedType: RecurrenceType.specific,
-            label: "At selected times",
+            label: RecurrenceType.specific.label(context.l10n),
             icon: Icons.access_time,
             isSelected: _recurrenceType == RecurrenceType.specific,
             onTap: () {
@@ -1624,8 +1687,8 @@ class _CreateUpdateNotificationPageState
                   ),
 
                 NotificationOutlinedButton(
-                  label: "Add Time",
-                  labelStyle: GoogleFonts.outfit(
+                  label: context.l10n.actionAddTime,
+                  labelStyle: font(
                     fontSize: 15,
                     color: Colors.blueAccent.shade400,
                     fontWeight: FontWeight.w500,
@@ -1655,7 +1718,9 @@ class _CreateUpdateNotificationPageState
                     }
 
                     if (nextTime == null) {
-                      showError("All daily time slots are already selected.");
+                      showError(
+                        context.l10n.notificationPageAllTimeSlotsSelected,
+                      );
                       return;
                     }
 
@@ -1674,7 +1739,7 @@ class _CreateUpdateNotificationPageState
           ),
           NotificationRadioCard(
             selectedType: RecurrenceType.random,
-            label: "Random times",
+            label: RecurrenceType.random.label(context.l10n),
             icon: Icons.shuffle,
             isSelected: _recurrenceType == RecurrenceType.random,
             onTap: () {
@@ -1696,8 +1761,8 @@ class _CreateUpdateNotificationPageState
                         spacing: 5,
                         children: [
                           Text(
-                            "How many times: ",
-                            style: GoogleFonts.outfit(
+                            context.l10n.notificationPageHowManyTimes,
+                            style: font(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                               color: Colors.white70,
@@ -1715,8 +1780,8 @@ class _CreateUpdateNotificationPageState
                         ],
                       ),
                       Text(
-                        "e.g: Show 5 notifications at random times",
-                        style: GoogleFonts.outfit(
+                        context.l10n.notificationPageRandomExample,
+                        style: font(
                           fontStyle: FontStyle.italic,
                           fontSize: 14,
                           color: Colors.white30,
@@ -1732,7 +1797,7 @@ class _CreateUpdateNotificationPageState
           ),
           NotificationRadioCard(
             selectedType: RecurrenceType.interval,
-            label: "At regular intervals",
+            label: RecurrenceType.interval.label(context.l10n),
             icon: Icons.loop,
             isSelected: _recurrenceType == RecurrenceType.interval,
             onTap: () {
@@ -1755,8 +1820,8 @@ class _CreateUpdateNotificationPageState
                         spacing: 8,
                         children: [
                           Text(
-                            "Every:",
-                            style: GoogleFonts.outfit(
+                            context.l10n.notificationPageEvery,
+                            style: font(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                               color: Colors.white70,
@@ -1775,14 +1840,10 @@ class _CreateUpdateNotificationPageState
                           NotificationOutlinedButton(
                             label: "",
                             labelWidget: Text(
-                              _intervalUnit == null ||
-                                      _intervalUnit == IntervalUnit.hour
-                                  ? "hours"
-                                  : "minutes",
-                              style: GoogleFonts.outfit(
-                                fontSize: 15,
-                                color: Colors.white54,
+                              (_intervalUnit ?? IntervalUnit.hour).label(
+                                context.l10n,
                               ),
+                              style: font(fontSize: 15, color: Colors.white54),
                             ),
                             centerText: true,
                             isCurrentlySelected: true,
@@ -1799,8 +1860,8 @@ class _CreateUpdateNotificationPageState
                         ],
                       ),
                       Text(
-                        "e.g: Show notification every 2 hours",
-                        style: GoogleFonts.outfit(
+                        context.l10n.notificationPageIntervalExample,
+                        style: font(
                           fontStyle: FontStyle.italic,
                           fontSize: 14,
                           color: Colors.white30,
@@ -1857,6 +1918,7 @@ class _CreateUpdateNotificationPageState
               ),
 
               onPressed: () async {
+                final l10n = context.l10n;
                 final pickedTime = await showTimePicker(
                   context: context,
                   initialTime: time,
@@ -1869,9 +1931,7 @@ class _CreateUpdateNotificationPageState
                 );
 
                 if (duplicate) {
-                  showError(
-                    "This time is already selected. Choose a different time.",
-                  );
+                  showError(l10n.notificationPageDuplicateTime);
                   return;
                 }
 
@@ -1888,6 +1948,10 @@ class _CreateUpdateNotificationPageState
   }
 
   Widget buildDurationOptions() {
+    final font = appFontOf(context);
+    final l10n = context.l10n;
+    final locale = Localizations.localeOf(context).toString();
+
     return RadioGroup(
       groupValue: _durationOption,
       onChanged: (value) {
@@ -1899,7 +1963,7 @@ class _CreateUpdateNotificationPageState
         children: [
           NotificationRadioCard(
             selectedType: DurationOption.forever,
-            label: "Forever",
+            label: DurationOption.forever.label(context.l10n),
             isSelected: _durationOption == DurationOption.forever,
             onTap: () {
               setState(() {
@@ -1910,7 +1974,7 @@ class _CreateUpdateNotificationPageState
 
           NotificationRadioCard(
             selectedType: DurationOption.duration,
-            label: "N duration",
+            label: DurationOption.duration.label(context.l10n),
             isSelected: _durationOption == DurationOption.duration,
             onTap: () {
               setState(() {
@@ -1922,8 +1986,8 @@ class _CreateUpdateNotificationPageState
                 spacing: 5,
                 children: [
                   Text(
-                    "Duration: ",
-                    style: GoogleFonts.outfit(
+                    "${context.l10n.notificationPageDuration} ",
+                    style: font(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: Colors.white70,
@@ -1938,9 +2002,10 @@ class _CreateUpdateNotificationPageState
                     isExpanded: false,
                   ),
                   NotificationOutlinedButton(
-                    label: _durationUnit != null
-                        ? "${_durationUnit!.name[0].toUpperCase()}${_durationUnit!.name.substring(1).toLowerCase()}s"
-                        : "${ScheduleUnit.daily.name[0].toUpperCase()}${ScheduleUnit.daily.name.substring(1).toLowerCase()}s",
+                    label: (_durationUnit ?? ScheduleUnit.daily).unit(
+                      int.tryParse(_durationCountController.text) ?? 1,
+                      l10n,
+                    ),
                     isCurrentlySelected: true,
                     onPressed: () {
                       setState(() {
@@ -1965,7 +2030,7 @@ class _CreateUpdateNotificationPageState
           ),
           NotificationRadioCard(
             selectedType: DurationOption.untilDate,
-            label: "Until date",
+            label: DurationOption.untilDate.label(context.l10n),
             isSelected: _durationOption == DurationOption.untilDate,
             onTap: () {
               setState(() {
@@ -1974,8 +2039,8 @@ class _CreateUpdateNotificationPageState
             },
             child: NotificationOutlinedButton(
               label: _endDate != null
-                  ? DateFormat.yMMMd().format(_endDate!)
-                  : "Select a date",
+                  ? DateFormat.yMMMd(locale).format(_endDate!)
+                  : context.l10n.actionSelectDate,
               isExpanded: true,
               icon: Icon(
                 Icons.calendar_month,
@@ -2000,7 +2065,7 @@ class _CreateUpdateNotificationPageState
           ),
           NotificationRadioCard(
             selectedType: DurationOption.occurrences,
-            label: "N total times",
+            label: DurationOption.occurrences.label(context.l10n),
             isSelected: _durationOption == DurationOption.occurrences,
             onTap: () {
               setState(() {
@@ -2012,8 +2077,8 @@ class _CreateUpdateNotificationPageState
                 spacing: 5,
                 children: [
                   Text(
-                    "Duration: ",
-                    style: GoogleFonts.outfit(
+                    context.l10n.notificationPageDuration,
+                    style: font(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: Colors.white70,
@@ -2028,8 +2093,8 @@ class _CreateUpdateNotificationPageState
                     isExpanded: false,
                   ),
                   Text(
-                    "occurrences",
-                    style: GoogleFonts.outfit(
+                    context.l10n.notificationPageOccurrences,
+                    style: font(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: Colors.white70,
@@ -2071,7 +2136,7 @@ class _CreateUpdateNotificationPageState
     final endMinutes = end.hour * 60 + end.minute;
 
     if (startMinutes >= endMinutes) {
-      showError("Start time must be before end time.");
+      showError(context.l10n.validationStartBeforeEnd);
       return false;
     }
 
@@ -2089,6 +2154,7 @@ class _CreateUpdateNotificationPageState
   }
 
   Widget buildTimeRangePicking(RecurrenceType recurrenceType) {
+    final font = appFontOf(context);
     final fromTime = recurrenceType == RecurrenceType.interval
         ? _intervalWindowStart
         : _randomWindowStart;
@@ -2127,24 +2193,26 @@ class _CreateUpdateNotificationPageState
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "From",
-                  style: GoogleFonts.outfit(
+                  context.l10n.notificationPageFrom,
+                  style: font(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: Colors.white38,
                   ),
                 ),
                 Text(
-                  fromTime != null ? fromTime.format(context) : "Select range",
-                  style: GoogleFonts.outfit(fontSize: 16, color: Colors.white),
+                  fromTime != null
+                      ? fromTime.format(context)
+                      : context.l10n.notificationPageSelectRange,
+                  style: font(fontSize: 16, color: Colors.white),
                 ),
               ],
             ),
           ),
         ),
         Text(
-          "to",
-          style: GoogleFonts.outfit(
+          context.l10n.actionTo,
+          style: font(
             fontSize: 14,
             fontWeight: FontWeight.w600,
             color: Colors.white54,
@@ -2177,8 +2245,8 @@ class _CreateUpdateNotificationPageState
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "Until",
-                  style: GoogleFonts.outfit(
+                  context.l10n.notificationPageUntil,
+                  style: font(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: Colors.white38,
@@ -2187,8 +2255,8 @@ class _CreateUpdateNotificationPageState
                 Text(
                   untilTime != null
                       ? untilTime.format(context)
-                      : "Select range",
-                  style: GoogleFonts.outfit(fontSize: 16, color: Colors.white),
+                      : context.l10n.notificationPageSelectRange,
+                  style: font(fontSize: 16, color: Colors.white),
                 ),
               ],
             ),
@@ -2217,9 +2285,9 @@ Future<NotificationPermissionStatus?> ensureNotificationPermission(
     if (!context.mounted) return null;
     await buildPermissionDialog(
       context,
-      'Notifications Permission Required',
-      'Please allow notifications permission in settings to receive reminders.',
-      'Okay',
+      context.l10n.permissionNotificationsTitle,
+      context.l10n.permissionNotificationsMessage,
+      context.l10n.actionOkay,
       () async {
         await PermissionService.instance.requestNotificationPermission();
         if (!context.mounted) return;
@@ -2232,9 +2300,9 @@ Future<NotificationPermissionStatus?> ensureNotificationPermission(
     if (!context.mounted) return null;
     await buildPermissionDialog(
       context,
-      'Exact Alarm Permission Required',
-      'Please allow exact alarm permission in settings to receive reminders.',
-      'Open Settings',
+      context.l10n.permissionExactAlarmTitle,
+      context.l10n.permissionExactAlarmMessage,
+      context.l10n.actionOpenSettings,
       () async {
         log("Requesting exact alarm permission");
         await PermissionService.instance.requestExactAlarmPermission();
@@ -2248,9 +2316,9 @@ Future<NotificationPermissionStatus?> ensureNotificationPermission(
     if (!context.mounted) return null;
     await buildPermissionDialog(
       context,
-      'DND Access Permission Required',
-      'Please allow DND access permission in settings to receive reminders.',
-      'Open Settings',
+      context.l10n.permissionDndTitle,
+      context.l10n.permissionDndMessage,
+      context.l10n.actionOpenSettings,
       () async {
         await PermissionService.instance.requestDndAccessPermission();
         if (!context.mounted) return;

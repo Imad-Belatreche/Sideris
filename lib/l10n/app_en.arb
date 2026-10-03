@@ -1,0 +1,402 @@
+{
+  "@@locale": "en",
+  "appName": "Sideris",
+  "actionUndo": "Undo",
+  "actionWarning": "Warning",
+  "actionCancel": "Cancel",
+  "actionDelete": "Delete",
+  "actionCreate": "Create",
+  "actionUpdate": "Update",
+  "actionSave": "Save",
+  "actionStart": "Start",
+  "actionOkay": "Okay",
+  "actionTo": "to",
+  "actionAddTime": "Add Time",
+  "actionOpenSettings": "Open Settings",
+  "actionSelectDate": "Select date",
+  "actionSelectTime": "Select time",
+  "actionCreateNotification": "Create Notification",
+  "actionUpdateNotification": "Update Notification",
+  "navHome": "Home",
+  "navSettings": "Settings",
+  "greetingMorning": "Good morning",
+  "greetingAfternoon": "Good afternoon",
+  "greetingEvening": "Good evening",
+  "homePageCalendarNoRules": "No rules planned for this day",
+  "homePageCalendarRulesPlanned": "{count, plural, one{1 rule planned} other{{count} rules planned}}",
+  "@homePageCalendarRulesPlanned": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "example": "1"
+      }
+    }
+  },
+  "homePageCalendarTapToInspectRules": "Tap another day to inspect its rules.",
+  "homePageListAllActive": "All Active Rules",
+  "homePageNotificationDeleteDialogContent": "This notification rule will be permanently deleted.\n\nAre you sure about that?",
+  "homePageNotificationDeleted": "Notification deleted",
+  "settingsPageTitle": "Settings",
+  "settingsPageLoadingError": "An error happened while loading settings: {errorMessage}",
+  "@settingsPageLoadingError": {
+    "placeholders": {
+      "errorMessage": {
+        "type": "String",
+        "example": "An error happened"
+      }
+    }
+  },
+  "settingsPageTheme": "Theme",
+  "settingsPageLanguage": "Language",
+  "settingsPageDefaultNotificationTemplate": "Default notification template",
+  "settingsPageDefaultRepetition": "Default Repetition",
+  "settingsPageDefaultRecurrence": "Default Recurrence",
+  "settingsPageDefaultTiming": "Default Timing",
+  "settingsPageDefaultDuration": "Default Duration",
+  "settingsPageSavedSettings": "Settings have been saved",
+  "settingsPageDefaultDescriptionHint": "(Default is empty)",
+  "fieldTitle": "Title",
+  "fieldDescription": "Description",
+  "notificationPageCreateTitle": "Create Notification",
+  "notificationPageUpdateTitle": "Update Notification",
+  "notificationPageTitleHint": "Notification title",
+  "notificationPageContentTitle": "Content (optional)",
+  "notificationPageContentHint": "Add details...",
+  "notificationPageColorTag": "Color Tag",
+  "notificationPageRepetitionType": "Repetition Type",
+  "notificationPageOptions": "Options",
+  "notificationPageDateAndTime": "Date & Time",
+  "notificationPageSchedule": "Schedule",
+  "notificationPageStartFromNow": "From now",
+  "notificationPagePickDateAndTime": "Pick date & time",
+  "notificationPageDateSelectionCanceled": "Date selection canceled.",
+  "notificationPageTimeSelectionCanceled": "Time selection canceled.",
+  "notificationPageSelectDateFirstSnackBar": "Please select a date first.",
+  "notificationPageRepeatEvery": "Repeat every",
+  "notificationPageDailyTiming": "Daily timing",
+  "notificationPageDuration": "Duration",
+  "notificationPageHowManyTimes": "How many times: ",
+  "notificationPageRandomExample": "e.g: Show 5 notifications at random times",
+  "notificationPageEvery": "Every:",
+  "notificationPageIntervalUnit": "{unit, select, hour{hours} minute{minutes} other{ERROR!!}}",
+  "@notificationPageIntervalUnit": {
+    "placeholders": {
+      "unit": {
+        "type": "String",
+        "example": "hour"
+      }
+    }
+  },
+  "notificationPageIntervalExample": "e.g: Show notification every 2 hours",
+  "notificationPageOccurrences": "occurrences",
+  "notificationPageMonths": "Months",
+  "notificationPageDays": "Days",
+  "notificationPageMonthlyDaysNotice": "If you select 29, 30 or 31, the notification will not trigger in months that do not have those days.",
+  "notificationPageFirstDayOfMonth": "First day of month",
+  "notificationPageLastDayOfMonth": "Last day of month",
+  "notificationPageAllTimeSlotsSelected": "All daily time slots are already selected.",
+  "notificationPageDuplicateTime": "This time is already selected. Choose a different time.",
+  "notificationPageSaved": "Notification saved successfully.",
+  "notificationPageUpdated": "Notification updated successfully.",
+  "notificationPageSaveError": "Error while creating notification: {error}",
+  "@notificationPageSaveError": {
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Something went wrong"
+      }
+    }
+  },
+  "notificationPageFrom": "From",
+  "notificationPageUntil": "Until",
+  "notificationPageSelectRange": "Select range",
+  "validationTitleEmpty": "Title cannot be empty.",
+  "validationStartDateRequired": "Please select a start date and time.",
+  "validationDateInPast": "Selected date and time cannot be in the past.",
+  "validationDailyTimingRequired": "Select a daily timing method.",
+  "validationRepeatEveryInvalid": "'Repeat every' must be a whole number greater than 0.",
+  "validationSelectDayOfWeek": "Select at least one day of the week.",
+  "validationSelectDayOfMonth": "Select at least one day of the month.",
+  "validationSelectMonthAndDay": "Select at least one month and one day.",
+  "validationAtLeastOneTime": "You must add at least one time for 'At selected times'",
+  "validationNoDuplicateTimes": "You cannot add duplicate times for 'At selected times'",
+  "validationHowManyTimesRequired": "You must set the 'How many times' field for 'Random times'",
+  "validationHowManyTimesNotNumber": "The 'How many times' field must be a number",
+  "validationRandomCountPositive": "Number of random notifications must be greater than 0.",
+  "validationRandomWindowRequired": "Select random notification start and end times.",
+  "validationRandomWindowOrder": "Random times start time must be before end time.",
+  "validationRandomCountExceedsWindow": "Random times notification count cannot exceed available minutes in window.",
+  "validationEveryRequired": "You must set the 'Every' field for 'At regular intervals'",
+  "validationIntervalPositive": "At regular intervals must be a whole number greater than 0.",
+  "validationIntervalUnitRequired": "Select an interval unit.",
+  "validationIntervalWindowRequired": "Select interval start and end times.",
+  "validationIntervalWindowOrder": "At regular intervals start time must be before end time.",
+  "validationDurationTypeRequired": "Select a duration type.",
+  "validationDurationUnitRequired": "Select a duration unit.",
+  "validationDurationInvalid": "Enter a valid duration.",
+  "validationOccurrencesInvalid": "Enter valid total times occurrences.",
+  "validationEndDateRequired": "Select an end date for the notification.",
+  "validationPermissionsNotGranted": "Required permissions are not granted. Please enable them in settings.",
+  "validationStartBeforeEnd": "Start time must be before end time.",
+  "permissionNotificationsTitle": "Notifications Permission Required",
+  "permissionNotificationsMessage": "Please allow notifications permission in settings to receive reminders.",
+  "permissionExactAlarmTitle": "Exact Alarm Permission Required",
+  "permissionExactAlarmMessage": "Please allow exact alarm permission in settings to receive reminders on time.",
+  "permissionDndTitle": "DND Access Permission Required",
+  "permissionDndMessage": "Please allow DND access permission in settings to override it.",
+  "dndSwitchTitle": "Override Do Not Disturb",
+  "dndSwitchSubtitle": "Bypass device DND mode",
+  "dndPillLabel": "Bypass DND",
+  "listingSeparator": "  •  ",
+  "listingScheduleOnce": "Once  •  {date}",
+  "@listingScheduleOnce": {
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "Mon, Jan 5"
+      }
+    }
+  },
+  "listingScheduleEveryUnit": "Every {unit}  •  {times}",
+  "@listingScheduleEveryUnit": {
+    "placeholders": {
+      "unit": {
+        "type": "String",
+        "example": "day"
+      },
+      "times": {
+        "type": "String",
+        "example": "9:00 AM, 6:00 PM"
+      }
+    }
+  },
+  "listingScheduleEveryCount": "Every {count} {unit}\n{times}",
+  "@listingScheduleEveryCount": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "example": "2"
+      },
+      "unit": {
+        "type": "String",
+        "example": "days"
+      },
+      "times": {
+        "type": "String",
+        "example": "9:00 AM, 6:00 PM"
+      }
+    }
+  },
+  "listingScheduleRandom": "Random  •  {count, plural, one{{count} time} other{{count} times}}\n{start} - {end}",
+  "@listingScheduleRandom": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "example": "5"
+      },
+      "start": {
+        "type": "String",
+        "example": "8:00 AM"
+      },
+      "end": {
+        "type": "String",
+        "example": "5:00 PM"
+      }
+    }
+  },
+  "listingScheduleInterval": "Every {count} {unit}\n{start} - {end}",
+  "@listingScheduleInterval": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "example": "2"
+      },
+      "unit": {
+        "type": "String",
+        "example": "hours"
+      },
+      "start": {
+        "type": "String",
+        "example": "8:00 AM"
+      },
+      "end": {
+        "type": "String",
+        "example": "5:00 PM"
+      }
+    }
+  },
+  "listingScheduleFallback": "Scheduled notification",
+  "listingDurationUntil": "Until {date}",
+  "@listingDurationUntil": {
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "Jan 5, 2026"
+      }
+    }
+  },
+  "listingDurationRemaining": "Remaining {count, plural, one{{count} time} other{{count} times}}",
+  "@listingDurationRemaining": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "example": "3"
+      }
+    }
+  },
+  "listingDurationLimited": "Limited duration",
+  "listingDetailScheduled": "Scheduled",
+  "listingDetailOccurrences": "{count, plural, one{{count} occurrence} other{{count} occurrences}}",
+  "@listingDetailOccurrences": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "example": "10"
+      }
+    }
+  },
+  "listingDetailLastSent": "Last sent {date}",
+  "@listingDetailLastSent": {
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "Jan 5, 09:00"
+      }
+    }
+  },
+  "listingDetailCreated": "Created {date}",
+  "@listingDetailCreated": {
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "Jan 5, 2026"
+      }
+    }
+  },
+  "listingDetailUpdated": "Updated {date}",
+  "@listingDetailUpdated": {
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "Jan 5, 2026"
+      }
+    }
+  },
+  "listingStatusActive": "ACTIVE",
+  "listingStatusPaused": "PAUSED",
+  "listingNotScheduled": "Not scheduled",
+  "listingRelativeNow": "Now",
+  "listingRelativeIn": "in",
+  "listingRelativeAgo": "ago",
+  "listingRelativeYears": "{count, plural, one{{count} year} other{{count} years}}",
+  "@listingRelativeYears": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "example": "2"
+      }
+    }
+  },
+  "listingRelativeDays": "{count, plural, one{{count} day} other{{count} days}}",
+  "@listingRelativeDays": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "example": "3"
+      }
+    }
+  },
+  "listingRelativeHours": "{count, plural, one{{count} hour} other{{count} hours}}",
+  "@listingRelativeHours": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "example": "5"
+      }
+    }
+  },
+  "listingRelativeMinutes": "{count, plural, one{{count} min} other{{count} mins}}",
+  "@listingRelativeMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "example": "20"
+      }
+    }
+  },
+  "unitDay": "{count, plural, =0{days} one{day} other{days}}",
+  "@unitDay": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "example": "2"
+      }
+    }
+  },
+  "unitWeek": "{count, plural, =0{weeks} one{week} other{weeks}}",
+  "@unitWeek": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "example": "2"
+      }
+    }
+  },
+  "unitMonth": "{count, plural, =0{months} one{month} other{months}}",
+  "@unitMonth": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "example": "2"
+      }
+    }
+  },
+  "unitYear": "{count, plural, =0{years} one{year} other{years}}",
+  "@unitYear": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "example": "2"
+      }
+    }
+  },
+  "unitHour": "{count, plural, =0{hours} one{hour} other{hours}}",
+  "@unitHour": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "example": "2"
+      }
+    }
+  },
+  "unitMinute": "{count, plural, =0{minutes} one{minute} other{minutes}}",
+  "@unitMinute": {
+    "placeholders": {
+      "count": {
+        "type": "num",
+        "example": "2"
+      }
+    }
+  },
+  "repetitionTypeOneTime": "One-time",
+  "repetitionTypeRepetitive": "Repetitive",
+  "recurrenceTypeSpecific": "At selected times",
+  "recurrenceTypeRandom": "Random times",
+  "recurrenceTypeInterval": "At regular intervals",
+  "scheduleUnitDaily": "Daily",
+  "scheduleUnitWeekly": "Weekly",
+  "scheduleUnitMonthly": "Monthly",
+  "scheduleUnitYearly": "Yearly",
+  "scheduleUnitDay": "Day",
+  "scheduleUnitWeek": "Week",
+  "scheduleUnitMonth": "Month",
+  "scheduleUnitYear": "Year",
+  "dailyOptionAllDays": "All days",
+  "dailyOptionWeekdays": "Weekdays",
+  "dailyOptionWeekends": "Weekends",
+  "durationOptionForever": "Forever",
+  "durationOptionDuration": "For a duration",
+  "durationOptionUntilDate": "Until date",
+  "durationOptionOccurrences": "For a total of N times",
+  "listingBypassDnd": "Bypass DND"
+}

@@ -1,4 +1,4 @@
-import 'package:google_fonts/google_fonts.dart';
+import 'package:sideris/l10n/app_font.dart';
 import 'package:material_ui/material_ui.dart';
 
 class CreateUpdateElevatedButton extends StatelessWidget {
@@ -34,7 +34,7 @@ class CreateUpdateElevatedButton extends StatelessWidget {
           Icon(icon, size: 20, color: Colors.white),
           Text(
             label,
-            style: GoogleFonts.outfit(
+            style: appFontOf(context)(
               color: Colors.white,
               fontSize: 20,
               fontWeight: FontWeight.bold,

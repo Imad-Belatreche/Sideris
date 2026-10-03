@@ -2,11 +2,12 @@ import 'dart:async';
 
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:sideris/cubits/notification/notification_cubit.dart';
 import 'package:sideris/cubits/settings/settings_cubit.dart';
+import 'package:sideris/l10n/app_font.dart';
+import 'package:sideris/l10n/l10n.dart';
 import 'package:sideris/models/notification_rule_model.dart';
 import 'package:sideris/pages/create_update_notification_page.dart';
 import 'package:sideris/utils/general_utils.dart';
@@ -74,16 +75,15 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _deleteNotification(NotificationRuleModel notification) async {
     final confirmed = await showWarningDialogue(
-      text:
-          "This notification rule will be permanently deleted.\n\nAre you sure about that?",
+      text: context.l10n.homePageNotificationDeleteDialogContent,
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(false),
-          child: const Text("Cancel"),
+          child: Text(context.l10n.actionCancel),
         ),
         TextButton(
           onPressed: () => Navigator.of(context).pop(true),
-          child: const Text("Delete"),
+          child: Text(context.l10n.actionDelete),
         ),
       ],
     );
@@ -103,8 +103,8 @@ class _HomePageState extends State<HomePage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          "Notification deleted",
-          style: GoogleFonts.outfit(color: Colors.black),
+          context.l10n.homePageNotificationDeleted,
+          style: appFontOf(context)(color: Colors.black),
         ),
         backgroundColor: Colors.greenAccent,
         action: SnackBarAction(
@@ -112,7 +112,7 @@ class _HomePageState extends State<HomePage> {
             setState(() => _leavingIds.remove(deleted.id));
             await context.read<NotificationCubit>().addNotification(deleted);
           },
-          label: "Undo",
+          label: context.l10n.actionUndo,
         ),
       ),
     );
@@ -131,13 +131,15 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
+    final font = appFontOf(context);
+    final locale = Localizations.localeOf(context).toString();
 
     String getGreeting() {
       final hour = now.hour;
 
-      if (hour < 12) return 'Good Morning';
-      if (hour < 17) return 'Good Afternoon';
-      return 'Good Evening';
+      if (hour < 12 && hour > 6) return context.l10n.greetingMorning;
+      if (hour < 18 && hour > 12) return context.l10n.greetingAfternoon;
+      return context.l10n.greetingEvening;
     }
 
     return SafeArea(
@@ -172,7 +174,7 @@ class _HomePageState extends State<HomePage> {
                               children: [
                                 Text(
                                       getGreeting(),
-                                      style: GoogleFonts.outfit(
+                                      style: font(
                                         fontSize: 28,
                                         fontWeight: FontWeight.w700,
                                         letterSpacing: -0.3,
@@ -188,10 +190,10 @@ class _HomePageState extends State<HomePage> {
                                 const SizedBox(height: 2),
 
                                 Text(
-                                      DateFormat.EEEE()
-                                          .addPattern(", MMMM dd")
-                                          .format(now),
-                                      style: GoogleFonts.outfit(
+                                      DateFormat.EEEE(
+                                        locale,
+                                      ).addPattern(", MMMM dd").format(now),
+                                      style: font(
                                         color: Colors.white38,
                                         fontSize: 15,
                                         fontWeight: FontWeight.w400,
@@ -258,6 +260,9 @@ class _HomePageState extends State<HomePage> {
     NotificationState state,
     List<NotificationRuleModel> selectedDayRules,
   ) {
+    final font = appFontOf(context);
+    final locale = Localizations.localeOf(context).toString();
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -302,8 +307,11 @@ class _HomePageState extends State<HomePage> {
                     key: ValueKey(_selectedDay),
                     child:
                         Text(
-                              DateFormat('EEEE, MMMM d').format(_selectedDay),
-                              style: GoogleFonts.outfit(
+                              DateFormat(
+                                'EEEE, MMMM d',
+                                locale,
+                              ).format(_selectedDay),
+                              style: font(
                                 fontSize: 22,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -322,12 +330,11 @@ class _HomePageState extends State<HomePage> {
                     child:
                         Text(
                               selectedDayRules.isEmpty
-                                  ? 'No rules planned for this day'
-                                  : '${selectedDayRules.length} ${selectedDayRules.length == 1 ? 'rule' : 'rules'} planned',
-                              style: GoogleFonts.outfit(
-                                color: Colors.white54,
-                                fontSize: 14,
-                              ),
+                                  ? context.l10n.homePageCalendarNoRules
+                                  : context.l10n.homePageCalendarRulesPlanned(
+                                      selectedDayRules.length,
+                                    ),
+                              style: font(color: Colors.white54, fontSize: 14),
                             )
                             .animate()
                             .fadeIn(duration: 300.ms, curve: Curves.easeIn)
@@ -343,8 +350,8 @@ class _HomePageState extends State<HomePage> {
                           padding: const EdgeInsets.symmetric(vertical: 18),
                           child: Center(
                             child: Text(
-                              'Tap another day to inspect its rules.',
-                              style: GoogleFonts.outfit(color: Colors.white38),
+                              context.l10n.homePageCalendarTapToInspectRules,
+                              style: font(color: Colors.white38),
                             ),
                           ),
                         )
@@ -447,8 +454,8 @@ class _HomePageState extends State<HomePage> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text(
-            "All Active Rules",
-            style: GoogleFonts.outfit(
+            context.l10n.homePageListAllActive,
+            style: appFontOf(context)(
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
@@ -481,8 +488,8 @@ class _HomePageState extends State<HomePage> {
           backgroundColor: const Color.fromARGB(255, 38, 7, 75),
           content: Text(text),
           title: Text(
-            "Warning",
-            style: GoogleFonts.outfit(
+            context.l10n.actionWarning,
+            style: appFontOf(context)(
               color: Colors.red,
               fontSize: 18,
               fontWeight: FontWeight.bold,

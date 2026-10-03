@@ -2,20 +2,20 @@ import 'package:equatable/equatable.dart';
 import 'package:sideris/models/notification_rule_model.dart';
 
 enum UiLanguage {
-  english(value: 'en_US', label: 'English'),
-  arabic(value: 'ar_DZ', label: 'العربية'),
-  french(value: 'fr_FR', label: 'Français');
+  english(value: 'en', label: 'English'),
+  arabic(value: 'ar', label: 'العربية'),
+  french(value: 'fr', label: 'Français');
 
   final String value;
   final String label;
 
   static UiLanguage? fromString(String? name) {
     if (name == null) return null;
-    try {
-      return UiLanguage.values.byName(name);
-    } on ArgumentError {
-      return null;
+    for (var lang in UiLanguage.values) {
+      if (lang.value == name) return lang;
     }
+    
+    return null;
   }
 
   const UiLanguage({required this.value, required this.label});
@@ -63,7 +63,7 @@ class SettingsModel extends Equatable {
 
   Map<String, dynamic> toMap() {
     return {
-      "uiLanguage": uiLanguage.name,
+      "uiLanguage": uiLanguage.value,
       "defaultTitle": defaultTitle,
       "defaultDescription": defaultDescription,
       "repetitionType": repetitionType.name,

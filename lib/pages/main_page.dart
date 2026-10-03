@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:sideris/cubits/notification/notification_cubit.dart';
 import 'package:sideris/cubits/settings/settings_cubit.dart';
+import 'package:sideris/l10n/l10n.dart';
 import 'package:sideris/pages/create_update_notification_page.dart';
 import 'package:sideris/pages/home_page.dart';
 import 'package:sideris/pages/settings_page.dart';
@@ -122,12 +123,12 @@ class _MainPageState extends State<MainPage> {
           items: [
             BottomNavigationBarItem(
               icon: Icon(Icons.home_outlined),
-              label: 'Home',
+              label: context.l10n.navHome,
             ),
 
             BottomNavigationBarItem(
               icon: Icon(Icons.settings_outlined),
-              label: 'Settings',
+              label: context.l10n.navSettings,
             ),
           ],
         ),
