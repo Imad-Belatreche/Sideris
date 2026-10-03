@@ -1,7 +1,9 @@
 import 'dart:ui';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:sideris/cubits/local/locale_cubit.dart';
 import 'package:sideris/cubits/notification/notification_cubit.dart';
 import 'package:sideris/l10n/app_font.dart';
 import 'package:sideris/utils/general_utils.dart';
@@ -142,7 +144,12 @@ class CalendarDay extends StatelessWidget {
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                       onPressed: onLeftPressed,
-                      icon: Icon(Icons.keyboard_double_arrow_left, size: 30),
+                      icon: Icon(
+                        isRTL(context.watch<LocaleCubit>().state.locale)
+                            ? Icons.keyboard_double_arrow_right
+                            : Icons.keyboard_double_arrow_left,
+                        size: 30,
+                      ),
                     ),
                     Text(
                       DateFormat.yMMM(locale).format(currentDate),
@@ -155,7 +162,12 @@ class CalendarDay extends StatelessWidget {
                         minimumSize: Size(35, 35),
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
-                      icon: Icon(Icons.keyboard_double_arrow_right, size: 30),
+                      icon: Icon(
+                        isRTL(context.watch<LocaleCubit>().state.locale)
+                            ? Icons.keyboard_double_arrow_left
+                            : Icons.keyboard_double_arrow_right,
+                        size: 30,
+                      ),
                     ),
                   ],
                 ),
@@ -173,7 +185,7 @@ class CalendarDay extends StatelessWidget {
                       weekName,
                       textAlign: TextAlign.center,
                       style: font(
-                        fontSize: 17,
+                        fontSize: 15,
                         letterSpacing: 1,
                         color: Colors.white.withAlpha(210),
                         fontWeight: FontWeight.w500,
