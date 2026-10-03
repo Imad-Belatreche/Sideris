@@ -31,12 +31,14 @@ const Set<String> rtlLanguageCodes = {
   'yi',
 };
 
+bool isRTL(Locale locale) {
+  return rtlLanguageCodes.contains(locale.languageCode);
+}
+
 AppFont appFontOf(BuildContext context) =>
     Directionality.of(context) == TextDirection.rtl
     ? GoogleFonts.cairo
     : GoogleFonts.outfit;
 
 AppFont appFontOfLocale(Locale locale) =>
-    rtlLanguageCodes.contains(locale.languageCode)
-    ? GoogleFonts.cairo
-    : GoogleFonts.outfit;
+    isRTL(locale) ? GoogleFonts.cairo : GoogleFonts.outfit;
