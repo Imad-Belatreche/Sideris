@@ -1,20 +1,21 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sideris/models/settings_model.dart';
 import 'package:sideris/repositories/settings_repository.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'settings_state.dart';
 
-//TODO: Think about adding a method of resetting settings to default
 class SettingsCubit extends Cubit<SettingsState> {
-  SettingsCubit({required SettingsRepository settingsRepository})
-    : _settingsRepository = settingsRepository,
-      super(
-        SettingsState(
-          isLoading: false,
-          isInitialized: false,
-          settings: SettingsModel.initial(),
-        ),
-      ) {
+  SettingsCubit({
+    required SettingsRepository settingsRepository,
+    required SettingsModel initialSettings,
+  }) : _settingsRepository = settingsRepository,
+       super(
+         SettingsState(
+           isLoading: false,
+           isInitialized: false,
+           settings: initialSettings,
+         ),
+       ) {
     getCurrentSettings();
   }
 
