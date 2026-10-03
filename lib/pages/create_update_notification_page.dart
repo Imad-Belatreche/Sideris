@@ -1257,6 +1257,7 @@ class _CreateUpdateNotificationPageState
               isSelected: selectedDaysOfWeek.contains(day.index),
               centerText: true,
               isRounded: true,
+              minimumSize: Size(70, 70),
               icon: null,
               onPressed: () {
                 setState(() {
@@ -1403,179 +1404,221 @@ class _CreateUpdateNotificationPageState
 
     final selectedDaysOfYear = _selectedDaysOfYear ??= <MonthDaysRepetition>[];
 
-    return NotificationCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            context.l10n.notificationPageMonths,
-            style: font(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Colors.white70,
-            ),
-          ),
-          SizedBox(height: 5),
-          Wrap(
-            spacing: 8,
-            children: [
-              for (var index = 0; index < monthNumbers.length; index++)
-                NotificationOutlinedButton(
-                  label: months[index],
-                  centerText: true,
-                  isSelected:
-                      _activeSelectedMonth == monthNumbers[index] ||
-                      selectedDaysOfYear.any(
-                        (selection) =>
-                            selection.selectedMonth == monthNumbers[index] &&
-                            selection.selectedDaysOfMonth != null &&
-                            selection.selectedDaysOfMonth!.isNotEmpty,
-                      ),
-                  isCurrentlySelected:
-                      _activeSelectedMonth == monthNumbers[index],
-                  minimumSize: const Size(20, 20),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  onPressed: () {
-                    final month = monthNumbers[index];
-
-                    setState(() {
-                      _activeSelectedMonth = month;
-                    });
-
-                    log(
-                      "The whole selected days of year: ${_selectedDaysOfYear.toString()}",
-                    );
-                  },
-                ),
-            ],
-          ),
-          SizedBox(height: 10),
-          if (_activeSelectedMonth != null) ...[
+    return SizedBox(
+      width: double.infinity,
+      child: NotificationCard(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
             Text(
-              context.l10n.notificationPageDays,
+              context.l10n.notificationPageMonths,
               style: font(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: Colors.white70,
               ),
             ),
-            Row(
+            SizedBox(height: 5),
+            Wrap(
               spacing: 8,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                NotificationOutlinedButton(
-                  label: context.l10n.notificationPageFirstDayOfMonth,
-                  isExpanded: false,
-                  isSelected: selectedDaysOfYear.any(
-                    (selection) =>
-                        selection.selectedMonth == _activeSelectedMonth &&
-                        selection.selectedDaysOfMonth?.contains(1) == true,
+                for (var index = 0; index < monthNumbers.length; index++)
+                  NotificationOutlinedButton(
+                    label: months[index],
+                    centerText: true,
+                    isSelected:
+                        _activeSelectedMonth == monthNumbers[index] ||
+                        selectedDaysOfYear.any(
+                          (selection) =>
+                              selection.selectedMonth == monthNumbers[index] &&
+                              selection.selectedDaysOfMonth != null &&
+                              selection.selectedDaysOfMonth!.isNotEmpty,
+                        ),
+                    isCurrentlySelected:
+                        _activeSelectedMonth == monthNumbers[index],
+                    minimumSize: const Size(20, 20),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    onPressed: () {
+                      final month = monthNumbers[index];
+
+                      setState(() {
+                        _activeSelectedMonth = month;
+                      });
+
+                      log(
+                        "The whole selected days of year: ${_selectedDaysOfYear.toString()}",
+                      );
+                    },
                   ),
-                  centerText: true,
-                  icon: null,
-                  onPressed: () {
-                    setState(() {
-                      final selectedDays = _selectedDaysForActiveMonth();
-                      if (selectedDays.contains(1)) {
-                        selectedDays.remove(1);
-                      } else {
-                        selectedDays.add(1);
-                      }
-                    });
-                  },
-                ),
-                NotificationOutlinedButton(
-                  label: context.l10n.notificationPageLastDayOfMonth,
-                  isExpanded: false,
-                  isSelected: selectedDaysOfYear.any(
-                    (selection) =>
-                        selection.selectedMonth == _activeSelectedMonth &&
-                        selection.selectedDaysOfMonth?.contains(
-                              daysInActiveMonth,
-                            ) ==
-                            true,
-                  ),
-                  centerText: true,
-                  icon: null,
-                  onPressed: () {
-                    setState(() {
-                      final selectedDays = _selectedDaysForActiveMonth();
-                      if (selectedDays.contains(daysInActiveMonth)) {
-                        selectedDays.remove(daysInActiveMonth);
-                      } else {
-                        selectedDays.add(daysInActiveMonth);
-                      }
-                    });
-                  },
-                ),
               ],
             ),
-            SizedBox(height: 16),
-            Align(
-              alignment: Alignment.center,
-              child: Wrap(
-                spacing: 4,
-                runSpacing: 4,
-                children: [
-                  for (var day = 1; day <= daysInActiveMonth; day++)
-                    NotificationOutlinedButton(
-                      label: day.toString(),
-                      centerText: true,
-                      isRounded: true,
-                      isSelected: selectedDaysOfYear.any(
-                        (element) =>
-                            element.selectedMonth == _activeSelectedMonth &&
-                            element.selectedDaysOfMonth != null &&
-                            element.selectedDaysOfMonth!.contains(day),
-                      ),
-                      minimumSize: const Size(20, 20),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          if (!selectedDaysOfYear.any(
-                            (element) =>
-                                element.selectedMonth == _activeSelectedMonth,
-                          )) {
-                            selectedDaysOfYear.add(
-                              MonthDaysRepetition(
-                                selectedMonth: _activeSelectedMonth,
-                                selectedDaysOfMonth: [],
+            SizedBox(height: 10),
+            AnimatedSwitcher(
+              duration: 350.ms,
+              reverseDuration: 350.ms,
+              layoutBuilder: (currentChild, previousChildren) {
+                return Stack(
+                  alignment: Alignment.topCenter,
+                  children: [...previousChildren, ?currentChild],
+                );
+              },
+              transitionBuilder: (child, animation) {
+                return SizeTransition(
+                  sizeFactor: animation,
+                  axis: Axis.vertical,
+                  child: FadeTransition(opacity: animation, child: child),
+                );
+              },
+              child: _activeSelectedMonth != null
+                  ? Column(
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          context.l10n.notificationPageDays,
+                          style: font(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white70,
+                          ),
+                        ),
+                        Row(
+                          spacing: 8,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            NotificationOutlinedButton(
+                              label:
+                                  context.l10n.notificationPageFirstDayOfMonth,
+                              isExpanded: false,
+                              isSelected: selectedDaysOfYear.any(
+                                (selection) =>
+                                    selection.selectedMonth ==
+                                        _activeSelectedMonth &&
+                                    selection.selectedDaysOfMonth?.contains(
+                                          1,
+                                        ) ==
+                                        true,
                               ),
-                            );
-                          }
-
-                          final selectedDays =
-                              selectedDaysOfYear
-                                      .firstWhere(
+                              centerText: true,
+                              icon: null,
+                              onPressed: () {
+                                setState(() {
+                                  final selectedDays =
+                                      _selectedDaysForActiveMonth();
+                                  if (selectedDays.contains(1)) {
+                                    selectedDays.remove(1);
+                                  } else {
+                                    selectedDays.add(1);
+                                  }
+                                });
+                              },
+                            ),
+                            NotificationOutlinedButton(
+                              label:
+                                  context.l10n.notificationPageLastDayOfMonth,
+                              isExpanded: false,
+                              isSelected: selectedDaysOfYear.any(
+                                (selection) =>
+                                    selection.selectedMonth ==
+                                        _activeSelectedMonth &&
+                                    selection.selectedDaysOfMonth?.contains(
+                                          daysInActiveMonth,
+                                        ) ==
+                                        true,
+                              ),
+                              centerText: true,
+                              icon: null,
+                              onPressed: () {
+                                setState(() {
+                                  final selectedDays =
+                                      _selectedDaysForActiveMonth();
+                                  if (selectedDays.contains(
+                                    daysInActiveMonth,
+                                  )) {
+                                    selectedDays.remove(daysInActiveMonth);
+                                  } else {
+                                    selectedDays.add(daysInActiveMonth);
+                                  }
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 16),
+                        Align(
+                          alignment: Alignment.center,
+                          child: Wrap(
+                            spacing: 4,
+                            runSpacing: 4,
+                            children: [
+                              for (var day = 1; day <= daysInActiveMonth; day++)
+                                NotificationOutlinedButton(
+                                  label: day.toString(),
+                                  centerText: true,
+                                  isRounded: true,
+                                  isSelected: selectedDaysOfYear.any(
+                                    (element) =>
+                                        element.selectedMonth ==
+                                            _activeSelectedMonth &&
+                                        element.selectedDaysOfMonth != null &&
+                                        element.selectedDaysOfMonth!.contains(
+                                          day,
+                                        ),
+                                  ),
+                                  minimumSize: const Size(20, 20),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 8,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      if (!selectedDaysOfYear.any(
                                         (element) =>
                                             element.selectedMonth ==
                                             _activeSelectedMonth,
-                                      )
-                                      .selectedDaysOfMonth ??=
-                                  <int>[];
+                                      )) {
+                                        selectedDaysOfYear.add(
+                                          MonthDaysRepetition(
+                                            selectedMonth: _activeSelectedMonth,
+                                            selectedDaysOfMonth: [],
+                                          ),
+                                        );
+                                      }
 
-                          if (selectedDays.contains(day)) {
-                            selectedDays.remove(day);
-                          } else {
-                            selectedDays.add(day);
-                          }
-                          _selectedDaysOfYear = selectedDaysOfYear;
-                        });
-                      },
-                    ),
-                ],
-              ),
+                                      final selectedDays =
+                                          selectedDaysOfYear
+                                                  .firstWhere(
+                                                    (element) =>
+                                                        element.selectedMonth ==
+                                                        _activeSelectedMonth,
+                                                  )
+                                                  .selectedDaysOfMonth ??=
+                                              <int>[];
+
+                                      if (selectedDays.contains(day)) {
+                                        selectedDays.remove(day);
+                                      } else {
+                                        selectedDays.add(day);
+                                      }
+                                      _selectedDaysOfYear = selectedDaysOfYear;
+                                    });
+                                  },
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    )
+                  : null,
             ),
           ],
-        ],
+        ),
       ),
     );
   }
