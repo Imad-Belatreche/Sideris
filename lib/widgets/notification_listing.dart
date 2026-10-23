@@ -4,7 +4,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:sideris/l10n/app_font.dart';
 import 'package:sideris/l10n/enum_labels.dart';
 import 'package:sideris/l10n/l10n.dart';
-import 'package:sideris/models/notification_rule_model.dart';
+import 'package:sideris/models/notification_rule/notification_rule_model.dart';
 
 class NotificationListing extends StatelessWidget {
   final NotificationRuleModel notification;
@@ -224,7 +224,9 @@ class NotificationListing extends StatelessWidget {
     final locale = Localizations.localeOf(context).toString();
     final details = <String>[];
 
-    if (notification.isScheduled) details.add(l10n.listingDetailScheduled);
+    if (notification.nextTriggerAt != null) {
+      details.add(l10n.listingDetailScheduled);
+    }
     if (notification.totalOccurrences != null) {
       details.add(
         l10n.listingDetailOccurrences(notification.totalOccurrences!),

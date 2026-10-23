@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:sideris/models/notification_rule_model.dart';
+import 'package:sideris/models/notification_rule/notification_rule_model.dart';
 
 enum UiLanguage {
   english(value: 'en', label: 'English'),
