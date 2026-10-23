@@ -564,8 +564,17 @@ class RecurrenceCalculator {
   }) {
     final List<DateTime> triggerList = [];
     DateTime cursor = now ?? DateTime.now();
-    for (var _ in List.generate(limit + 1, (index) => index + 1)) {
-      final result = computeNextTrigger(rule, now: cursor);
+    var remainingOccurrences = rule.totalOccurrences;
+
+    for (var index = 0; index < limit; index++) {
+      if (remainingOccurrences != null && remainingOccurrences <= 0) {
+        break;
+      }
+
+      final generationRule = remainingOccurrences == rule.totalOccurrences
+          ? rule
+          : rule.copyWith(totalOccurrences: Optional(remainingOccurrences));
+      final result = computeNextTrigger(generationRule, now: cursor);
       if (result == null ||
           result.error != null ||
           result.nextTrigger == null) {
@@ -574,10 +583,8 @@ class RecurrenceCalculator {
 
       cursor = result.nextTrigger!;
       triggerList.add(cursor);
-      if (rule.totalOccurrences != null) {
-        rule = rule.copyWith(
-          totalOccurrences: Optional(rule.totalOccurrences! - 1),
-        );
+      if (remainingOccurrences != null) {
+        remainingOccurrences--;
       }
     }
     triggerList.sort((a, b) => a.compareTo(b));
