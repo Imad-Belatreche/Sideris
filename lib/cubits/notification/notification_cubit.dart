@@ -1,31 +1,38 @@
 import 'dart:developer';
 
-import 'package:sideris/models/notification_rule_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sideris/models/notification_rule/notification_rule_model.dart';
 import 'package:sideris/repositories/notifications_repository.dart';
+import 'package:sideris/repositories/scheduled_notifications_repository.dart';
 import 'package:sideris/services/notification_service.dart';
 import 'package:sideris/utils/exceptions.dart';
 import 'package:sideris/utils/recurrence_calculator.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'notification_state.dart';
 
+//TODO: Implement the new ScheduledNotification model and update the cubit accordingly.
+//The current implementation is based on the old NotificationRule model, which may not be compatible with the new ScheduledNotification model.
 class NotificationCubit extends Cubit<NotificationState> {
   NotificationCubit({
-    required NotificationsRepository repository,
-    required NotificationService service,
-  }) : _notificationRepository = repository,
-       _notificationService = service,
+    required SchedulesRepository schedulesRepository,
+    required NotificationsRepository notificationRepository,
+    required NotificationService notificationService,
+  }) : _notificationRepository = notificationRepository,
+       _notificationService = notificationService,
+       _schedulesRepository = schedulesRepository,
        super(NotificationState(notifications: []));
 
   final NotificationsRepository _notificationRepository;
   final NotificationService _notificationService;
+
+  final SchedulesRepository _schedulesRepository;
 
   Future<void> loadNotifications() async {
     try {
       if (!state.isLoading) {
         emit(state.copyWith(isLoading: true, errorMessage: null));
       }
-      await _notificationService.refreshScheduledNotifications();
+      await _notificationService.syncNotification();
       final notifications = await _notificationRepository.getAllNotifications();
       emit(state.copyWith(notifications: notifications));
     } catch (e) {
@@ -42,7 +49,7 @@ class NotificationCubit extends Cubit<NotificationState> {
 
     try {
       emit(state.copyWith(isLoading: true, errorMessage: null));
-      notification = notification.normalized().copyWith(isScheduled: false);
+      notification = notification.normalized();
 
       if (!notification.isForever &&
           notification.durationCount != null &&
@@ -58,31 +65,23 @@ class NotificationCubit extends Cubit<NotificationState> {
         );
       }
 
-      RecurrenceCalculationResponse? nextTrigger;
-      try {
-        nextTrigger = RecurrenceCalculator.computeNextTrigger(notification);
-      } catch (e) {
-        log(
-          "NotificationCubit: Failed to compute next trigger during add. Error: $e",
-        );
-        nextTrigger = null;
-      }
+      List<DateTime>? nextTriggers = RecurrenceCalculator.computeNextTriggers(
+        notification,
+      );
 
-      if (nextTrigger != null &&
-          nextTrigger.error == null &&
-          nextTrigger.nextTrigger != null) {
+      if (nextTriggers.isNotEmpty) {
         notification = notification.copyWith(
-          nextTriggerAt: Optional(nextTrigger.nextTrigger),
+          nextTriggersAt: Optional(nextTriggers),
+          nextTriggerAt: Optional(nextTriggers.first),
           isActive: true,
-          isScheduled: false,
         );
       } else {
         log(
-          "NotificationCubit: Notification cannot be scheduled (${nextTrigger?.error}). Restoring as inactive.",
+          "NotificationCubit: Notification cannot be scheduled. Restoring as inactive.",
         );
         notification = notification.copyWith(
           isActive: false,
-          isScheduled: false,
+          nextTriggersAt: Optional<List<DateTime>?>(null),
           nextTriggerAt: Optional<DateTime?>(null),
         );
       }
@@ -145,14 +144,40 @@ class NotificationCubit extends Cubit<NotificationState> {
         );
       }
 
-      notification = notification.copyWith(updatedAt: Optional(DateTime.now()));
+      List<DateTime> nextTriggers = RecurrenceCalculator.computeNextTriggers(
+        notification,
+      );
+      if (nextTriggers.isNotEmpty) {
+        notification = notification.copyWith(
+          nextTriggersAt: Optional(nextTriggers),
+          nextTriggerAt: Optional(nextTriggers.first),
+          updatedAt: Optional(DateTime.now()),
+        );
 
-      await _notificationRepository.updateNotification(notification);
+        await _schedulesRepository.deletePendingForRule(
+          notification.id,
+        );
+        await _notificationRepository.updateNotification(notification);
 
-      final id = notification.id;
-      await _notificationService.cancelNotification(id);
+        await loadNotifications();
+      } else {
+        log(
+          "NotificationCubit: Notification cannot be scheduled. Restoring as inactive.",
+        );
+        notification = notification.copyWith(
+          isActive: false,
+          nextTriggersAt: Optional<List<DateTime>?>(null),
+          nextTriggerAt: Optional<DateTime?>(null),
+          updatedAt: Optional(DateTime.now()),
+        );
 
-      await loadNotifications();
+        await _schedulesRepository.deletePendingForRule(
+          notification.id,
+        );
+        await _notificationRepository.updateNotification(notification);
+
+        await loadNotifications();
+      }
     } catch (e) {
       emit(state.copyWith(errorMessage: e.toString()));
     } finally {
@@ -178,6 +203,10 @@ class NotificationCubit extends Cubit<NotificationState> {
       }
 
       await _notificationRepository.deleteNotification(id);
+
+      await _schedulesRepository.deleteSchedulesOfRule(
+        notification.id,
+      );
 
       await loadNotifications();
       return notification;

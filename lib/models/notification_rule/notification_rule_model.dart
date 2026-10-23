@@ -126,12 +126,8 @@ class NotificationRuleModel extends Equatable {
   @Enumerated(EnumType.name)
   ColorTag? colorTag;
   bool bypassDnd;
-
-  @Index(
-    composite: [CompositeIndex("isScheduled"), CompositeIndex("nextTriggerAt")],
-  )
+  @Index()
   bool isActive = true;
-  bool isScheduled = false;
 
   /// Choose recurrence `Specific`, `Random`, `Interval`
   @Enumerated(EnumType.name)
@@ -186,6 +182,7 @@ class NotificationRuleModel extends Equatable {
 
   DateTime? lastTriggeredAt;
 
+  List<DateTime>? nextTriggersAt;
   DateTime? nextTriggerAt;
 
   DateTime? createdAt;
@@ -319,7 +316,6 @@ class NotificationRuleModel extends Equatable {
     this.colorTag,
     required this.bypassDnd,
     this.isActive = true,
-    this.isScheduled = false,
 
     required this.repetitionType,
     this.recurrenceType,
@@ -346,6 +342,7 @@ class NotificationRuleModel extends Equatable {
     this.durationUnit,
     this.durationCount,
 
+    this.nextTriggersAt,
     this.lastTriggeredAt,
     this.nextTriggerAt,
     DateTime? createdAt,
@@ -359,7 +356,6 @@ class NotificationRuleModel extends Equatable {
     ColorTag? colorTag,
     bool? bypassDnd,
     bool? isActive,
-    bool? isScheduled,
 
     RepetitionType? repetitionType,
     Optional<RecurrenceType?>? recurrenceType,
@@ -388,6 +384,7 @@ class NotificationRuleModel extends Equatable {
     Optional<int?>? durationCount,
 
     Optional<DateTime?>? lastTriggeredAt,
+    Optional<List<DateTime>?>? nextTriggersAt,
     Optional<DateTime?>? nextTriggerAt,
 
     DateTime? createdAt,
@@ -435,7 +432,6 @@ class NotificationRuleModel extends Equatable {
       colorTag: colorTag ?? this.colorTag,
       bypassDnd: bypassDnd ?? this.bypassDnd,
       isActive: isActive ?? this.isActive,
-      isScheduled: isScheduled ?? this.isScheduled,
 
       fixedTimesMinutes: fixedTimesMinutes,
 
@@ -482,6 +478,10 @@ class NotificationRuleModel extends Equatable {
       lastTriggeredAt: lastTriggeredAt != null
           ? lastTriggeredAt.value
           : this.lastTriggeredAt,
+
+      nextTriggersAt: nextTriggersAt != null
+          ? nextTriggersAt.value
+          : this.nextTriggersAt,
       nextTriggerAt: nextTriggerAt != null
           ? nextTriggerAt.value
           : this.nextTriggerAt,
@@ -570,13 +570,13 @@ class NotificationRuleModel extends Equatable {
   @override
   @ignore
   List<Object?> get props => [
+    id,
     title,
     content,
     startDate,
     colorTag,
     bypassDnd,
     isActive,
-    isScheduled,
     repetitionType,
     recurrenceType,
     fixedTimesMinutes,
@@ -599,6 +599,7 @@ class NotificationRuleModel extends Equatable {
     durationCount,
     lastTriggeredAt,
     nextTriggerAt,
+    nextTriggersAt,
     createdAt,
     updatedAt,
   ];

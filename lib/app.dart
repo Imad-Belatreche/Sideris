@@ -8,18 +8,21 @@ import 'package:sideris/l10n/l10n.dart';
 import 'package:sideris/models/settings_model.dart';
 import 'package:sideris/pages/main_page.dart';
 import 'package:sideris/repositories/notifications_repository.dart';
+import 'package:sideris/repositories/scheduled_notifications_repository.dart';
 import 'package:sideris/repositories/settings_repository.dart';
 import 'package:sideris/services/notification_service.dart';
 
 class MyApp extends StatelessWidget {
   final SettingsRepository settingsRepository;
   final NotificationsRepository notificationRepository;
+  final SchedulesRepository schedulesRepository;
   final NotificationService notificationService;
   final SettingsModel initialSettings;
 
   const MyApp({
     super.key,
     required this.notificationRepository,
+    required this.schedulesRepository,
     required this.notificationService,
     required this.settingsRepository,
     required this.initialSettings,
@@ -34,8 +37,9 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => LocaleCubit(locale: currentLocal)),
         BlocProvider(
           create: (context) => NotificationCubit(
-            repository: notificationRepository,
-            service: notificationService,
+            schedulesRepository: schedulesRepository,
+            notificationRepository: notificationRepository,
+            notificationService: notificationService,
           ),
         ),
         BlocProvider(

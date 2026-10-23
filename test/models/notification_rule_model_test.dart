@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:sideris/models/notification_rule_model.dart';
+import 'package:sideris/models/notification_rule/notification_rule_model.dart';
 
 void main() {
   NotificationRuleModel createRule({
@@ -296,7 +296,6 @@ void main() {
       final after = DateTime.now();
 
       expect(rule.isActive, isTrue);
-      expect(rule.isScheduled, isFalse);
       expect(rule.isForever, isFalse);
       expect(rule.content, isNull);
       expect(rule.colorTag, isNull);
@@ -315,13 +314,11 @@ void main() {
         title: "new",
         bypassDnd: true,
         isActive: false,
-        isScheduled: true,
       );
 
       expect(copied.title, equals("new"));
       expect(copied.bypassDnd, isTrue);
       expect(copied.isActive, isFalse);
-      expect(copied.isScheduled, isTrue);
       // untouched
       expect(copied.startDate, equals(rule.startDate));
       expect(copied.repetitionType, equals(rule.repetitionType));

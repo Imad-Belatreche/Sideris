@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:sideris/models/notification_rule_model.dart';
+import 'package:sideris/models/notification_rule/notification_rule_model.dart';
 import 'package:sideris/utils/recurrence_calculator.dart';
 
 void main() {
@@ -261,6 +261,39 @@ void main() {
       final res = RecurrenceCalculator.computeNextTrigger(rule)!;
       expect(res.nextTrigger, isNull);
       expect(res.error.toString(), contains("not active"));
+    });
+  });
+
+  group("computeNextTriggers occurrence accounting", () {
+    test("does not mutate rule totalOccurrences while generating", () {
+      final rule = makeRule(
+        startDate: DateTime.now().subtract(const Duration(days: 1)),
+        totalOccurrences: 3,
+        fixedTimesMinutes: [9 * 60],
+      );
+
+      final triggers = RecurrenceCalculator.computeNextTriggers(
+        rule,
+        limit: 200,
+      );
+
+      expect(triggers, hasLength(3));
+      expect(rule.totalOccurrences, equals(3));
+    });
+
+    test("never generates more triggers than remaining occurrences", () {
+      final rule = makeRule(
+        startDate: DateTime.now().subtract(const Duration(days: 1)),
+        totalOccurrences: 2,
+        fixedTimesMinutes: [9 * 60, 12 * 60],
+      );
+
+      final triggers = RecurrenceCalculator.computeNextTriggers(
+        rule,
+        limit: 200,
+      );
+
+      expect(triggers, hasLength(2));
     });
   });
 

@@ -1,5 +1,5 @@
 import 'package:sideris/l10n/generated/app_localizations.dart';
-import 'package:sideris/models/notification_rule_model.dart';
+import 'package:sideris/models/notification_rule/notification_rule_model.dart';
 
 extension RepetitionTypeLabel on RepetitionType {
   String label(AppLocalizations l10n) => switch (this) {

@@ -1,72 +1,102 @@
-import 'package:sideris/models/notification_rule_model.dart';
+import 'dart:collection';
+
 import 'package:isar_community/isar.dart';
+import 'package:sideris/models/notification_rule/notification_rule_model.dart';
 
 class NotificationsRepository {
-  final Isar database;
+  final Isar _database;
 
-  NotificationsRepository(this.database);
+  NotificationsRepository({required Isar database}) : _database = database;
 
   Future<int> addNotification(NotificationRuleModel notification) async {
     int id = -1;
-    await database.writeTxn(() async {
-      id = await database.notificationRuleModels.put(notification);
+    await _database.writeTxn(() async {
+      id = await _database.notificationRuleModels.put(notification);
     });
     return id;
   }
 
   Future<void> updateNotification(NotificationRuleModel notification) async {
-    await database.writeTxn(() async {
-      await database.notificationRuleModels.put(notification);
+    await _database.writeTxn(() async {
+      await _database.notificationRuleModels.put(notification);
     });
   }
 
   Future<void> deleteNotification(int id) async {
-    await database.writeTxn(() async {
-      await database.notificationRuleModels.delete(id);
+    await _database.writeTxn(() async {
+      await _database.notificationRuleModels.delete(id);
     });
   }
 
   Future<List<NotificationRuleModel>> getAllNotifications() async {
-    return await database.notificationRuleModels
+    return await _database.notificationRuleModels
         .where()
         .sortByNextTriggerAt()
         .findAll();
   }
 
   Future<NotificationRuleModel?> getNotificationById(int id) async {
-    return await database.notificationRuleModels.get(id);
+    return await _database.notificationRuleModels.get(id);
   }
 
   Future<List<NotificationRuleModel>> getActiveNotifications() async {
-    return await database.notificationRuleModels
+    return await _database.notificationRuleModels
         .where()
-        .isActiveEqualToAnyIsScheduledNextTriggerAt(true)
+        .isActiveEqualTo(true)
         .sortByNextTriggerAt()
         .findAll();
   }
 
   Future<List<NotificationRuleModel>> getNonActiveNotifications() async {
-    return await database.notificationRuleModels
+    return await _database.notificationRuleModels
         .where()
-        .isActiveEqualToAnyIsScheduledNextTriggerAt(false)
-        .sortByNextTriggerAt()
+        .isActiveEqualTo(false)
+        .sortByLastTriggeredAt()
         .findAll();
   }
 
-  Future<List<NotificationRuleModel>> getScheduledNotifications() async {
-    return await database.notificationRuleModels
-        .where()
-        .isActiveIsScheduledEqualToAnyNextTriggerAt(true, true)
-        .sortByNextTriggerAt()
-        .findAll();
-  }
+  Future<SplayTreeMap<DateTime, List<NotificationRuleModel>>>
+  get600NotificationsToTrigger() async {
+    final now = DateTime.now();
+    final nearestPairs = SplayTreeMap<DateTime, List<NotificationRuleModel>>(
+      (key1, key2) => key1.compareTo(key2),
+    );
 
-  Future<List<NotificationRuleModel>> get50NotificationsToTrigger() async {
-    return await database.notificationRuleModels
-        .where()
-        .isActiveIsScheduledEqualToAnyNextTriggerAt(true, false)
-        .sortByNextTriggerAt()
-        .limit(50)
-        .findAll();
+    final activeRules = await getActiveNotifications();
+
+    for (var rule in activeRules) {
+      if (rule.nextTriggersAt == null || rule.nextTriggersAt!.isEmpty) continue;
+
+      final seenTriggers = <DateTime>{};
+      for (var dateTime in rule.nextTriggersAt!) {
+        if (dateTime.isBefore(now) || !seenTriggers.add(dateTime)) continue;
+        nearestPairs.update(
+          dateTime,
+          (value) => value..add(rule),
+          ifAbsent: () => [rule],
+        );
+      }
+    }
+
+    const maxNotifs = 600;
+    int remaining = maxNotifs;
+
+    final SplayTreeMap<DateTime, List<NotificationRuleModel>> nearest60 =
+        SplayTreeMap<DateTime, List<NotificationRuleModel>>(
+          (key1, key2) => key1.compareTo(key2),
+        );
+    for (var entery in nearestPairs.entries) {
+      if (remaining == 0) break;
+
+      final rulesAtTime = entery.value;
+      final selectedCount = rulesAtTime.length <= remaining
+          ? rulesAtTime.length
+          : remaining;
+
+      nearest60[entery.key] = rulesAtTime.take(selectedCount).toList();
+      remaining -= selectedCount;
+    }
+
+    return nearest60;
   }
 }

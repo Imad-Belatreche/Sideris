@@ -9,7 +9,7 @@ import 'package:sideris/cubits/settings/settings_cubit.dart';
 import 'package:sideris/l10n/app_font.dart';
 import 'package:sideris/l10n/enum_labels.dart';
 import 'package:sideris/l10n/l10n.dart';
-import 'package:sideris/models/notification_rule_model.dart';
+import 'package:sideris/models/notification_rule/notification_rule_model.dart';
 import 'package:sideris/models/settings_model.dart';
 import 'package:sideris/services/permission_service.dart';
 import 'package:sideris/utils/permission_dialog.dart';

@@ -7,7 +7,7 @@ part of 'notification_rule_model.dart';
 // **************************************************************************
 
 // coverage:ignore-file
-// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types, experimental_member_use
 
 extension GetNotificationRuleModelCollection on Isar {
   IsarCollection<NotificationRuleModel> get notificationRuleModels =>
@@ -89,20 +89,20 @@ const NotificationRuleModelSchema = CollectionSchema(
       name: r'isForever',
       type: IsarType.bool,
     ),
-    r'isScheduled': PropertySchema(
-      id: 15,
-      name: r'isScheduled',
-      type: IsarType.bool,
-    ),
     r'lastTriggeredAt': PropertySchema(
-      id: 16,
+      id: 15,
       name: r'lastTriggeredAt',
       type: IsarType.dateTime,
     ),
     r'nextTriggerAt': PropertySchema(
-      id: 17,
+      id: 16,
       name: r'nextTriggerAt',
       type: IsarType.dateTime,
+    ),
+    r'nextTriggersAt': PropertySchema(
+      id: 17,
+      name: r'nextTriggersAt',
+      type: IsarType.dateTimeList,
     ),
     r'randomCount': PropertySchema(
       id: 18,
@@ -178,24 +178,14 @@ const NotificationRuleModelSchema = CollectionSchema(
   deserializeProp: _notificationRuleModelDeserializeProp,
   idName: r'id',
   indexes: {
-    r'isActive_isScheduled_nextTriggerAt': IndexSchema(
-      id: -3737118100490942973,
-      name: r'isActive_isScheduled_nextTriggerAt',
+    r'isActive': IndexSchema(
+      id: 8092228061260947457,
+      name: r'isActive',
       unique: false,
       replace: false,
       properties: [
         IndexPropertySchema(
           name: r'isActive',
-          type: IndexType.value,
-          caseSensitive: false,
-        ),
-        IndexPropertySchema(
-          name: r'isScheduled',
-          type: IndexType.value,
-          caseSensitive: false,
-        ),
-        IndexPropertySchema(
-          name: r'nextTriggerAt',
           type: IndexType.value,
           caseSensitive: false,
         ),
@@ -208,7 +198,7 @@ const NotificationRuleModelSchema = CollectionSchema(
   getId: _notificationRuleModelGetId,
   getLinks: _notificationRuleModelGetLinks,
   attach: _notificationRuleModelAttach,
-  version: '3.3.2',
+  version: '3.4.1',
 );
 
 int _notificationRuleModelEstimateSize(
@@ -251,6 +241,12 @@ int _notificationRuleModelEstimateSize(
     final value = object.intervalUnit;
     if (value != null) {
       bytesCount += 3 + value.name.length * 3;
+    }
+  }
+  {
+    final value = object.nextTriggersAt;
+    if (value != null) {
+      bytesCount += 3 + value.length * 8;
     }
   }
   {
@@ -314,9 +310,9 @@ void _notificationRuleModelSerialize(
   writer.writeLong(offsets[12], object.intervalWindowStartMinutes);
   writer.writeBool(offsets[13], object.isActive);
   writer.writeBool(offsets[14], object.isForever);
-  writer.writeBool(offsets[15], object.isScheduled);
-  writer.writeDateTime(offsets[16], object.lastTriggeredAt);
-  writer.writeDateTime(offsets[17], object.nextTriggerAt);
+  writer.writeDateTime(offsets[15], object.lastTriggeredAt);
+  writer.writeDateTime(offsets[16], object.nextTriggerAt);
+  writer.writeDateTimeList(offsets[17], object.nextTriggersAt);
   writer.writeLong(offsets[18], object.randomCount);
   writer.writeLong(offsets[19], object.randomWindowEndMinutes);
   writer.writeLong(offsets[20], object.randomWindowStartMinutes);
@@ -371,9 +367,9 @@ NotificationRuleModel _notificationRuleModelDeserialize(
     intervalWindowStartMinutes: reader.readLongOrNull(offsets[12]),
     isActive: reader.readBoolOrNull(offsets[13]) ?? true,
     isForever: reader.readBoolOrNull(offsets[14]) ?? false,
-    isScheduled: reader.readBoolOrNull(offsets[15]) ?? false,
-    lastTriggeredAt: reader.readDateTimeOrNull(offsets[16]),
-    nextTriggerAt: reader.readDateTimeOrNull(offsets[17]),
+    lastTriggeredAt: reader.readDateTimeOrNull(offsets[15]),
+    nextTriggerAt: reader.readDateTimeOrNull(offsets[16]),
+    nextTriggersAt: reader.readDateTimeList(offsets[17]),
     randomCount: reader.readLongOrNull(offsets[18]),
     randomWindowEndMinutes: reader.readLongOrNull(offsets[19]),
     randomWindowStartMinutes: reader.readLongOrNull(offsets[20]),
@@ -451,11 +447,11 @@ P _notificationRuleModelDeserializeProp<P>(
     case 14:
       return (reader.readBoolOrNull(offset) ?? false) as P;
     case 15:
-      return (reader.readBoolOrNull(offset) ?? false) as P;
+      return (reader.readDateTimeOrNull(offset)) as P;
     case 16:
       return (reader.readDateTimeOrNull(offset)) as P;
     case 17:
-      return (reader.readDateTimeOrNull(offset)) as P;
+      return (reader.readDateTimeList(offset)) as P;
     case 18:
       return (reader.readLongOrNull(offset)) as P;
     case 19:
@@ -609,12 +605,10 @@ extension NotificationRuleModelQueryWhereSort
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhere>
-  anyIsActiveIsScheduledNextTriggerAt() {
+  anyIsActive() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
-        const IndexWhereClause.any(
-          indexName: r'isActive_isScheduled_nextTriggerAt',
-        ),
+        const IndexWhereClause.any(indexName: r'isActive'),
       );
     });
   }
@@ -695,25 +689,22 @@ extension NotificationRuleModelQueryWhere
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
-  isActiveEqualToAnyIsScheduledNextTriggerAt(bool isActive) {
+  isActiveEqualTo(bool isActive) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
-        IndexWhereClause.equalTo(
-          indexName: r'isActive_isScheduled_nextTriggerAt',
-          value: [isActive],
-        ),
+        IndexWhereClause.equalTo(indexName: r'isActive', value: [isActive]),
       );
     });
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
-  isActiveNotEqualToAnyIsScheduledNextTriggerAt(bool isActive) {
+  isActiveNotEqualTo(bool isActive) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
             .addWhereClause(
               IndexWhereClause.between(
-                indexName: r'isActive_isScheduled_nextTriggerAt',
+                indexName: r'isActive',
                 lower: [],
                 upper: [isActive],
                 includeUpper: false,
@@ -721,7 +712,7 @@ extension NotificationRuleModelQueryWhere
             )
             .addWhereClause(
               IndexWhereClause.between(
-                indexName: r'isActive_isScheduled_nextTriggerAt',
+                indexName: r'isActive',
                 lower: [isActive],
                 includeLower: false,
                 upper: [],
@@ -731,7 +722,7 @@ extension NotificationRuleModelQueryWhere
         return query
             .addWhereClause(
               IndexWhereClause.between(
-                indexName: r'isActive_isScheduled_nextTriggerAt',
+                indexName: r'isActive',
                 lower: [isActive],
                 includeLower: false,
                 upper: [],
@@ -739,226 +730,13 @@ extension NotificationRuleModelQueryWhere
             )
             .addWhereClause(
               IndexWhereClause.between(
-                indexName: r'isActive_isScheduled_nextTriggerAt',
+                indexName: r'isActive',
                 lower: [],
                 upper: [isActive],
                 includeUpper: false,
               ),
             );
       }
-    });
-  }
-
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
-  isActiveIsScheduledEqualToAnyNextTriggerAt(bool isActive, bool isScheduled) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IndexWhereClause.equalTo(
-          indexName: r'isActive_isScheduled_nextTriggerAt',
-          value: [isActive, isScheduled],
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
-  isActiveEqualToIsScheduledNotEqualToAnyNextTriggerAt(
-    bool isActive,
-    bool isScheduled,
-  ) {
-    return QueryBuilder.apply(this, (query) {
-      if (query.whereSort == Sort.asc) {
-        return query
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'isActive_isScheduled_nextTriggerAt',
-                lower: [isActive],
-                upper: [isActive, isScheduled],
-                includeUpper: false,
-              ),
-            )
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'isActive_isScheduled_nextTriggerAt',
-                lower: [isActive, isScheduled],
-                includeLower: false,
-                upper: [isActive],
-              ),
-            );
-      } else {
-        return query
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'isActive_isScheduled_nextTriggerAt',
-                lower: [isActive, isScheduled],
-                includeLower: false,
-                upper: [isActive],
-              ),
-            )
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'isActive_isScheduled_nextTriggerAt',
-                lower: [isActive],
-                upper: [isActive, isScheduled],
-                includeUpper: false,
-              ),
-            );
-      }
-    });
-  }
-
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
-  isActiveIsScheduledEqualToNextTriggerAtIsNull(
-    bool isActive,
-    bool isScheduled,
-  ) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IndexWhereClause.equalTo(
-          indexName: r'isActive_isScheduled_nextTriggerAt',
-          value: [isActive, isScheduled, null],
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
-  isActiveIsScheduledEqualToNextTriggerAtIsNotNull(
-    bool isActive,
-    bool isScheduled,
-  ) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IndexWhereClause.between(
-          indexName: r'isActive_isScheduled_nextTriggerAt',
-          lower: [isActive, isScheduled, null],
-          includeLower: false,
-          upper: [isActive, isScheduled],
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
-  isActiveIsScheduledNextTriggerAtEqualTo(
-    bool isActive,
-    bool isScheduled,
-    DateTime? nextTriggerAt,
-  ) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IndexWhereClause.equalTo(
-          indexName: r'isActive_isScheduled_nextTriggerAt',
-          value: [isActive, isScheduled, nextTriggerAt],
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
-  isActiveIsScheduledEqualToNextTriggerAtNotEqualTo(
-    bool isActive,
-    bool isScheduled,
-    DateTime? nextTriggerAt,
-  ) {
-    return QueryBuilder.apply(this, (query) {
-      if (query.whereSort == Sort.asc) {
-        return query
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'isActive_isScheduled_nextTriggerAt',
-                lower: [isActive, isScheduled],
-                upper: [isActive, isScheduled, nextTriggerAt],
-                includeUpper: false,
-              ),
-            )
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'isActive_isScheduled_nextTriggerAt',
-                lower: [isActive, isScheduled, nextTriggerAt],
-                includeLower: false,
-                upper: [isActive, isScheduled],
-              ),
-            );
-      } else {
-        return query
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'isActive_isScheduled_nextTriggerAt',
-                lower: [isActive, isScheduled, nextTriggerAt],
-                includeLower: false,
-                upper: [isActive, isScheduled],
-              ),
-            )
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'isActive_isScheduled_nextTriggerAt',
-                lower: [isActive, isScheduled],
-                upper: [isActive, isScheduled, nextTriggerAt],
-                includeUpper: false,
-              ),
-            );
-      }
-    });
-  }
-
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
-  isActiveIsScheduledEqualToNextTriggerAtGreaterThan(
-    bool isActive,
-    bool isScheduled,
-    DateTime? nextTriggerAt, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IndexWhereClause.between(
-          indexName: r'isActive_isScheduled_nextTriggerAt',
-          lower: [isActive, isScheduled, nextTriggerAt],
-          includeLower: include,
-          upper: [isActive, isScheduled],
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
-  isActiveIsScheduledEqualToNextTriggerAtLessThan(
-    bool isActive,
-    bool isScheduled,
-    DateTime? nextTriggerAt, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IndexWhereClause.between(
-          indexName: r'isActive_isScheduled_nextTriggerAt',
-          lower: [isActive, isScheduled],
-          upper: [isActive, isScheduled, nextTriggerAt],
-          includeUpper: include,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterWhereClause>
-  isActiveIsScheduledEqualToNextTriggerAtBetween(
-    bool isActive,
-    bool isScheduled,
-    DateTime? lowerNextTriggerAt,
-    DateTime? upperNextTriggerAt, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IndexWhereClause.between(
-          indexName: r'isActive_isScheduled_nextTriggerAt',
-          lower: [isActive, isScheduled, lowerNextTriggerAt],
-          includeLower: includeLower,
-          upper: [isActive, isScheduled, upperNextTriggerAt],
-          includeUpper: includeUpper,
-        ),
-      );
     });
   }
 }
@@ -2890,19 +2668,6 @@ extension NotificationRuleModelQueryFilter
     NotificationRuleModel,
     QAfterFilterCondition
   >
-  isScheduledEqualTo(bool value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'isScheduled', value: value),
-      );
-    });
-  }
-
-  QueryBuilder<
-    NotificationRuleModel,
-    NotificationRuleModel,
-    QAfterFilterCondition
-  >
   lastTriggeredAtIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
@@ -3088,6 +2853,180 @@ extension NotificationRuleModelQueryFilter
           upper: upper,
           includeUpper: includeUpper,
         ),
+      );
+    });
+  }
+
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  nextTriggersAtIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'nextTriggersAt'),
+      );
+    });
+  }
+
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  nextTriggersAtIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'nextTriggersAt'),
+      );
+    });
+  }
+
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  nextTriggersAtElementEqualTo(DateTime value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'nextTriggersAt', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  nextTriggersAtElementGreaterThan(DateTime value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'nextTriggersAt',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  nextTriggersAtElementLessThan(DateTime value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'nextTriggersAt',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  nextTriggersAtElementBetween(
+    DateTime lower,
+    DateTime upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'nextTriggersAt',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  nextTriggersAtLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'nextTriggersAt', length, true, length, true);
+    });
+  }
+
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  nextTriggersAtIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'nextTriggersAt', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  nextTriggersAtIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'nextTriggersAt', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  nextTriggersAtLengthLessThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'nextTriggersAt', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  nextTriggersAtLengthGreaterThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'nextTriggersAt', length, include, 999999, true);
+    });
+  }
+
+  QueryBuilder<
+    NotificationRuleModel,
+    NotificationRuleModel,
+    QAfterFilterCondition
+  >
+  nextTriggersAtLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'nextTriggersAt',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
       );
     });
   }
@@ -5049,20 +4988,6 @@ extension NotificationRuleModelQuerySortBy
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-  sortByIsScheduled() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isScheduled', Sort.asc);
-    });
-  }
-
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-  sortByIsScheduledDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isScheduled', Sort.desc);
-    });
-  }
-
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
   sortByLastTriggeredAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lastTriggeredAt', Sort.asc);
@@ -5458,20 +5383,6 @@ extension NotificationRuleModelQuerySortThenBy
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-  thenByIsScheduled() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isScheduled', Sort.asc);
-    });
-  }
-
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
-  thenByIsScheduledDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isScheduled', Sort.desc);
-    });
-  }
-
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QAfterSortBy>
   thenByLastTriggeredAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lastTriggeredAt', Sort.asc);
@@ -5762,13 +5673,6 @@ extension NotificationRuleModelQueryWhereDistinct
   }
 
   QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
-  distinctByIsScheduled() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'isScheduled');
-    });
-  }
-
-  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
   distinctByLastTriggeredAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'lastTriggeredAt');
@@ -5779,6 +5683,13 @@ extension NotificationRuleModelQueryWhereDistinct
   distinctByNextTriggerAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'nextTriggerAt');
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, NotificationRuleModel, QDistinct>
+  distinctByNextTriggersAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'nextTriggersAt');
     });
   }
 
@@ -5991,13 +5902,6 @@ extension NotificationRuleModelQueryProperty
     });
   }
 
-  QueryBuilder<NotificationRuleModel, bool, QQueryOperations>
-  isScheduledProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'isScheduled');
-    });
-  }
-
   QueryBuilder<NotificationRuleModel, DateTime?, QQueryOperations>
   lastTriggeredAtProperty() {
     return QueryBuilder.apply(this, (query) {
@@ -6009,6 +5913,13 @@ extension NotificationRuleModelQueryProperty
   nextTriggerAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'nextTriggerAt');
+    });
+  }
+
+  QueryBuilder<NotificationRuleModel, List<DateTime>?, QQueryOperations>
+  nextTriggersAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'nextTriggersAt');
     });
   }
 
@@ -6113,7 +6024,7 @@ extension NotificationRuleModelQueryProperty
 // **************************************************************************
 
 // coverage:ignore-file
-// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types, experimental_member_use
 
 const MonthDaysRepetitionSchema = Schema(
   name: r'MonthDaysRepetition',

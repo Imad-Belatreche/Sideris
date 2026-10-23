@@ -1,23 +1,27 @@
 import 'dart:developer';
 
-import 'package:sideris/models/notification_rule_model.dart';
-import 'package:sideris/repositories/notifications_repository.dart';
-import 'package:sideris/utils/recurrence_calculator.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:isar_community/isar.dart';
+import 'package:sideris/models/notification_rule/notification_rule_model.dart';
+import 'package:sideris/models/scheduled_notification/schedule_model.dart';
+import 'package:sideris/repositories/notifications_repository.dart';
+import 'package:sideris/repositories/scheduled_notifications_repository.dart';
+import 'package:sideris/utils/recurrence_calculator.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 class NotificationService {
   NotificationService({
-    required NotificationsRepository repository,
+    required NotificationsRepository notificationsRepository,
     FlutterLocalNotificationsPlugin? plugin,
-  }) : _notificationRepository = repository,
+    required SchedulesRepository schedulesRepository,
+  }) : _schedulesRepository = schedulesRepository,
+       _notificationsRepository = notificationsRepository,
        _plugin = plugin ?? FlutterLocalNotificationsPlugin();
 
-  final NotificationsRepository _notificationRepository;
+  final NotificationsRepository _notificationsRepository;
+  final SchedulesRepository _schedulesRepository;
   final FlutterLocalNotificationsPlugin _plugin;
-
-  int _platformId(int isarId) =>
-      isarId.bitLength > 31 ? isarId % 0x7FFFFFFF : isarId;
+  Future<void>? _syncInProgress;
 
   Future<void> initialize() async {
     await _plugin.initialize(
@@ -28,33 +32,27 @@ class NotificationService {
     );
   }
 
-  Future<bool> scheduleExactNotification(
-    NotificationRuleModel notificationRule,
-  ) async {
-    if (notificationRule.nextTriggerAt == null ||
-        !notificationRule.nextTriggerAt!.isAfter(DateTime.now())) {
+  Future<bool> scheduleExactNotification(ScheduleModel schedule) async {
+    if (!schedule.isPending ||
+        schedule.consumedAt != null ||
+        schedule.triggerTime.isBefore(DateTime.now()) ||
+        schedule.cancelledAt != null) {
       throw Exception(
-        "$runtimeType: Notification with id '${notificationRule.id}' doesn't have a nextTriggerAt or it's in the past. Skipping scheduling.",
+        "$runtimeType: Notification with id '${schedule.id}' doesn't have a triggerTime or it's in the past. Skipping scheduling.",
       );
     }
     try {
-      final isAlreadyScheduled = await _plugin
-          .pendingNotificationRequests()
-          .then((scheduledNotifications) {
-            return scheduledNotifications.any(
-              (n) => n.id == _platformId(notificationRule.id),
-            );
-          });
-
-      if (isAlreadyScheduled) {
+      final notificationRule = await _notificationsRepository
+          .getNotificationById(schedule.ruleId);
+      if (notificationRule == null) {
         throw Exception(
-          "$runtimeType: Notification with id '${notificationRule.id}' is already scheduled. Skipping scheduling.",
+          "New notification did not found in db, this should not happen",
         );
       }
-
       await _plugin.zonedSchedule(
-        id: _platformId(notificationRule.id),
+        id: schedule.platformId,
         notificationDetails: NotificationDetails(
+          //TODO: Add IOS notification details
           android: AndroidNotificationDetails(
             notificationRule.bypassDnd
                 ? 'sideris_dnd_channel_id'
@@ -79,10 +77,7 @@ class NotificationService {
             //TODO: Add custom sound based on notification
           ),
         ),
-        scheduledDate: tz.TZDateTime.from(
-          notificationRule.nextTriggerAt!,
-          tz.local,
-        ),
+        scheduledDate: tz.TZDateTime.from(schedule.triggerTime, tz.local),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
 
         title: notificationRule.title,
@@ -94,118 +89,217 @@ class NotificationService {
     }
   }
 
-  Future<void> cancelNotification(int id) async {
+  Future<void> cancelNotification(int scheduleId) async {
     try {
-      log("$runtimeType: Cancelling notification with id: $id");
-      await _plugin.cancel(id: _platformId(id));
+      log("$runtimeType: Cancelling notification with id: $scheduleId");
+      final canceledSchedule = await _schedulesRepository.getScheduleById(
+        scheduleId,
+      );
+      if (canceledSchedule == null) {
+        throw Exception("Notification not found");
+      }
+
+      await _plugin.cancel(id: canceledSchedule.platformId);
+      await _schedulesRepository.markCancelled([
+        canceledSchedule.id,
+      ], DateTime.now());
     } catch (e) {
       throw Exception(
-        "$runtimeType: Error cancelling notification with id: ${_platformId(id)}: $e",
+        "$runtimeType: Error cancelling notification with id: $scheduleId: $e",
       );
     }
   }
 
-  Future<List<NotificationRuleModel>> refreshScheduledNotifications() async {
+  Future<void> syncNotification() {
+    final inProgress = _syncInProgress;
+    if (inProgress != null) return inProgress;
+
+    late final Future<void> operation;
+    operation = _runSyncWithCleanup();
+    _syncInProgress = operation;
+    return operation;
+  }
+
+  Future<void> _runSyncWithCleanup() async {
     try {
-      final pendingOs = await _plugin.pendingNotificationRequests();
-      final pendingOsIds = pendingOs.map((n) => n.id).toSet();
+      await _syncNotificationInternal();
+    } finally {
+      _clearSyncInProgress(_syncInProgress!);
+    }
+  }
 
-      if (pendingOsIds.length > 50) {
-        throw Exception(
-          "$runtimeType: More than 50 notifications are scheduled. This should not happen.",
-        );
-      }
+  void _clearSyncInProgress(Future<void> operation) {
+    if (identical(_syncInProgress, operation)) {
+      _syncInProgress = null;
+    }
+  }
 
-      var allActiveNotifications = await _notificationRepository
-          .getActiveNotifications();
+  Future<void> _syncNotificationInternal() async {
+    final now = DateTime.now();
+    await _reconcileOverdueSchedules(now);
 
-      for (var notification in allActiveNotifications) {
-        if (notification.nextTriggerAt == null ||
-            !notification.nextTriggerAt!.isAfter(DateTime.now())) {
-          try {
-            final firedAt = notification.nextTriggerAt;
-            var updated = notification;
+    final groupedNearest600 = await _notificationsRepository
+        .get600NotificationsToTrigger();
+    final nearest600 = groupedNearest600.entries
+        .where((entry) => !entry.key.isBefore(now))
+        .expand(
+          (entry) => entry.value.map(
+            (rule) => (ruleId: rule.id, triggerTime: entry.key),
+          ),
+        )
+        .toList();
 
-            if (firedAt != null) {
-              updated = updated.copyWith(
-                lastTriggeredAt: Optional(firedAt),
-                totalOccurrences: updated.totalOccurrences != null
-                    ? Optional(updated.totalOccurrences! - 1)
-                    : null,
-              );
-            }
+    final systemPending = await _plugin.pendingNotificationRequests();
+    final systemPendingIds = systemPending.map((request) => request.id).toSet();
 
-            final response = RecurrenceCalculator.computeNextTrigger(updated);
+    final localPending = (await _schedulesRepository.getPendingSchedules())
+        .where(
+          (schedule) =>
+              schedule.status == ScheduleStatus.pending &&
+              schedule.cancelledAt == null &&
+              schedule.consumedAt == null,
+        )
+        .toList();
 
-            if (response != null) {
-              if (response.error != null) {
-                log(
-                  "$runtimeType: Error computing next trigger for notification with id: ${notification.id}. Error: ${response.error}",
-                );
-                updated = updated.copyWith(isActive: false);
-                await _notificationRepository.updateNotification(updated);
-              } else if (response.nextTrigger != null) {
-                updated = updated.copyWith(
-                  nextTriggerAt: Optional(response.nextTrigger),
-                );
-                await _notificationRepository.updateNotification(updated);
-              }
-            }
-          } catch (e) {
-            log(
-              "$runtimeType: Error computing next trigger for notification with id: ${notification.id}. Error: $e",
-            );
-            notification = notification.copyWith(isActive: false);
-            await _notificationRepository.updateNotification(notification);
-          }
-        }
-      }
+    final localByKey = <(int, DateTime), ScheduleModel>{};
+    for (final schedule in localPending) {
+      localByKey.putIfAbsent((
+        schedule.ruleId,
+        schedule.triggerTime,
+      ), () => schedule);
+    }
 
-      allActiveNotifications = await _notificationRepository
-          .getActiveNotifications();
+    final desiredSchedules = <ScheduleModel>[];
+    final schedulesToInsert = <ScheduleModel>[];
+    final desiredPlatformIds = <int>{};
+    final desiredKeys = <(int, DateTime)>{};
 
-      final candidates = allActiveNotifications.take(50).toList();
-      final desiredIds = candidates.map((e) => _platformId(e.id)).toSet();
+    for (final candidate in nearest600) {
+      final key = (candidate.ruleId, candidate.triggerTime);
+      if (!desiredKeys.add(key)) continue;
 
-      for (var candidate in candidates) {
-        final platformId = _platformId(candidate.id);
-        if (!pendingOsIds.contains(platformId)) {
-          try {
-            await scheduleExactNotification(candidate);
-            candidate = candidate.copyWith(isScheduled: true);
-            await _notificationRepository.updateNotification(candidate);
-          } catch (e) {
-            log(
-              "$runtimeType: Failed to schedule notification with id: ${candidate.id}. Error: $e",
-            );
-          }
-        } else if (!candidate.isScheduled) {
-          candidate = candidate.copyWith(isScheduled: true);
-          await _notificationRepository.updateNotification(candidate);
-        }
-      }
-
-      final forgottenIds = pendingOsIds.difference(desiredIds);
-      for (final forgottenId in forgottenIds) {
-        await cancelNotification(forgottenId);
-        var rule = await _notificationRepository.getNotificationById(
-          forgottenId,
-        );
-        if (rule != null) {
-          rule = rule.copyWith(isScheduled: false);
-          await _notificationRepository.updateNotification(rule);
-        } else {
-          log(
-            "$runtimeType: Notification with id: $forgottenId is scheduled in OS but not found in database. This should not happen.",
+      final schedule =
+          localByKey[key] ??
+          ScheduleModel(
+            ruleId: candidate.ruleId,
+            triggerTime: candidate.triggerTime,
           );
-        }
+
+      desiredSchedules.add(schedule);
+      if (schedule.id == Isar.autoIncrement) {
+        schedulesToInsert.add(schedule);
+      } else {
+        desiredPlatformIds.add(schedule.platformId);
+      }
+    }
+
+    if (schedulesToInsert.isNotEmpty) {
+      await _schedulesRepository.addSchedules(schedulesToInsert);
+      for (final schedule in schedulesToInsert) {
+        desiredPlatformIds.add(schedule.platformId);
+      }
+    }
+
+    final staleLocalSchedules = localPending.where((schedule) {
+      final key = (schedule.ruleId, schedule.triggerTime);
+      return !desiredKeys.contains(key);
+    }).toList();
+    if (staleLocalSchedules.isNotEmpty) {
+      await _schedulesRepository.markCancelled(
+        staleLocalSchedules.map((schedule) => schedule.id).toList(),
+        now,
+      );
+    }
+
+    final staleSystemIds = systemPendingIds.difference(desiredPlatformIds);
+    for (final id in staleSystemIds) {
+      await _plugin.cancel(id: id);
+    }
+
+    for (final schedule in desiredSchedules) {
+      if (!systemPendingIds.contains(schedule.platformId)) {
+        await scheduleExactNotification(schedule);
+      }
+    }
+  }
+
+  Future<void> _reconcileOverdueSchedules(DateTime now) async {
+    final overdue = await _schedulesRepository.getOverduePendingSchedules(now);
+    if (overdue.isEmpty) return;
+
+    await _schedulesRepository.markConsumed(
+      overdue.map((schedule) => schedule.id).toList(),
+      now,
+    );
+
+    final overdueByRule = <int, List<ScheduleModel>>{};
+    for (final schedule in overdue) {
+      overdueByRule.putIfAbsent(schedule.ruleId, () => []).add(schedule);
+    }
+
+    for (final entry in overdueByRule.entries) {
+      final rule = await _notificationsRepository.getNotificationById(
+        entry.key,
+      );
+      if (rule == null) {
+        await _schedulesRepository.deletePendingForRule(entry.key);
+        continue;
       }
 
-      return await _notificationRepository.getScheduledNotifications();
-    } catch (e) {
-      throw Exception(
-        "$runtimeType: Error refreshing scheduled notifications: $e",
+      final latestTrigger = entry.value
+          .map((schedule) => schedule.triggerTime)
+          .reduce((left, right) => left.isAfter(right) ? left : right);
+
+      final remainingOccurrences = rule.totalOccurrences == null
+          ? null
+          : rule.totalOccurrences! - entry.value.length;
+
+      final consumedRule = rule.copyWith(
+        lastTriggeredAt: Optional(latestTrigger),
+        totalOccurrences: Optional(remainingOccurrences),
       );
+
+      await _schedulesRepository.deletePendingForRule(rule.id);
+
+      if (!rule.isActive ||
+          remainingOccurrences != null && remainingOccurrences <= 0) {
+        await _notificationsRepository.updateNotification(
+          consumedRule.copyWith(
+            isActive: false,
+            nextTriggersAt: Optional<List<DateTime>?>(null),
+            nextTriggerAt: Optional<DateTime?>(null),
+            updatedAt: Optional(now),
+          ),
+        );
+        continue;
+      }
+
+      final nextTriggers = RecurrenceCalculator.computeNextTriggers(
+        consumedRule,
+        now: now,
+      );
+
+      if (nextTriggers.isEmpty ||
+          (consumedRule.endDate != null &&
+              nextTriggers.first.isAfter(consumedRule.endDate!))) {
+        await _notificationsRepository.updateNotification(
+          consumedRule.copyWith(
+            isActive: false,
+            nextTriggersAt: Optional<List<DateTime>?>(null),
+            nextTriggerAt: Optional<DateTime?>(null),
+            updatedAt: Optional(now),
+          ),
+        );
+      } else {
+        await _notificationsRepository.updateNotification(
+          consumedRule.copyWith(
+            isActive: true,
+            nextTriggersAt: Optional(nextTriggers),
+            nextTriggerAt: Optional(nextTriggers.first),
+            updatedAt: Optional(now),
+          ),
+        );
+      }
     }
   }
 }

@@ -8,7 +8,7 @@ import 'package:sideris/cubits/notification/notification_cubit.dart';
 import 'package:sideris/cubits/settings/settings_cubit.dart';
 import 'package:sideris/l10n/app_font.dart';
 import 'package:sideris/l10n/l10n.dart';
-import 'package:sideris/models/notification_rule_model.dart';
+import 'package:sideris/models/notification_rule/notification_rule_model.dart';
 import 'package:sideris/pages/create_update_notification_page.dart';
 import 'package:sideris/utils/general_utils.dart';
 import 'package:sideris/utils/recurrence_calculator.dart';
