@@ -3,13 +3,18 @@ import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:sideris/cubits/notification/notification_cubit.dart';
-import 'package:sideris/models/notification_rule_model.dart';
+import 'package:sideris/models/notification_rule/notification_rule_model.dart';
+import 'package:sideris/models/scheduled_notification/schedule_model.dart';
 import 'package:sideris/repositories/notifications_repository.dart';
+import 'package:sideris/repositories/scheduled_notifications_repository.dart';
 import 'package:sideris/services/notification_service.dart';
 import 'package:sideris/utils/exceptions.dart';
 
 class MockNotificationsRepository extends Mock
     implements NotificationsRepository {}
+
+class MockScheduledNotificationsRepository extends Mock
+    implements SchedulesRepository {}
 
 class MockNotificationService extends Mock implements NotificationService {}
 
@@ -61,6 +66,7 @@ NotificationRuleModel _makeRepetitiveRule({
 
 void main() {
   late MockNotificationsRepository mockRepo;
+  late MockScheduledNotificationsRepository mockScheduledRepo;
   late MockNotificationService mockService;
   late NotificationCubit cubit;
 
@@ -78,13 +84,21 @@ void main() {
 
   setUp(() {
     mockRepo = MockNotificationsRepository();
+    mockScheduledRepo = MockScheduledNotificationsRepository();
     mockService = MockNotificationService();
-    cubit = NotificationCubit(repository: mockRepo, service: mockService);
+    cubit = NotificationCubit(
+      schedulesRepository: mockScheduledRepo,
+      notificationRepository: mockRepo,
+      notificationService: mockService,
+    );
 
+    when(() => mockService.syncNotification()).thenAnswer((_) async {});
     when(
-      () => mockService.refreshScheduledNotifications(),
-    ).thenAnswer((_) async => []);
-    when(() => mockService.cancelNotification(any())).thenAnswer((_) async {});
+      () => mockScheduledRepo.deletePendingForRule(any()),
+    ).thenAnswer((_) async => <ScheduleModel>[]);
+    when(
+      () => mockScheduledRepo.deleteSchedulesOfRule(any()),
+    ).thenAnswer((_) async => <ScheduleModel>[]);
   });
 
   tearDown(() => cubit.close());
@@ -176,7 +190,7 @@ void main() {
       expect(result.id, equals(5));
       expect(result.nextTriggerAt, isNotNull);
       verify(() => mockRepo.addNotification(any())).called(1);
-      verify(() => mockService.refreshScheduledNotifications()).called(1);
+      verify(() => mockService.syncNotification()).called(1);
       verify(() => mockRepo.getAllNotifications()).called(1);
     });
 
@@ -241,7 +255,6 @@ void main() {
         );
         final saved = input.copyWith(
           isActive: false,
-          isScheduled: false,
           nextTriggerAt: Optional<DateTime?>(null),
         )..id = 14;
 
@@ -263,7 +276,6 @@ void main() {
             verify(() => mockRepo.addNotification(captureAny())).captured.single
                 as NotificationRuleModel;
         expect(captured.isActive, isFalse);
-        expect(captured.isScheduled, isFalse);
         expect(captured.nextTriggerAt, isNull);
       },
     );
@@ -337,8 +349,7 @@ void main() {
       await cubit.updateNotification(input);
 
       verify(() => mockRepo.updateNotification(any())).called(1);
-      verify(() => mockService.cancelNotification(20)).called(1);
-      verify(() => mockService.refreshScheduledNotifications()).called(1);
+      verify(() => mockService.syncNotification()).called(1);
       expect(cubit.state.notifications, equals([saved]));
       expect(cubit.state.isLoading, isFalse);
     });
@@ -370,6 +381,29 @@ void main() {
               as NotificationRuleModel;
       expect(captured.endDate, isNotNull);
       expect(captured.endDate!.isAfter(now), isTrue);
+    });
+
+    test("persists inactive update when no future triggers remain", () async {
+      final input = _makeOneTimeRule(
+        id: 24,
+        startDate: DateTime.now().subtract(const Duration(minutes: 1)),
+      );
+
+      when(() => mockRepo.updateNotification(any())).thenAnswer((_) async {});
+      when(() => mockRepo.getAllNotifications()).thenAnswer((_) async => []);
+
+      await cubit.updateNotification(input);
+
+      final captured =
+          verify(
+                () => mockRepo.updateNotification(captureAny()),
+              ).captured.single
+              as NotificationRuleModel;
+
+      expect(captured.isActive, isFalse);
+      expect(captured.nextTriggersAt, isNull);
+      expect(captured.nextTriggerAt, isNull);
+      verify(() => mockService.syncNotification()).called(1);
     });
 
     test("repo error sets errorMessage", () async {
@@ -406,7 +440,8 @@ void main() {
 
       expect(result, equals(existing));
       verify(() => mockRepo.deleteNotification(30)).called(1);
-      verify(() => mockService.refreshScheduledNotifications()).called(1);
+      verify(() => mockScheduledRepo.deleteSchedulesOfRule(30)).called(1);
+      verify(() => mockService.syncNotification()).called(1);
       expect(cubit.state.notifications, isEmpty);
     });
 
@@ -439,7 +474,7 @@ void main() {
       expect(cubit.state.errorMessage, contains("delete failed"));
     });
 
-    test("service.refreshScheduledNotifications called after delete", () async {
+    test("service.syncNotification called after delete", () async {
       when(
         () => mockRepo.getNotificationById(32),
       ).thenAnswer((_) async => _makeOneTimeRule(id: 32));
@@ -448,7 +483,7 @@ void main() {
 
       await cubit.deleteNotification(32);
 
-      verify(() => mockService.refreshScheduledNotifications()).called(1);
+      verify(() => mockService.syncNotification()).called(1);
     });
 
     test("emits isLoading false in finally block", () async {
