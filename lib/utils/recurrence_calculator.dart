@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:sideris/models/notification_rule_model.dart';
+import 'package:sideris/models/notification_rule/notification_rule_model.dart';
 import 'package:sideris/utils/general_utils.dart';
 
 class RecurrenceCalculationResponse {
@@ -136,8 +136,53 @@ class RecurrenceCalculator {
     return null;
   }
 
+  static List<DateTime> _randomSlotsFor(
+    DateTime triggerDate,
+    NotificationRuleModel rule,
+  ) {
+    final seed =
+        rule.id.hashCode ^
+        triggerDate.year ^
+        (triggerDate.month << 8) ^
+        (triggerDate.day << 16);
+    final rng = Random(seed);
+
+    final startMin = rule.randomWindowStartMinutes!;
+    final endMin = rule.randomWindowEndMinutes!;
+
+    if (startMin >= endMin) {
+      throw Exception("Random window start must be before window end");
+    }
+
+    final availableMinutes = endMin - startMin + 1;
+
+    if (rule.randomCount! > availableMinutes) {
+      throw Exception(
+        "Random notification count exceeds available window minutes",
+      );
+    }
+
+    final availableSlots = List.generate(
+      availableMinutes,
+      (index) => startMin + index,
+    )..shuffle(rng);
+
+    final minutesList = availableSlots.take(rule.randomCount!).toList()..sort();
+
+    return minutesList.map((m) {
+      return DateTime(
+        triggerDate.year,
+        triggerDate.month,
+        triggerDate.day,
+        m ~/ 60,
+        m % 60,
+      );
+    }).toList();
+  }
+
   static DateTime _dateFinder(
     NotificationRuleModel rule, {
+    required DateTime now,
     DateTime? lastTriggeredAt,
   }) {
     if (rule.scheduleEvery == null || rule.scheduleUnit == null) {
@@ -148,7 +193,6 @@ class RecurrenceCalculator {
       throw Exception('Schedule every must be greater than 0');
     }
 
-    DateTime now = DateTime.now();
     now = _timeCropping(now);
     final effectiveLastTriggeredAt = lastTriggeredAt ?? rule.lastTriggeredAt;
 
@@ -332,10 +376,9 @@ class RecurrenceCalculator {
 
   static DateTime? _timeFinder(
     DateTime triggerDate,
-    NotificationRuleModel rule,
-  ) {
-    final now = DateTime.now();
-
+    NotificationRuleModel rule, {
+    required DateTime now,
+  }) {
     if (rule.isSpecific) {
       if (rule.fixedTimes == null || rule.fixedTimes!.isEmpty) {
         throw Exception("Specific repetition but fixedTimes was not provided");
@@ -398,7 +441,9 @@ class RecurrenceCalculator {
       );
 
       while (!slot.isAfter(windowEnd)) {
-        if (slot.isAfter(now)) return slot;
+        if (slot.isAfter(now)) {
+          return slot;
+        }
         slot = slot.add(step);
       }
 
@@ -411,52 +456,8 @@ class RecurrenceCalculator {
           rule.randomWindowStartMinutes! >= rule.randomWindowEndMinutes!) {
         throw Exception("Random timing configuration is invalid");
       }
-      List<DateTime> randomSlotsFor(
-        DateTime triggerDate,
-        NotificationRuleModel rule,
-      ) {
-        final seed =
-            rule.id.hashCode ^
-            triggerDate.year ^
-            (triggerDate.month << 8) ^
-            (triggerDate.day << 16);
-        final rng = Random(seed);
 
-        final startMin = rule.randomWindowStartMinutes!;
-        final endMin = rule.randomWindowEndMinutes!;
-
-        if (startMin >= endMin) {
-          throw Exception("Random window start must be before window end");
-        }
-
-        final availableMinutes = endMin - startMin + 1;
-
-        if (rule.randomCount! > availableMinutes) {
-          throw Exception(
-            "Random notification count exceeds available window minutes",
-          );
-        }
-
-        final availableSlots = List.generate(
-          availableMinutes,
-          (index) => startMin + index,
-        )..shuffle(rng);
-
-        final minutesList = availableSlots.take(rule.randomCount!).toList()
-          ..sort();
-
-        return minutesList.map((m) {
-          return DateTime(
-            triggerDate.year,
-            triggerDate.month,
-            triggerDate.day,
-            m ~/ 60,
-            m % 60,
-          );
-        }).toList();
-      }
-
-      final slots = randomSlotsFor(triggerDate, rule);
+      final slots = _randomSlotsFor(triggerDate, rule);
 
       for (final slot in slots) {
         if (slot.isAfter(now)) return slot;
@@ -490,9 +491,10 @@ class RecurrenceCalculator {
   }
 
   static RecurrenceCalculationResponse? computeNextTrigger(
-    NotificationRuleModel rule,
-  ) {
-    final now = DateTime.now();
+    NotificationRuleModel rule, {
+    DateTime? now,
+  }) {
+    now = now ?? DateTime.now();
 
     if (!isRuleActive(rule, now)) {
       return RecurrenceCalculationResponse(
@@ -517,14 +519,18 @@ class RecurrenceCalculator {
 
     DateTime candidateDate = rule.lastTriggeredAt != null
         ? _timeCropping(rule.lastTriggeredAt!)
-        : _dateFinder(rule);
+        : _dateFinder(rule, now: now);
 
     DateTime? result;
     var guard = 0;
     while (result == null) {
-      result = _timeFinder(candidateDate, rule);
+      result = _timeFinder(candidateDate, rule, now: now);
       if (result == null) {
-        candidateDate = _dateFinder(rule, lastTriggeredAt: candidateDate);
+        candidateDate = _dateFinder(
+          rule,
+          lastTriggeredAt: candidateDate,
+          now: now,
+        );
       }
       if (++guard > 1000) {
         throw Exception(
@@ -549,6 +555,34 @@ class RecurrenceCalculator {
       value.month,
       value.day,
     ).difference(DateTime.utc(2005, 8, 10)).inDays;
+  }
+
+  static List<DateTime> computeNextTriggers(
+    NotificationRuleModel rule, {
+    int limit = 200,
+    DateTime? now,
+  }) {
+    final List<DateTime> triggerList = [];
+    DateTime cursor = now ?? DateTime.now();
+    for (var _ in List.generate(limit + 1, (index) => index + 1)) {
+      final result = computeNextTrigger(rule, now: cursor);
+      if (result == null ||
+          result.error != null ||
+          result.nextTrigger == null) {
+        break;
+      }
+
+      cursor = result.nextTrigger!;
+      triggerList.add(cursor);
+      if (rule.totalOccurrences != null) {
+        rule = rule.copyWith(
+          totalOccurrences: Optional(rule.totalOccurrences! - 1),
+        );
+      }
+    }
+    triggerList.sort((a, b) => a.compareTo(b));
+
+    return triggerList;
   }
 
   static bool occursOnDay(NotificationRuleModel rule, DateTime day) {
