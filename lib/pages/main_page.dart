@@ -8,7 +8,7 @@ import 'package:sideris/pages/create_update_notification_page.dart';
 import 'package:sideris/pages/home_page.dart';
 import 'package:sideris/pages/settings_page.dart';
 import 'package:sideris/services/notification_service.dart';
-import 'package:sideris/widgets/night_sky_background.dart';
+import 'package:sideris/themes/app_theme.dart';
 
 class MainPage extends StatefulWidget {
   final NotificationService notificationService;
@@ -59,7 +59,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      body: NightSkyBackground(child: _buildPage()),
+      body: context.appTheme.buildBackground(_buildPage()),
 
       floatingActionButton: (_selectedIndex == 0)
           ? FloatingActionButton(
@@ -97,8 +97,8 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
                               );
                             },
                         pageBuilder: (_, animation, secondaryAnimation) {
-                          return NightSkyBackground(
-                            child: MultiBlocProvider(
+                          return context.appTheme.buildBackground(
+                            MultiBlocProvider(
                               providers: [
                                 BlocProvider.value(
                                   value: context.read<NotificationCubit>(),
