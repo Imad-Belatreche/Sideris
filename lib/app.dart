@@ -11,6 +11,8 @@ import 'package:sideris/repositories/notifications_repository.dart';
 import 'package:sideris/repositories/scheduled_notifications_repository.dart';
 import 'package:sideris/repositories/settings_repository.dart';
 import 'package:sideris/services/notification_service.dart';
+import 'package:sideris/themes/app_theme.dart';
+import 'package:sideris/themes/night_blue_theme.dart';
 
 class MyApp extends StatelessWidget {
   final SettingsRepository settingsRepository;
@@ -54,64 +56,21 @@ class MyApp extends StatelessWidget {
         buildWhen: (previous, current) => previous != current,
         builder: (context, state) {
           final font = appFontOfLocale(state.locale);
+          final appTheme = NightBlueTheme(font: font);
 
-          return MaterialApp(
-            title: lookupAppLocalizations(state.locale).appName,
-            theme: ThemeData.dark().copyWith(
-              textTheme: TextTheme(
-                headlineLarge: font(
-                  fontSize: 23,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white30,
-                ),
-                headlineSmall: font(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white70,
-                ),
-                labelLarge: font(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
-                ),
-                labelMedium: font(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.white54,
-                ),
-                bodyMedium: font(
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
-                  color: Colors.white,
-                ),
-                bodySmall: font(
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
-                  color: Colors.white24,
-                ),
-              ),
-              floatingActionButtonTheme: FloatingActionButtonThemeData(
-                shape: CircleBorder(),
-                backgroundColor: Colors.indigo,
-                elevation: 5,
-                iconSize: 30,
-              ),
-              datePickerTheme: DatePickerThemeData(
-                backgroundColor: const Color.fromARGB(255, 27, 14, 49),
-              ),
-              timePickerTheme: TimePickerThemeData(
-                backgroundColor: const Color.fromARGB(255, 27, 14, 49),
-                dialBackgroundColor: const Color.fromARGB(255, 61, 32, 112),
-              ),
+          return AppThemeScope(
+            theme: appTheme,
+            child: MaterialApp(
+              title: lookupAppLocalizations(state.locale).appName,
+              theme: appTheme.data,
+              localizationsDelegates: [
+                AppLocalizations.delegate,
+                ...GlobalMaterialLocalizations.delegates,
+              ],
+              supportedLocales: [Locale("en"), Locale("fr"), Locale("ar")],
+              locale: state.locale,
+              home: MainPage(notificationService: notificationService),
             ),
-            localizationsDelegates: [
-              AppLocalizations.delegate,
-              ...GlobalMaterialLocalizations.delegates,
-            ],
-            supportedLocales: [Locale("en"), Locale("fr"), Locale("ar")],
-            locale: state.locale,
-
-            home: MainPage(notificationService: notificationService),
           );
         },
       ),
