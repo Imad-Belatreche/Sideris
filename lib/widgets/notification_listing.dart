@@ -1,10 +1,10 @@
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:sideris/l10n/app_font.dart';
 import 'package:sideris/l10n/enum_labels.dart';
 import 'package:sideris/l10n/l10n.dart';
 import 'package:sideris/models/notification_rule/notification_rule_model.dart';
+import 'package:sideris/themes/app_theme.dart';
 
 class NotificationListing extends StatelessWidget {
   final NotificationRuleModel notification;
@@ -12,9 +12,9 @@ class NotificationListing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final font = appFontOf(context);
     final l10n = context.l10n;
-    final accent = notification.colorTag?.value ?? Colors.white70;
+    final accent =
+        notification.colorTag?.value ?? context.appColors.textSecondary;
     final isActive = notification.isActive;
     final nextTrigger =
         notification.nextTriggerAt != null &&
@@ -27,10 +27,10 @@ class NotificationListing extends StatelessWidget {
       opacity: isActive ? 1 : 0.58,
       child:
           Card(
-                color: const Color.fromARGB(10, 255, 255, 255),
+                color: context.appColors.surfaceLow,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadiusGeometry.circular(12),
-                  side: BorderSide(color: Colors.white24),
+                  side: BorderSide(color: context.appColors.borderStrong),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -53,11 +53,9 @@ class NotificationListing extends StatelessWidget {
                                   notification.title,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: font(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w700,
-                                  ),
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.titleMedium,
                                 ),
                                 AnimatedSwitcher(
                                   transitionBuilder: (child, animation) {
@@ -75,10 +73,9 @@ class NotificationListing extends StatelessWidget {
                                               notification.content!,
                                               maxLines: 2,
                                               overflow: TextOverflow.fade,
-                                              style: font(
-                                                color: Colors.white70,
-                                                fontSize: 14,
-                                              ),
+                                              style: Theme.of(
+                                                context,
+                                              ).textTheme.bodyMedium,
                                             ),
                                           ],
                                         )
@@ -119,10 +116,7 @@ class NotificationListing extends StatelessWidget {
                                   _secondaryDetails(context),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: font(
-                                    color: Colors.white38,
-                                    fontSize: 12,
-                                  ),
+                                  style: Theme.of(context).textTheme.bodySmall,
                                 ),
                               ],
                             ),
@@ -291,7 +285,6 @@ class _StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final font = appFontOf(context);
     final l10n = context.l10n;
     final icon = isNotificationActive
         ? Icons.notifications_active_outlined
@@ -302,8 +295,11 @@ class _StatusBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
       decoration: BoxDecoration(
-        color: (isNotificationActive ? Colors.blueAccent : Colors.white24)
-            .withValues(alpha: 0.14),
+        color:
+            (isNotificationActive
+                    ? context.appColors.selectionBorder
+                    : context.appColors.borderTint)
+                .withValues(alpha: 0.14),
         borderRadius: BorderRadius.circular(7),
       ),
       child: Row(
@@ -313,19 +309,11 @@ class _StatusBadge extends StatelessWidget {
             icon,
             size: 13,
             color: isNotificationActive
-                ? Colors.lightBlueAccent
-                : Colors.white54,
+                ? context.appColors.info
+                : context.appColors.textMuted,
           ),
           const SizedBox(width: 4),
-          Text(
-            label,
-            style: font(
-              color: Colors.white54,
-              fontSize: 9,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.7,
-            ),
-          ),
+          Text(label, style: Theme.of(context).textTheme.labelSmall),
         ],
       ),
     );
@@ -339,25 +327,23 @@ class _InfoPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final font = appFontOf(context);
-
     return Chip(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadiusGeometry.circular(10),
-        side: BorderSide(color: Colors.white10),
+        side: BorderSide(color: context.appColors.borderSubtle),
       ),
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       labelPadding: EdgeInsets.all(0),
-      backgroundColor: Colors.white.withAlpha(1),
+      backgroundColor: context.appColors.surfaceFaint,
       label: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 13, color: Colors.lightBlueAccent),
+          Icon(icon, size: 13, color: context.appColors.info),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               label,
-              style: font(color: Colors.white60, fontSize: 11),
+              style: Theme.of(context).textTheme.labelMedium,
               // overflow: TextOverflow.fade,
               softWrap: true,
               maxLines: 3,
@@ -381,7 +367,6 @@ class _NextTrigger extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final font = appFontOf(context);
     final l10n = context.l10n;
     final locale = Localizations.localeOf(context).toString();
     final time = trigger == null
@@ -397,14 +382,7 @@ class _NextTrigger extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       spacing: 3,
       children: [
-        Text(
-          time,
-          style: font(
-            color: Colors.white,
-            fontSize: 25,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
+        Text(time, style: Theme.of(context).textTheme.titleLarge),
         Row(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -415,31 +393,25 @@ class _NextTrigger extends StatelessWidget {
             if (difference != null && !difference.isNegative) ...[
               Text(
                 l10n.listingRelativeIn,
-                style: font(
-                  color: accent,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.labelLarge?.copyWith(color: accent),
               ),
               const SizedBox(width: 4),
             ],
             Text(
               relative,
-              style: font(
-                color: accent,
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.labelLarge?.copyWith(color: accent),
             ),
             if (difference != null && difference.isNegative) ...[
               const SizedBox(width: 4),
               Text(
                 l10n.listingRelativeAgo,
-                style: font(
-                  color: accent,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.labelLarge?.copyWith(color: accent),
               ),
             ],
           ],

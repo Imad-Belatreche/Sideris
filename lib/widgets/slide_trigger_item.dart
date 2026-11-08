@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:material_ui/material_ui.dart';
+import 'package:sideris/themes/app_theme.dart';
 
 class SlideTriggerItem extends StatefulWidget {
   const SlideTriggerItem({
@@ -32,7 +33,11 @@ class _SlideTriggerItemState extends State<SlideTriggerItem> {
           child: Container(
             color: Colors.transparent,
             alignment: Alignment.centerRight,
-            child: Icon(Icons.delete_forever, color: Colors.red, size: 30),
+            child: Icon(
+              Icons.delete_forever,
+              color: context.appColors.danger,
+              size: 30,
+            ),
           ),
         ),
         Transform.translate(

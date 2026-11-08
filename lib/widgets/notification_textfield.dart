@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
-import 'package:sideris/l10n/app_font.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:sideris/themes/app_theme.dart';
 
 class NotificationTextfield extends StatelessWidget {
   const NotificationTextfield({
@@ -28,10 +28,7 @@ class NotificationTextfield extends StatelessWidget {
   Widget build(BuildContext context) {
     var border = OutlineInputBorder(
       borderRadius: BorderRadius.circular(12.0),
-      borderSide: BorderSide(
-        color: Colors.white.withValues(alpha: 0.1),
-        width: 2.0,
-      ),
+      borderSide: BorderSide(color: context.appColors.borderSubtle, width: 2.0),
     );
 
     final textField = TextField(
@@ -48,19 +45,11 @@ class NotificationTextfield extends StatelessWidget {
 
       decoration: InputDecoration(
         labelText: labelText,
-        labelStyle: appFontOf(context)(
-          color: Colors.white70,
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-        ),
+        labelStyle: Theme.of(context).textTheme.titleMedium,
         hintText: hintText,
-        hintStyle: appFontOf(context)(
-          color: Colors.white.withValues(alpha: 0.3),
-          fontSize: 16,
-          fontWeight: FontWeight.w400,
-        ),
+        hintStyle: Theme.of(context).textTheme.bodyMedium,
         filled: true,
-        fillColor: Colors.white.withValues(alpha: 0.05),
+        fillColor: context.appColors.fieldFill,
         border: border,
         enabledBorder: border,
         focusedBorder: border,

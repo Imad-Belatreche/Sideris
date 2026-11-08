@@ -1,6 +1,6 @@
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:sideris/l10n/app_font.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:sideris/themes/app_theme.dart';
 import 'package:sideris/widgets/notification_card.dart';
 
 class NotificationRadioCard<T> extends StatelessWidget {
@@ -33,7 +33,9 @@ class NotificationRadioCard<T> extends StatelessWidget {
               children: [
                 Radio<T>(
                   side: BorderSide(
-                    color: isSelected ? Colors.blue.shade700 : Colors.white54,
+                    color: isSelected
+                        ? context.appColors.selectionStrong
+                        : context.appColors.textMuted,
                     width: isSelected ? 2.0 : 1.0,
                   ),
                   value: selectedType,
@@ -42,17 +44,18 @@ class NotificationRadioCard<T> extends StatelessWidget {
                 if (icon != null) ...[
                   Icon(
                     icon,
-                    color: isSelected ? Colors.blue.shade700 : Colors.white54,
+                    color: isSelected
+                        ? context.appColors.selectionStrong
+                        : context.appColors.textMuted,
                     size: 20,
                   ),
                   SizedBox(width: 8),
                 ],
                 Text(
                   label,
-                  style: appFontOf(context)(
-                    fontSize: 15,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                    color: isSelected ? Colors.white : Colors.white70,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: isSelected ? context.appColors.textPrimary : context.appColors.textSecondary,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500
                   ),
                 ),
               ],

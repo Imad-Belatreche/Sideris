@@ -6,14 +6,13 @@ import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:sideris/cubits/notification/notification_cubit.dart';
 import 'package:sideris/cubits/settings/settings_cubit.dart';
-import 'package:sideris/l10n/app_font.dart';
 import 'package:sideris/l10n/l10n.dart';
 import 'package:sideris/models/notification_rule/notification_rule_model.dart';
 import 'package:sideris/pages/create_update_notification_page.dart';
+import 'package:sideris/themes/app_theme.dart';
 import 'package:sideris/utils/general_utils.dart';
 import 'package:sideris/utils/recurrence_calculator.dart';
 import 'package:sideris/widgets/calendar_day.dart';
-import 'package:sideris/widgets/night_sky_background.dart';
 import 'package:sideris/widgets/notification_listing.dart';
 import 'package:sideris/widgets/slide_trigger_item.dart';
 
@@ -104,9 +103,11 @@ class _HomePageState extends State<HomePage> {
       SnackBar(
         content: Text(
           context.l10n.homePageNotificationDeleted,
-          style: appFontOf(context)(color: Colors.black),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(color: context.appColors.onSuccess),
         ),
-        backgroundColor: Colors.greenAccent,
+        backgroundColor: context.appColors.success,
         action: SnackBarAction(
           onPressed: () async {
             setState(() => _leavingIds.remove(deleted.id));
@@ -124,14 +125,13 @@ class _HomePageState extends State<HomePage> {
     return [
       for (final n in state.notifications)
         if (RecurrenceCalculator.occursOnDay(n, day))
-          n.colorTag?.value ?? Colors.white,
+          n.colorTag?.value ?? context.appColors.textPrimary,
     ];
   }
 
   @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
-    final font = appFontOf(context);
     final locale = Localizations.localeOf(context).toString();
 
     String getGreeting() {
@@ -174,11 +174,9 @@ class _HomePageState extends State<HomePage> {
                               children: [
                                 Text(
                                       getGreeting(),
-                                      style: font(
-                                        fontSize: 28,
-                                        fontWeight: FontWeight.w700,
-                                        letterSpacing: -0.3,
-                                      ),
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.headlineLarge,
                                     )
                                     .animate()
                                     .fadeIn(duration: 400.ms)
@@ -193,11 +191,9 @@ class _HomePageState extends State<HomePage> {
                                       DateFormat.EEEE(
                                         locale,
                                       ).addPattern(", MMMM dd").format(now),
-                                      style: font(
-                                        color: Colors.white38,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w400,
-                                      ),
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.headlineSmall,
                                     )
                                     .animate()
                                     .fadeIn(duration: 400.ms, delay: 100.ms)
@@ -260,7 +256,6 @@ class _HomePageState extends State<HomePage> {
     NotificationState state,
     List<NotificationRuleModel> selectedDayRules,
   ) {
-    final font = appFontOf(context);
     final locale = Localizations.localeOf(context).toString();
 
     return Column(
@@ -268,7 +263,7 @@ class _HomePageState extends State<HomePage> {
       children: [
         SizedBox(
           key: ValueKey("Yes Calandar"),
-          height: 550,
+          height: 510,
           child: PageView.builder(
             scrollDirection: Axis.horizontal,
 
@@ -311,10 +306,7 @@ class _HomePageState extends State<HomePage> {
                                 'EEEE, MMMM d',
                                 locale,
                               ).format(_selectedDay),
-                              style: font(
-                                fontSize: 22,
-                                fontWeight: FontWeight.w700,
-                              ),
+                              style: Theme.of(context).textTheme.titleLarge,
                             )
                             .animate()
                             .fadeIn(duration: 300.ms, curve: Curves.easeIn)
@@ -334,7 +326,7 @@ class _HomePageState extends State<HomePage> {
                                   : context.l10n.homePageCalendarRulesPlanned(
                                       selectedDayRules.length,
                                     ),
-                              style: font(color: Colors.white54, fontSize: 14),
+                              style: Theme.of(context).textTheme.labelLarge,
                             )
                             .animate()
                             .fadeIn(duration: 300.ms, curve: Curves.easeIn)
@@ -351,7 +343,7 @@ class _HomePageState extends State<HomePage> {
                           child: Center(
                             child: Text(
                               context.l10n.homePageCalendarTapToInspectRules,
-                              style: font(color: Colors.white38),
+                              style: Theme.of(context).textTheme.bodySmall,
                             ),
                           ),
                         )
@@ -389,8 +381,9 @@ class _HomePageState extends State<HomePage> {
                                       transitionDuration: 300.ms,
                                       pageBuilder:
                                           (_, animation, secondaryAnimation) {
-                                            return NightSkyBackground(
-                                              child: MultiBlocProvider(
+
+                                            return context.appTheme.buildBackground(
+                                               MultiBlocProvider(
                                                 providers: [
                                                   BlocProvider.value(
                                                     value: context
@@ -455,10 +448,7 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text(
             context.l10n.homePageListAllActive,
-            style: appFontOf(context)(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(context).textTheme.titleLarge,
           ),
         ),
         for (final notification in state.notifications.reversed.toList())
@@ -483,17 +473,15 @@ class _HomePageState extends State<HomePage> {
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadiusGeometry.circular(12),
-            side: BorderSide(color: Colors.white12),
+            side: BorderSide(color: context.appColors.borderSoft),
           ),
-          backgroundColor: const Color.fromARGB(255, 38, 7, 75),
+          backgroundColor: context.appColors.dialogBackground,
           content: Text(text),
           title: Text(
             context.l10n.actionWarning,
-            style: appFontOf(context)(
-              color: Colors.red,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(color: context.appColors.danger),
           ),
           actions: actions,
         );

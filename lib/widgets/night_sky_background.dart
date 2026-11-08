@@ -1,6 +1,7 @@
 import 'dart:math' hide log;
 
 import 'package:material_ui/material_ui.dart';
+import 'package:sideris/themes/app_theme.dart';
 
 class Star {
   final double x;
@@ -107,12 +108,17 @@ class _NightSkyBackgroundState extends State<NightSkyBackground>
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: AlignmentGeometry.topCenter,
           end: AlignmentGeometry.bottomCenter,
-          colors: [Color(0xFF03071E), Color(0xFF0B091A), Color(0xFF161233)],
+          colors: [
+            colors.backgroundTop,
+            colors.backgroundMid,
+            colors.backgroundBottom,
+          ],
         ),
       ),
       child: NotificationListener<ScrollNotification>(
@@ -148,6 +154,7 @@ class _NightSkyBackgroundState extends State<NightSkyBackground>
                   stars: _stars,
                   scrollOffset: _scrollOffset,
                   shootingStars: _shootingStars,
+                  color: colors.star,
                 ),
               ),
             ),
@@ -161,6 +168,7 @@ class _NightSkyBackgroundState extends State<NightSkyBackground>
 
 class StarPainter extends CustomPainter {
   final List<Star> stars;
+  final Color color;
   final double scrollOffset;
   final List<ShootingStar> shootingStars;
 
@@ -168,11 +176,12 @@ class StarPainter extends CustomPainter {
     required this.stars,
     required this.scrollOffset,
     required this.shootingStars,
+    required this.color,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = Colors.white;
+    final paint = Paint()..color = color;
 
     for (var star in stars) {
       final double rawY = star.y * size.height - (scrollOffset * 0.2);
@@ -183,7 +192,7 @@ class StarPainter extends CustomPainter {
 
       final double pixelX = star.x * size.width;
 
-      paint.color = Colors.white.withValues(alpha: star.opacity);
+      paint.color = color.withValues(alpha: star.opacity);
       canvas.drawCircle(Offset(pixelX, starY), star.size, paint);
     }
 
@@ -216,12 +225,7 @@ class StarPainter extends CustomPainter {
         ..shader = LinearGradient(
           colors: [
             Colors.transparent,
-            const Color.fromARGB(
-              200,
-              255,
-              255,
-              255,
-            ).withValues(alpha: 1.0 - s.progress),
+            color.withValues(alpha: 1.0 - s.progress),
           ],
         ).createShader(Rect.fromPoints(head, tail))
         ..strokeWidth = 2.0
