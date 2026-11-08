@@ -8,6 +8,7 @@ import 'package:sideris/l10n/enum_labels.dart';
 import 'package:sideris/l10n/l10n.dart';
 import 'package:sideris/models/notification_rule/notification_rule_model.dart';
 import 'package:sideris/models/settings_model.dart';
+import 'package:sideris/themes/app_theme.dart';
 import 'package:sideris/widgets/create_update_elevated_button.dart';
 import 'package:sideris/widgets/dnd_switch.dart';
 import 'package:sideris/widgets/notification_outlined_button.dart';
@@ -127,8 +128,6 @@ class _SettingsPageState extends State<SettingsPage> {
     required String Function(T value) valueLabel,
     required ValueChanged onChanged,
   }) {
-    final font = appFontOf(context);
-
     return NotificationOutlinedButton(
       label: "",
       isExpanded: true,
@@ -146,7 +145,7 @@ class _SettingsPageState extends State<SettingsPage> {
         isRTL(context.read<LocaleCubit>().state.locale)
             ? Icons.keyboard_arrow_left
             : Icons.keyboard_arrow_right,
-        color: Colors.white,
+        color: context.appColors.textPrimary,
         size: 20,
       ),
       leadingWidget: Container(
@@ -154,20 +153,17 @@ class _SettingsPageState extends State<SettingsPage> {
         decoration: BoxDecoration(
           shape: BoxShape.rectangle,
           borderRadius: BorderRadius.circular(12),
-          color: Colors.indigo.withAlpha(50),
+          color: context.appColors.accentSoft,
         ),
-        child: Icon(icon, color: Colors.indigo, size: 25),
+        child: Icon(icon, color: context.appColors.accent, size: 25),
       ),
       labelWidget: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: font(color: Colors.white, fontWeight: FontWeight.w500),
-          ),
+          Text(label, style: Theme.of(context).textTheme.labelLarge),
           Text(
             valueLabel(value),
-            style: font(color: Colors.white70),
+            style: Theme.of(context).textTheme.bodyMedium,
           ).animate(key: ValueKey(value)).fadeIn(duration: 250.ms),
         ],
       ),
@@ -176,8 +172,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final font = appFontOf(context);
-    final scaffoldBg = const Color(0xFF161233);
+    final scaffoldBg = context.appColors.backgroundBottom;
 
     final isDirty = _checkIsDirty(context.watch<SettingsCubit>().state);
     _lastDirty = isDirty;
@@ -197,11 +192,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 title:
                     Text(
                           context.l10n.settingsPageTitle,
-                          style: font(
-                            fontSize: 28,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: -0.3,
-                          ),
+                          style: Theme.of(context).textTheme.headlineLarge,
                         )
                         .animate()
                         .fadeIn(duration: 400.ms)
@@ -222,7 +213,9 @@ class _SettingsPageState extends State<SettingsPage> {
                     );
 
                     if (_draft == null) {
-                      return CircularProgressIndicator(color: Colors.white);
+                      return CircularProgressIndicator(
+                        color: context.appColors.textPrimary,
+                      );
                     }
 
                     if (state.errorMessage != null) {
@@ -243,7 +236,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         children: [
                           Text(
                             context.l10n.settingsPageTheme,
-                            style: Theme.of(context).textTheme.headlineLarge,
+                            style: Theme.of(context).textTheme.headlineMedium,
                           ),
                           SizedBox(height: 10),
 
@@ -269,7 +262,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
                           Text(
                             context.l10n.settingsPageLanguage,
-                            style: Theme.of(context).textTheme.headlineLarge,
+                            style: Theme.of(context).textTheme.headlineMedium,
                           ),
                           SizedBox(height: 10),
 
@@ -296,7 +289,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             context
                                 .l10n
                                 .settingsPageDefaultNotificationTemplate,
-                            style: Theme.of(context).textTheme.headlineLarge,
+                            style: Theme.of(context).textTheme.headlineMedium,
                           ),
                           SizedBox(height: 12),
 
@@ -478,9 +471,9 @@ class _SettingsPageState extends State<SettingsPage> {
                           ).scaffoldBackgroundColor,
                           content: Text(
                             context.l10n.settingsPageSavedSettings,
-                            style: Theme.of(
-                              context,
-                            ).textTheme.bodySmall!.apply(color: Colors.white),
+                            style: Theme.of(context).textTheme.bodySmall!.apply(
+                              color: context.appColors.textPrimary,
+                            ),
                           ),
                         ),
                       );

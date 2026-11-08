@@ -1,5 +1,5 @@
-import 'package:sideris/l10n/app_font.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:sideris/themes/app_theme.dart';
 
 class CreateUpdateElevatedButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -17,29 +17,22 @@ class CreateUpdateElevatedButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color.fromARGB(255, 95, 12, 128),
+        backgroundColor: context.appColors.primaryAction,
         padding: EdgeInsets.all(15),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadiusGeometry.circular(20),
-          side: BorderSide(color: Colors.white10),
+          side: BorderSide(color: context.appColors.borderSubtle),
         ),
 
-        shadowColor: Colors.black12,
+        shadowColor: context.appColors.shadow,
         elevation: 10,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         spacing: 10,
         children: [
-          Icon(icon, size: 20, color: Colors.white),
-          Text(
-            label,
-            style: appFontOf(context)(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          Icon(icon, size: 20, color: context.appColors.textPrimary),
+          Text(label, style: Theme.of(context).textTheme.titleMedium),
         ],
       ),
     );

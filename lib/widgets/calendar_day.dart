@@ -6,6 +6,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:sideris/cubits/local/locale_cubit.dart';
 import 'package:sideris/cubits/notification/notification_cubit.dart';
 import 'package:sideris/l10n/app_font.dart';
+import 'package:sideris/themes/app_theme.dart';
 import 'package:sideris/utils/general_utils.dart';
 import 'package:sideris/widgets/notification_outlined_button.dart';
 
@@ -64,7 +65,7 @@ class CalendarDay extends StatelessWidget {
     );
   }
 
-  Widget _dayContent(int dayNumber, List<Color> colors) {
+  Widget _dayContent(BuildContext context, int dayNumber, List<Color> colors) {
     final top = colors.sublist(0, colors.length.clamp(0, 5));
     final bottom = colors.length > 5
         ? colors.sublist(5, colors.length.clamp(5, 10))
@@ -77,14 +78,14 @@ class CalendarDay extends StatelessWidget {
         : <Color>[];
 
     return SizedBox(
-      width: 50,
+      width: double.infinity,
       height: 50,
       child: Stack(
         children: [
           Center(
             child: Text(
               '$dayNumber',
-              style: const TextStyle(color: Colors.white),
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
           ),
           Positioned(top: 3, left: 4, right: 4, child: _horizontalDots(top)),
@@ -110,7 +111,6 @@ class CalendarDay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final font = appFontOf(context);
     final locale = Localizations.localeOf(context).toString();
 
     return ClipRRect(
@@ -122,14 +122,14 @@ class CalendarDay extends StatelessWidget {
           padding: EdgeInsets.all(15),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white12, width: 2),
-            color: Colors.white.withAlpha(3),
+            border: Border.all(color: context.appColors.borderSoft, width: 2),
+            color: context.appColors.surfaceGhost,
           ),
           child: Column(
             spacing: 25,
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Align(
                 alignment: Alignment.topCenter,
@@ -151,9 +151,10 @@ class CalendarDay extends StatelessWidget {
                         size: 30,
                       ),
                     ),
+                    //TODO: Maybe make it a text button that lets you choose a year and month
                     Text(
                       DateFormat.yMMM(locale).format(currentDate),
-                      style: font(fontWeight: FontWeight.w600, fontSize: 20),
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
                     IconButton(
                       onPressed: onRightPressed,
@@ -174,7 +175,7 @@ class CalendarDay extends StatelessWidget {
               ),
               GridView.count(
                 physics: NeverScrollableScrollPhysics(),
-                mainAxisExtent: 56,
+                mainAxisExtent: 50,
                 crossAxisCount: 7,
                 shrinkWrap: true,
                 mainAxisSpacing: 5,
@@ -184,12 +185,7 @@ class CalendarDay extends StatelessWidget {
                     Text(
                       weekName,
                       textAlign: TextAlign.center,
-                      style: font(
-                        fontSize: 15,
-                        letterSpacing: 1,
-                        color: Colors.white.withAlpha(210),
-                        fontWeight: FontWeight.w500,
-                      ),
+                      style: Theme.of(context).textTheme.headlineSmall,
                     ),
                   ...List.generate(
                     DateTime(currentDate.year, currentDate.month, 1).weekday -
@@ -215,9 +211,10 @@ class CalendarDay extends StatelessWidget {
 
                         return NotificationOutlinedButton(
                           label: "",
-                          labelWidget: _dayContent(dayNumber, colors),
+                          labelWidget: _dayContent(context, dayNumber, colors),
                           isRounded: false,
-                          isExpanded: false,
+                          isExpanded: true,
+                          centerText: true,
                           isSelected: dateOnly(selectedDate) == day,
                           padding: EdgeInsets.zero,
                           onPressed: () => onDayPress(day),

@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:sideris/themes/app_theme.dart';
 
 class NotificationOutlinedButton extends StatelessWidget {
   const NotificationOutlinedButton({
@@ -41,18 +42,14 @@ class NotificationOutlinedButton extends StatelessWidget {
 
     // Base dark/transparent color overlayed with blue when selected
     final backgroundColor = selected
-        ? Colors.blue.withValues(alpha: 0.3)
-        : Colors.white.withValues(alpha: 0.1);
+        ? context.appColors.selectionOverlay
+        : context.appColors.surfaceOverlay;
 
     final borderColor = currenlySelected
-        ? Colors.blueAccent.shade700
+        ? context.appColors.selectionStrong
         : selected
-        ? Colors.blueAccent
-        : Colors.white.withValues(alpha: 0.1);
-
-    final textColor = selected || currenlySelected
-        ? Colors.white
-        : Colors.white.withValues(alpha: 0.6);
+        ? context.appColors.selectionBorder
+        : context.appColors.borderSubtle;
 
     return OutlinedButton(
       onPressed: onPressed,
@@ -86,13 +83,12 @@ class NotificationOutlinedButton extends StatelessWidget {
               label,
               style:
                   labelStyle ??
-                  TextStyle(
-                    color: textColor,
-                    fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
-                  ),
+                  (selected
+                      ? Theme.of(context).textTheme.labelLarge
+                      : Theme.of(context).textTheme.bodyLarge!),
             )
           else
-            labelWidget!,
+            Flexible(child: labelWidget!),
 
           if (tailingWidget != null) ...[Spacer(), tailingWidget!],
         ],
