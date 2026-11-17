@@ -1,9 +1,15 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:sideris/themes/app_theme.dart';
-import 'package:sideris/widgets/night_sky_background.dart';
+import 'package:sideris/widgets/backgrounds/night_sky_background.dart';
 
 class NightBlueTheme extends AppTheme {
   NightBlueTheme({required super.font});
+
+  @override
+  String get name => "Midnight";
+
+  @override
+  IconData get icon => Icons.nightlight;
 
   @override
   AppColors get colors => nightBlueColors;
