@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:sideris/models/notification_rule/notification_rule_model.dart';
+import 'package:sideris/themes/night_blue_theme.dart';
 
 enum UiLanguage {
   english(value: 'en', label: 'English'),
@@ -14,15 +15,34 @@ enum UiLanguage {
     for (var lang in UiLanguage.values) {
       if (lang.value == name) return lang;
     }
-    
+
     return null;
   }
 
   const UiLanguage({required this.value, required this.label});
 }
 
+enum ApplicationTheme {
+  //TODO: Add new themes here
+  nightBlue(NightBlueTheme);
+
+  final Type theme;
+
+  static ApplicationTheme? fromString(String? name) {
+    if (name == null) return null;
+    try {
+      return ApplicationTheme.values.byName(name);
+    } on ArgumentError {
+      return null;
+    }
+  }
+
+  const ApplicationTheme(this.theme);
+}
+
 //TODO: Add time settings later too.
 class SettingsModel extends Equatable {
+  final ApplicationTheme theme;
   final UiLanguage uiLanguage;
   final String defaultTitle;
   final String defaultDescription;
@@ -36,6 +56,7 @@ class SettingsModel extends Equatable {
   final bool bypassDND;
 
   const SettingsModel({
+    required this.theme,
     required this.uiLanguage,
     required this.defaultTitle,
     required this.defaultDescription,
@@ -49,6 +70,7 @@ class SettingsModel extends Equatable {
 
   factory SettingsModel.initial() {
     return SettingsModel(
+      theme: ApplicationTheme.nightBlue,
       uiLanguage: UiLanguage.english,
       defaultTitle: "Remind me",
       defaultDescription: "",
@@ -63,6 +85,7 @@ class SettingsModel extends Equatable {
 
   Map<String, dynamic> toMap() {
     return {
+      "theme": theme.name,
       "uiLanguage": uiLanguage.value,
       "defaultTitle": defaultTitle,
       "defaultDescription": defaultDescription,
@@ -80,6 +103,7 @@ class SettingsModel extends Equatable {
     final defaultSettings = SettingsModel.initial();
 
     return SettingsModel(
+      theme: ApplicationTheme.fromString(map["theme"]) ?? defaultSettings.theme,
       uiLanguage:
           UiLanguage.fromString(map["uiLanguage"]) ??
           defaultSettings.uiLanguage,
@@ -107,6 +131,7 @@ class SettingsModel extends Equatable {
 
   @override
   List<Object?> get props => [
+    theme,
     uiLanguage,
     defaultTitle,
     defaultDescription,
