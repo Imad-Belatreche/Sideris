@@ -9,10 +9,12 @@ import 'package:sideris/l10n/l10n.dart';
 import 'package:sideris/models/notification_rule/notification_rule_model.dart';
 import 'package:sideris/models/settings_model.dart';
 import 'package:sideris/themes/app_theme.dart';
+import 'package:sideris/themes/night_blue_theme.dart';
 import 'package:sideris/widgets/create_update_elevated_button.dart';
 import 'package:sideris/widgets/dnd_switch.dart';
 import 'package:sideris/widgets/notification_outlined_button.dart';
 import 'package:sideris/widgets/notification_textfield.dart';
+import 'package:sideris/widgets/theme_preview_cards/theme_settings_card.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -39,6 +41,7 @@ class _SettingsPageState extends State<SettingsPage> {
   SettingsModel? _draft;
 
   UiLanguage? language;
+  ApplicationTheme? theme;
   RecurrenceType? recurrenceType;
   RepetitionType? repetitionType;
   ScheduleUnit? scheduleUnit;
@@ -94,6 +97,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
     _defaultTitleController.text = s.defaultTitle;
     _defaultDescriptionController.text = s.defaultDescription;
+    theme = s.theme;
     language = s.uiLanguage;
     recurrenceType = s.recurrenceType;
     repetitionType = s.repetitionType;
@@ -111,6 +115,7 @@ class _SettingsPageState extends State<SettingsPage> {
     final s = state.settings;
     return _defaultTitleController.text.trim() != s.defaultTitle ||
         _defaultDescriptionController.text.trim() != s.defaultDescription ||
+        theme != s.theme ||
         language != s.uiLanguage ||
         scheduleUnit != s.scheduleUnit ||
         recurrenceType != s.recurrenceType ||
@@ -241,22 +246,29 @@ class _SettingsPageState extends State<SettingsPage> {
                           SizedBox(height: 10),
 
                           //TODO: Add theme changing
-                          GridView.builder(
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
+                          SingleChildScrollView(
+                            // physics: NeverScrollableScrollPhysics(),
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
+                                //TODO: Add small icons showcasing each theme
+                                //TODO: Add onTap function that changes their selection
+
+                                ThemeSettingsCard(
+                                  onTap: () {
+                                    setState(() {
+                                      theme = ApplicationTheme.nightBlue;
+                                    });
+                                  },
+                                  isSelected:
+                                      _draft!.theme.name ==
+                                      ApplicationTheme.nightBlue.name,
+                                  theme: NightBlueTheme(
+                                    font: context.appTheme.font,
+                                  ),
                                 ),
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: 5,
-                            scrollDirection: Axis.vertical,
-                            itemBuilder: (context, index) {
-                              return SizedBox(
-                                height: 50,
-                                width: 100,
-                                child: Placeholder(),
-                              );
-                            },
+                              ],
+                            ),
                           ),
                           SizedBox(height: 16),
 
@@ -437,6 +449,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           .trim();
 
                       final newSettings = SettingsModel(
+                        theme: theme ?? base.theme,
                         uiLanguage: language ?? base.uiLanguage,
                         defaultTitle: title,
                         defaultDescription: description,
