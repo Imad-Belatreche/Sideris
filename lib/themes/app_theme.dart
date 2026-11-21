@@ -11,6 +11,8 @@ abstract class AppTheme {
 
   AppColors get colors;
   ThemeData get data;
+  String get name;
+  IconData get icon;
 
   Widget buildBackground(Widget child);
 

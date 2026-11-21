@@ -37,6 +37,7 @@ class SettingsRepository {
 
   Future<SettingsModel> loadSettings() async {
     final [
+      theme,
       uiLanguage,
       defaultTitle,
       defaultDescription,
@@ -47,6 +48,7 @@ class SettingsRepository {
       scheduleUnit,
       durationOption,
     ] = await Future.wait([
+      prefs.getString("theme"),
       prefs.getString("uiLanguage"),
       prefs.getString("defaultTitle"),
       prefs.getString("defaultDescription"),
@@ -59,6 +61,7 @@ class SettingsRepository {
     ]);
 
     return SettingsModel.fromMap({
+      "theme": theme,
       "uiLanguage": uiLanguage,
       "defaultTitle": defaultTitle,
       "defaultDescription": defaultDescription,
