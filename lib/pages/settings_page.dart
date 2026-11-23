@@ -9,6 +9,7 @@ import 'package:sideris/l10n/l10n.dart';
 import 'package:sideris/models/notification_rule/notification_rule_model.dart';
 import 'package:sideris/models/settings_model.dart';
 import 'package:sideris/themes/app_theme.dart';
+import 'package:sideris/themes/day_light_theme.dart';
 import 'package:sideris/themes/night_blue_theme.dart';
 import 'package:sideris/widgets/create_update_elevated_button.dart';
 import 'package:sideris/widgets/dnd_switch.dart';
@@ -251,6 +252,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             // physics: NeverScrollableScrollPhysics(),
                             scrollDirection: Axis.horizontal,
                             child: Row(
+                              spacing: 10,
                               children: [
                                 //TODO: Add small icons showcasing each theme
                                 //TODO: Add onTap function that changes their selection
@@ -262,9 +264,20 @@ class _SettingsPageState extends State<SettingsPage> {
                                     });
                                   },
                                   isSelected:
-                                      _draft!.theme.name ==
-                                      ApplicationTheme.nightBlue.name,
+                                      theme == ApplicationTheme.nightBlue,
                                   theme: NightBlueTheme(
+                                    font: context.appTheme.font,
+                                  ),
+                                ),
+                                ThemeSettingsCard(
+                                  onTap: () {
+                                    setState(() {
+                                      theme = ApplicationTheme.dayLight;
+                                    });
+                                  },
+                                  isSelected:
+                                      theme == ApplicationTheme.dayLight,
+                                  theme: DayLightTheme(
                                     font: context.appTheme.font,
                                   ),
                                 ),

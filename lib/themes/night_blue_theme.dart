@@ -40,6 +40,7 @@ class NightBlueTheme extends AppTheme {
 }
 
 final AppColors nightBlueColors = AppColors(
+  brightness: Brightness.dark,
   backgroundTop: const Color(0xFF03071E),
   backgroundMid: const Color(0xFF0B091A),
   backgroundBottom: const Color(0xFF161233),
@@ -47,6 +48,7 @@ final AppColors nightBlueColors = AppColors(
   textPrimary: Colors.white,
   surfaceTint: Colors.white,
   borderTint: Colors.white,
+  cardSurface: const Color(0x14FFFFFF),
 
   accent: Colors.indigo,
   accentBright: Colors.indigoAccent,

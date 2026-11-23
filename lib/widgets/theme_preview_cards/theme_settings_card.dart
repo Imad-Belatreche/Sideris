@@ -1,3 +1,4 @@
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:sideris/themes/app_theme.dart';
 
@@ -19,7 +20,8 @@ class ThemeSettingsCard extends StatelessWidget {
       children: [
         InkWell(
           onTap: onTap,
-          child: Container(
+          child: AnimatedContainer(
+            duration: 250.ms,
             width: 90,
             height: 90,
             decoration: BoxDecoration(
@@ -37,7 +39,7 @@ class ThemeSettingsCard extends StatelessWidget {
                 color: isSelected
                     ? context.appColors.selectionStrong
                     : context.appColors.borderStrong,
-                width: isSelected ? 1.5 : 1,
+                width: isSelected ? 2 : 1,
               ),
               borderRadius: BorderRadius.circular(15),
             ),
@@ -52,7 +54,12 @@ class ThemeSettingsCard extends StatelessWidget {
           ),
         ),
 
-        Text(theme.name, style: theme.data.textTheme.titleSmall),
+        Text(
+          theme.name,
+          style: isSelected
+              ? context.appTheme.data.textTheme.titleSmall
+              : context.appTheme.data.textTheme.bodyLarge,
+        ),
       ],
     );
   }
