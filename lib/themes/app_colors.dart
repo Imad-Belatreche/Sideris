@@ -1,6 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 
 class AppColors extends ThemeExtension<AppColors> {
+  final Brightness brightness;
+
   final Color backgroundTop;
   final Color backgroundMid;
   final Color backgroundBottom;
@@ -8,6 +10,7 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color textPrimary;
   final Color surfaceTint;
   final Color borderTint;
+  final Color cardSurface;
 
   final Color accent;
   final Color accentBright;
@@ -33,12 +36,14 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color star;
 
   AppColors({
+    required this.brightness,
     required this.backgroundTop,
     required this.backgroundMid,
     required this.backgroundBottom,
     required this.textPrimary,
     required this.surfaceTint,
     required this.borderTint,
+    required this.cardSurface,
     required this.accent,
     required this.accentBright,
     required this.primaryAction,
@@ -59,40 +64,53 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.star,
   });
 
-  // Text hierarchy derived from the theme's main text color.
-  Color get textSecondary => textPrimary.withValues(alpha: 0.7); // white70
-  Color get textTertiary => textPrimary.withValues(alpha: 0.6); // white60
-  Color get textMuted => textPrimary.withValues(alpha: 0.54); // white54
-  Color get textSubtle => textPrimary.withValues(alpha: 0.38); // white38
-  Color get textFaint => textPrimary.withValues(alpha: 0.30); // white30
-  Color get textDisabled => textPrimary.withValues(alpha: 0.24); // white24
+  bool get _isDark => brightness == Brightness.dark;
+
+  Color get textSecondary =>
+      textPrimary.withValues(alpha: _isDark ? 0.7 : 0.82); // white70
+  Color get textTertiary =>
+      textPrimary.withValues(alpha: _isDark ? 0.6 : 0.74); // white60
+  Color get textMuted =>
+      textPrimary.withValues(alpha: _isDark ? 0.54 : 0.68); // white54
+  Color get textSubtle =>
+      textPrimary.withValues(alpha: _isDark ? 0.38 : 0.62); // white38
+  Color get textFaint =>
+      textPrimary.withValues(alpha: _isDark ? 0.30 : 0.55); // white30
+  Color get textDisabled =>
+      textPrimary.withValues(alpha: _isDark ? 0.24 : 0.50); // white24
 
   // Surfaces.
   Color get surface => surfaceTint.withValues(alpha: 0.1); // white10
   Color get surfaceLow => surfaceTint.withValues(alpha: 0.04);
-  Color get surfaceGhost => surfaceTint.withValues(alpha: 0.012);
+  Color get surfaceGhost =>
+      surfaceTint.withValues(alpha: _isDark ? 0.012 : 0.1);
   Color get surfaceFaint => surfaceTint.withValues(alpha: 0.004);
-  Color get surfaceOverlay => surfaceTint.withValues(alpha: 0.1);
-  Color get fieldFill => surfaceTint.withValues(alpha: 0.05);
+  Color get surfaceOverlay =>
+      surfaceTint.withValues(alpha: _isDark ? 0.1 : 0.25);
+  Color get fieldFill => surfaceTint.withValues(alpha: _isDark ? 0.05 : 0.35);
 
   // Borders.
   Color get borderSubtle => borderTint.withValues(alpha: 0.1); // white10
   Color get borderSoft => borderTint.withValues(alpha: 0.12); // white12
-  Color get borderStrong => borderTint.withValues(alpha: 0.24); // white24
+  Color get borderStrong =>
+      borderTint.withValues(alpha: _isDark ? 0.24 : 0.1); // white24
 
   // Accent/selection variants.
   Color get accentSoft => accent.withValues(alpha: 0.2);
   Color get selectionBackground => selection.withValues(alpha: 0.1);
-  Color get selectionOverlay => selection.withValues(alpha: 0.3);
+  Color get selectionOverlay =>
+      selection.withValues(alpha: _isDark ? 0.3 : 0.1);
 
   @override
   AppColors copyWith({
+    Brightness? brightness,
     Color? backgroundTop,
     Color? backgroundMid,
     Color? backgroundBottom,
     Color? textPrimary,
     Color? surfaceTint,
     Color? borderTint,
+    Color? cardSurface,
     Color? accent,
     Color? accentBright,
     Color? primaryAction,
@@ -113,12 +131,14 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? star,
   }) {
     return AppColors(
+      brightness: brightness ?? this.brightness,
       backgroundTop: backgroundTop ?? this.backgroundTop,
       backgroundMid: backgroundMid ?? this.backgroundMid,
       backgroundBottom: backgroundBottom ?? this.backgroundBottom,
       textPrimary: textPrimary ?? this.textPrimary,
       surfaceTint: surfaceTint ?? this.surfaceTint,
       borderTint: borderTint ?? this.borderTint,
+      cardSurface: cardSurface ?? this.cardSurface,
       accent: accent ?? this.accent,
       accentBright: accentBright ?? this.accentBright,
       primaryAction: primaryAction ?? this.primaryAction,
@@ -146,6 +166,7 @@ class AppColors extends ThemeExtension<AppColors> {
     if (other == null) return this;
 
     return AppColors(
+      brightness: t < 0.5 ? brightness : other.brightness,
       backgroundTop: Color.lerp(backgroundTop, other.backgroundTop, t)!,
       backgroundMid: Color.lerp(backgroundMid, other.backgroundMid, t)!,
       backgroundBottom: Color.lerp(
@@ -156,6 +177,7 @@ class AppColors extends ThemeExtension<AppColors> {
       textPrimary: Color.lerp(textPrimary, other.textPrimary, t)!,
       surfaceTint: Color.lerp(surfaceTint, other.surfaceTint, t)!,
       borderTint: Color.lerp(borderTint, other.borderTint, t)!,
+      cardSurface: Color.lerp(cardSurface, other.cardSurface, t)!,
       accent: Color.lerp(accent, other.accent, t)!,
       accentBright: Color.lerp(accentBright, other.accentBright, t)!,
       primaryAction: Color.lerp(primaryAction, other.primaryAction, t)!,
