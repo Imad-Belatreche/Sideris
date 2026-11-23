@@ -85,7 +85,7 @@ class CalendarDay extends StatelessWidget {
           Center(
             child: Text(
               '$dayNumber',
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: context.appTheme.data.textTheme.bodyMedium,
             ),
           ),
           Positioned(top: 3, left: 4, right: 4, child: _horizontalDots(top)),
@@ -154,7 +154,7 @@ class CalendarDay extends StatelessWidget {
                     //TODO: Maybe make it a text button that lets you choose a year and month
                     Text(
                       DateFormat.yMMM(locale).format(currentDate),
-                      style: Theme.of(context).textTheme.titleLarge,
+                      style: context.appTheme.data.textTheme.titleLarge,
                     ),
                     IconButton(
                       onPressed: onRightPressed,
@@ -185,7 +185,7 @@ class CalendarDay extends StatelessWidget {
                     Text(
                       weekName,
                       textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.headlineSmall,
+                      style: context.appTheme.data.textTheme.headlineSmall,
                     ),
                   ...List.generate(
                     DateTime(currentDate.year, currentDate.month, 1).weekday -

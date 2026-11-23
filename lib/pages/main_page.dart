@@ -123,7 +123,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: Theme(
-        data: Theme.of(context).copyWith(
+        data: context.appTheme.data.copyWith(
           splashFactory: NoSplash.splashFactory,
           highlightColor: Colors.transparent,
         ),

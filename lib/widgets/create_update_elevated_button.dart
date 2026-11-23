@@ -32,7 +32,7 @@ class CreateUpdateElevatedButton extends StatelessWidget {
         spacing: 10,
         children: [
           Icon(icon, size: 20, color: context.appColors.textPrimary),
-          Text(label, style: Theme.of(context).textTheme.titleMedium),
+          Text(label, style: context.appTheme.data.textTheme.titleMedium),
         ],
       ),
     );

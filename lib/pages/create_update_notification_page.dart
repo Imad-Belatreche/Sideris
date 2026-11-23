@@ -520,7 +520,7 @@ class _CreateUpdateNotificationPageState
           widget.updateNotification == null
               ? context.l10n.notificationPageCreateTitle
               : context.l10n.notificationPageUpdateTitle,
-          style: Theme.of(context).textTheme.headlineLarge,
+          style: context.appTheme.data.textTheme.headlineLarge,
         ),
       ),
       body: SafeArea(
@@ -535,7 +535,7 @@ class _CreateUpdateNotificationPageState
               children: [
                 Text(
                   context.l10n.fieldTitle,
-                  style: Theme.of(context).textTheme.headlineMedium,
+                  style: context.appTheme.data.textTheme.headlineMedium,
                 ),
                 SizedBox(height: 5),
                 NotificationTextfield(
@@ -548,7 +548,7 @@ class _CreateUpdateNotificationPageState
 
                 Text(
                   context.l10n.notificationPageContentTitle,
-                  style: Theme.of(context).textTheme.headlineMedium,
+                  style: context.appTheme.data.textTheme.headlineMedium,
                 ),
                 SizedBox(height: 5),
                 NotificationTextfield(
@@ -562,14 +562,14 @@ class _CreateUpdateNotificationPageState
 
                 Text(
                   context.l10n.notificationPageColorTag,
-                  style: Theme.of(context).textTheme.headlineMedium,
+                  style: context.appTheme.data.textTheme.headlineMedium,
                 ),
                 SizedBox(height: 5),
                 buildColorTagSelector(),
 
                 Text(
                   context.l10n.notificationPageRepetitionType,
-                  style: Theme.of(context).textTheme.headlineMedium,
+                  style: context.appTheme.data.textTheme.headlineMedium,
                 ),
                 SizedBox(height: 5),
                 buildRepetitionTypeSelector(),
@@ -587,7 +587,7 @@ class _CreateUpdateNotificationPageState
 
                 Text(
                   context.l10n.notificationPageOptions,
-                  style: Theme.of(context).textTheme.headlineMedium,
+                  style: context.appTheme.data.textTheme.headlineMedium,
                 ),
                 SizedBox(height: 5),
                 buildOptions(),
@@ -807,7 +807,7 @@ class _CreateUpdateNotificationPageState
       children: [
         Text(
           context.l10n.notificationPageDateAndTime,
-          style: Theme.of(context).textTheme.headlineMedium,
+          style: context.appTheme.data.textTheme.headlineMedium,
         ),
 
         ///TODO: Maybe using a single button for whole date?
@@ -905,7 +905,7 @@ class _CreateUpdateNotificationPageState
       children: [
         Text(
           context.l10n.notificationPageSchedule,
-          style: Theme.of(context).textTheme.headlineMedium,
+          style: context.appTheme.data.textTheme.headlineMedium,
         ),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
@@ -967,7 +967,7 @@ class _CreateUpdateNotificationPageState
                   ),
                   Text(
                     context.l10n.actionStart,
-                    style: Theme.of(context).textTheme.bodyLarge,
+                    style: context.appTheme.data.textTheme.bodyLarge,
                   ),
                 ],
               ),
@@ -1103,7 +1103,7 @@ class _CreateUpdateNotificationPageState
                     children: [
                       Text(
                         context.l10n.notificationPageRepeatEvery,
-                        style: Theme.of(context).textTheme.labelLarge,
+                        style: context.appTheme.data.textTheme.labelLarge,
                       ),
 
                       NotificationTextfield(
@@ -1133,7 +1133,7 @@ class _CreateUpdateNotificationPageState
                         child: Text(
                           key: ValueKey<String>(_scheduleUnit!.name),
                           _scheduleUnit!.label(context.l10n),
-                          style: Theme.of(context).textTheme.labelLarge,
+                          style: context.appTheme.data.textTheme.labelLarge,
                         ),
                       ),
                     ],
@@ -1180,7 +1180,7 @@ class _CreateUpdateNotificationPageState
         SizedBox(height: 16),
         Text(
           context.l10n.notificationPageDailyTiming,
-          style: Theme.of(context).textTheme.headlineMedium,
+          style: context.appTheme.data.textTheme.headlineMedium,
         ),
         SizedBox(height: 5),
 
@@ -1189,7 +1189,7 @@ class _CreateUpdateNotificationPageState
         SizedBox(height: 16),
         Text(
           context.l10n.notificationPageDuration,
-          style: Theme.of(context).textTheme.headlineMedium,
+          style: context.appTheme.data.textTheme.headlineMedium,
         ),
         SizedBox(height: 5),
 
@@ -1385,9 +1385,9 @@ class _CreateUpdateNotificationPageState
           SizedBox(height: 5),
           Text(
             context.l10n.notificationPageMonthlyDaysNotice,
-            style: Theme.of(
-              context,
-            ).textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
+            style: context.appTheme.data.textTheme.bodySmall?.copyWith(
+              fontStyle: FontStyle.italic,
+            ),
           ),
         ],
       ),
@@ -1418,7 +1418,7 @@ class _CreateUpdateNotificationPageState
           children: [
             Text(
               context.l10n.notificationPageMonths,
-              style: Theme.of(context).textTheme.labelLarge,
+              style: context.appTheme.data.textTheme.labelLarge,
             ),
             SizedBox(height: 5),
             Wrap(
@@ -1482,7 +1482,7 @@ class _CreateUpdateNotificationPageState
                       children: [
                         Text(
                           context.l10n.notificationPageDays,
-                          style: Theme.of(context).textTheme.labelLarge,
+                          style: context.appTheme.data.textTheme.labelLarge,
                         ),
                         Row(
                           spacing: 8,
@@ -1683,7 +1683,7 @@ class _CreateUpdateNotificationPageState
 
                 NotificationOutlinedButton(
                   label: context.l10n.actionAddTime,
-                  labelStyle: Theme.of(context).textTheme.headlineSmall
+                  labelStyle: context.appTheme.data.textTheme.headlineSmall
                       ?.copyWith(color: context.appColors.selectionBright),
                   isExpanded: true,
                   isSelected: false,
@@ -1754,7 +1754,7 @@ class _CreateUpdateNotificationPageState
                         children: [
                           Text(
                             context.l10n.notificationPageHowManyTimes,
-                            style: Theme.of(context).textTheme.labelLarge,
+                            style: context.appTheme.data.textTheme.labelLarge,
                           ),
 
                           NotificationTextfield(
@@ -1769,10 +1769,11 @@ class _CreateUpdateNotificationPageState
                       ),
                       Text(
                         context.l10n.notificationPageRandomExample,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontStyle: FontStyle.italic,
-                          color: context.appColors.textFaint,
-                        ),
+                        style: context.appTheme.data.textTheme.bodyMedium
+                            ?.copyWith(
+                              fontStyle: FontStyle.italic,
+                              color: context.appColors.textFaint,
+                            ),
                       ),
                     ],
                   ),
@@ -1808,7 +1809,7 @@ class _CreateUpdateNotificationPageState
                         children: [
                           Text(
                             context.l10n.notificationPageEvery,
-                            style: Theme.of(context).textTheme.labelLarge,
+                            style: context.appTheme.data.textTheme.labelLarge,
                           ),
 
                           NotificationTextfield(
@@ -1826,7 +1827,7 @@ class _CreateUpdateNotificationPageState
                               (_intervalUnit ?? IntervalUnit.hour).label(
                                 context.l10n,
                               ),
-                              style: Theme.of(context).textTheme.labelLarge,
+                              style: context.appTheme.data.textTheme.labelLarge,
                             ),
                             centerText: true,
                             isCurrentlySelected: true,
@@ -1844,10 +1845,11 @@ class _CreateUpdateNotificationPageState
                       ),
                       Text(
                         context.l10n.notificationPageIntervalExample,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontStyle: FontStyle.italic,
-                          color: context.appColors.textFaint,
-                        ),
+                        style: context.appTheme.data.textTheme.bodyMedium
+                            ?.copyWith(
+                              fontStyle: FontStyle.italic,
+                              color: context.appColors.textFaint,
+                            ),
                       ),
                     ],
                   ),
@@ -1968,7 +1970,7 @@ class _CreateUpdateNotificationPageState
                 children: [
                   Text(
                     "${context.l10n.notificationPageDuration} ",
-                    style: Theme.of(context).textTheme.labelLarge,
+                    style: context.appTheme.data.textTheme.labelLarge,
                   ),
                   NotificationTextfield(
                     controller: _durationCountController,
@@ -2055,7 +2057,7 @@ class _CreateUpdateNotificationPageState
                 children: [
                   Text(
                     context.l10n.notificationPageDuration,
-                    style: Theme.of(context).textTheme.labelLarge,
+                    style: context.appTheme.data.textTheme.labelLarge,
                   ),
                   NotificationTextfield(
                     controller: _totalTimesController,
@@ -2067,7 +2069,7 @@ class _CreateUpdateNotificationPageState
                   ),
                   Text(
                     context.l10n.notificationPageOccurrences,
-                    style: Theme.of(context).textTheme.labelLarge,
+                    style: context.appTheme.data.textTheme.labelLarge,
                   ),
                 ],
               ),
@@ -2162,13 +2164,13 @@ class _CreateUpdateNotificationPageState
               children: [
                 Text(
                   context.l10n.notificationPageFrom,
-                  style: Theme.of(context).textTheme.labelLarge,
+                  style: context.appTheme.data.textTheme.labelLarge,
                 ),
                 Text(
                   fromTime != null
                       ? fromTime.format(context)
                       : context.l10n.notificationPageSelectRange,
-                  style: Theme.of(context).textTheme.titleSmall,
+                  style: context.appTheme.data.textTheme.titleSmall,
                 ),
               ],
             ),
@@ -2176,7 +2178,7 @@ class _CreateUpdateNotificationPageState
         ),
         Text(
           context.l10n.actionTo,
-          style: Theme.of(context).textTheme.labelMedium,
+          style: context.appTheme.data.textTheme.labelMedium,
         ),
         Expanded(
           child: NotificationOutlinedButton(
@@ -2206,13 +2208,13 @@ class _CreateUpdateNotificationPageState
               children: [
                 Text(
                   context.l10n.notificationPageUntil,
-                  style: Theme.of(context).textTheme.labelLarge,
+                  style: context.appTheme.data.textTheme.labelLarge,
                 ),
                 Text(
                   untilTime != null
                       ? untilTime.format(context)
                       : context.l10n.notificationPageSelectRange,
-                  style: Theme.of(context).textTheme.titleSmall,
+                  style: context.appTheme.data.textTheme.titleSmall,
                 ),
               ],
             ),

@@ -33,7 +33,7 @@ class DndSwitch extends StatelessWidget {
             ),
             child: Icon(
               Icons.do_not_disturb_on_rounded,
-              color: Theme.of(context).colorScheme.primary,
+              color: context.appTheme.data.colorScheme.primary,
             ),
           ),
           SizedBox(width: 10),
@@ -42,11 +42,11 @@ class DndSwitch extends StatelessWidget {
             children: [
               Text(
                 context.l10n.dndSwitchTitle,
-                style: Theme.of(context).textTheme.titleSmall,
+                style: context.appTheme.data.textTheme.titleSmall,
               ),
               Text(
                 context.l10n.dndSwitchSubtitle,
-                style: Theme.of(context).textTheme.labelMedium,
+                style: context.appTheme.data.textTheme.labelMedium,
               ),
             ],
           ),

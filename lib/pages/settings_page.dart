@@ -165,10 +165,10 @@ class _SettingsPageState extends State<SettingsPage> {
       labelWidget: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: Theme.of(context).textTheme.labelLarge),
+          Text(label, style: context.appTheme.data.textTheme.labelLarge),
           Text(
             valueLabel(value),
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: context.appTheme.data.textTheme.bodyMedium,
           ).animate(key: ValueKey(value)).fadeIn(duration: 250.ms),
         ],
       ),
@@ -197,7 +197,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 title:
                     Text(
                           context.l10n.settingsPageTitle,
-                          style: Theme.of(context).textTheme.headlineLarge,
+                          style: context.appTheme.data.textTheme.headlineLarge,
                         )
                         .animate()
                         .fadeIn(duration: 400.ms)
@@ -229,7 +229,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           context.l10n.settingsPageLoadingError(
                             state.errorMessage!,
                           ),
-                          style: Theme.of(context).textTheme.headlineMedium,
+                          style: context.appTheme.data.textTheme.headlineMedium,
                         ),
                       );
                     }
@@ -241,7 +241,8 @@ class _SettingsPageState extends State<SettingsPage> {
                         children: [
                           Text(
                             context.l10n.settingsPageTheme,
-                            style: Theme.of(context).textTheme.headlineMedium,
+                            style:
+                                context.appTheme.data.textTheme.headlineMedium,
                           ),
                           SizedBox(height: 10),
 
@@ -274,7 +275,8 @@ class _SettingsPageState extends State<SettingsPage> {
 
                           Text(
                             context.l10n.settingsPageLanguage,
-                            style: Theme.of(context).textTheme.headlineMedium,
+                            style:
+                                context.appTheme.data.textTheme.headlineMedium,
                           ),
                           SizedBox(height: 10),
 
@@ -301,7 +303,8 @@ class _SettingsPageState extends State<SettingsPage> {
                             context
                                 .l10n
                                 .settingsPageDefaultNotificationTemplate,
-                            style: Theme.of(context).textTheme.headlineMedium,
+                            style:
+                                context.appTheme.data.textTheme.headlineMedium,
                           ),
                           SizedBox(height: 12),
 
@@ -479,14 +482,12 @@ class _SettingsPageState extends State<SettingsPage> {
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          backgroundColor: Theme.of(
-                            context,
-                          ).scaffoldBackgroundColor,
+                          backgroundColor:
+                              context.appTheme.data.scaffoldBackgroundColor,
                           content: Text(
                             context.l10n.settingsPageSavedSettings,
-                            style: Theme.of(context).textTheme.bodySmall!.apply(
-                              color: context.appColors.textPrimary,
-                            ),
+                            style: context.appTheme.data.textTheme.bodySmall!
+                                .apply(color: context.appColors.textPrimary),
                           ),
                         ),
                       );

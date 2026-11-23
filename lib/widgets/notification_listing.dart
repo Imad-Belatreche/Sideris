@@ -53,9 +53,11 @@ class NotificationListing extends StatelessWidget {
                                   notification.title,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(
-                                    context,
-                                  ).textTheme.titleMedium,
+                                  style: context
+                                      .appTheme
+                                      .data
+                                      .textTheme
+                                      .titleMedium,
                                 ),
                                 AnimatedSwitcher(
                                   transitionBuilder: (child, animation) {
@@ -73,9 +75,11 @@ class NotificationListing extends StatelessWidget {
                                               notification.content!,
                                               maxLines: 2,
                                               overflow: TextOverflow.fade,
-                                              style: Theme.of(
-                                                context,
-                                              ).textTheme.bodyMedium,
+                                              style: context
+                                                  .appTheme
+                                                  .data
+                                                  .textTheme
+                                                  .bodyMedium,
                                             ),
                                           ],
                                         )
@@ -116,7 +120,8 @@ class NotificationListing extends StatelessWidget {
                                   _secondaryDetails(context),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(context).textTheme.bodySmall,
+                                  style:
+                                      context.appTheme.data.textTheme.bodySmall,
                                 ),
                               ],
                             ),
@@ -313,7 +318,7 @@ class _StatusBadge extends StatelessWidget {
                 : context.appColors.textMuted,
           ),
           const SizedBox(width: 4),
-          Text(label, style: Theme.of(context).textTheme.labelSmall),
+          Text(label, style: context.appTheme.data.textTheme.labelSmall),
         ],
       ),
     );
@@ -343,7 +348,7 @@ class _InfoPill extends StatelessWidget {
           Expanded(
             child: Text(
               label,
-              style: Theme.of(context).textTheme.labelMedium,
+              style: context.appTheme.data.textTheme.labelMedium,
               // overflow: TextOverflow.fade,
               softWrap: true,
               maxLines: 3,
@@ -382,7 +387,7 @@ class _NextTrigger extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       spacing: 3,
       children: [
-        Text(time, style: Theme.of(context).textTheme.titleLarge),
+        Text(time, style: context.appTheme.data.textTheme.titleLarge),
         Row(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -393,25 +398,25 @@ class _NextTrigger extends StatelessWidget {
             if (difference != null && !difference.isNegative) ...[
               Text(
                 l10n.listingRelativeIn,
-                style: Theme.of(
-                  context,
-                ).textTheme.labelLarge?.copyWith(color: accent),
+                style: context.appTheme.data.textTheme.labelLarge?.copyWith(
+                  color: accent,
+                ),
               ),
               const SizedBox(width: 4),
             ],
             Text(
               relative,
-              style: Theme.of(
-                context,
-              ).textTheme.labelLarge?.copyWith(color: accent),
+              style: context.appTheme.data.textTheme.labelLarge?.copyWith(
+                color: accent,
+              ),
             ),
             if (difference != null && difference.isNegative) ...[
               const SizedBox(width: 4),
               Text(
                 l10n.listingRelativeAgo,
-                style: Theme.of(
-                  context,
-                ).textTheme.labelLarge?.copyWith(color: accent),
+                style: context.appTheme.data.textTheme.labelLarge?.copyWith(
+                  color: accent,
+                ),
               ),
             ],
           ],
