@@ -125,7 +125,7 @@ class _HomePageState extends State<HomePage> {
     return [
       for (final n in state.notifications)
         if (RecurrenceCalculator.occursOnDay(n, day))
-          n.colorTag?.value ?? context.appColors.textPrimary,
+          n.colorTag?.value ?? context.appColors.accent,
     ];
   }
 
