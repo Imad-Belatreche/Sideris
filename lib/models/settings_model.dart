@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:sideris/models/notification_rule/notification_rule_model.dart';
+import 'package:sideris/themes/day_light_theme.dart';
 import 'package:sideris/themes/night_blue_theme.dart';
 
 enum UiLanguage {
@@ -24,7 +25,8 @@ enum UiLanguage {
 
 enum ApplicationTheme {
   //TODO: Add new themes here
-  nightBlue(NightBlueTheme);
+  nightBlue(NightBlueTheme),
+  dayLight(DayLightTheme);
 
   final Type theme;
 
