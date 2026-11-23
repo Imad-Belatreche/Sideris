@@ -13,8 +13,7 @@ class NotificationListing extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final accent =
-        notification.colorTag?.value ?? context.appColors.textSecondary;
+    final accent = notification.colorTag?.value ?? context.appColors.accent;
     final isActive = notification.isActive;
     final nextTrigger =
         notification.nextTriggerAt != null &&
@@ -27,7 +26,9 @@ class NotificationListing extends StatelessWidget {
       opacity: isActive ? 1 : 0.58,
       child:
           Card(
-                color: context.appColors.surfaceLow,
+                color: context.appColors.cardSurface,
+                surfaceTintColor: Colors.transparent,
+                shadowColor: context.appColors.shadow,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadiusGeometry.circular(12),
                   side: BorderSide(color: context.appColors.borderStrong),
