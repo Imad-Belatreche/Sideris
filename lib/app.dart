@@ -12,6 +12,7 @@ import 'package:sideris/repositories/scheduled_notifications_repository.dart';
 import 'package:sideris/repositories/settings_repository.dart';
 import 'package:sideris/services/notification_service.dart';
 import 'package:sideris/themes/app_theme.dart';
+import 'package:sideris/themes/day_light_theme.dart';
 import 'package:sideris/themes/night_blue_theme.dart';
 
 class MyApp extends StatelessWidget {
@@ -54,23 +55,33 @@ class MyApp extends StatelessWidget {
 
       child: BlocBuilder<LocaleCubit, LocaleState>(
         buildWhen: (previous, current) => previous != current,
-        builder: (context, state) {
-          final font = appFontOfLocale(state.locale);
-          final appTheme = NightBlueTheme(font: font);
+        builder: (context, localState) {
+          return BlocBuilder<SettingsCubit, SettingsState>(
+            buildWhen: (previous, current) =>
+                previous.settings.theme != current.settings.theme,
+            builder: (context, settingsState) {
+              final font = appFontOfLocale(localState.locale);
 
-          return AppThemeScope(
-            theme: appTheme,
-            child: MaterialApp(
-              title: lookupAppLocalizations(state.locale).appName,
-              theme: appTheme.data,
-              localizationsDelegates: [
-                AppLocalizations.delegate,
-                ...GlobalMaterialLocalizations.delegates,
-              ],
-              supportedLocales: [Locale("en"), Locale("fr"), Locale("ar")],
-              locale: state.locale,
-              home: MainPage(notificationService: notificationService),
-            ),
+              final appTheme = switch (settingsState.settings.theme) {
+                ApplicationTheme.nightBlue => NightBlueTheme(font: font),
+                ApplicationTheme.dayLight => DayLightTheme(font: font),
+              };
+
+              return AppThemeScope(
+                theme: appTheme,
+                child: MaterialApp(
+                  title: lookupAppLocalizations(localState.locale).appName,
+                  theme: appTheme.data,
+                  localizationsDelegates: [
+                    AppLocalizations.delegate,
+                    ...GlobalMaterialLocalizations.delegates,
+                  ],
+                  supportedLocales: [Locale("en"), Locale("fr"), Locale("ar")],
+                  locale: localState.locale,
+                  home: MainPage(notificationService: notificationService),
+                ),
+              );
+            },
           );
         },
       ),
