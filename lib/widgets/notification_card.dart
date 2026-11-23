@@ -12,16 +12,20 @@ class NotificationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return Card(
       color: isSelected
-          ? context.appColors.selectionBackground
-          : context.appColors.surface,
+          ? Color.alphaBlend(
+              colors.selection.withValues(alpha: 0.18),
+              colors.cardSurface,
+            )
+          : colors.cardSurface,
+      surfaceTintColor: Colors.transparent,
+      shadowColor: colors.shadow,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
         side: BorderSide(
-          color: isSelected
-              ? context.appColors.selection
-              : context.appColors.borderSubtle,
+          color: isSelected ? colors.selection : colors.borderSubtle,
         ),
       ),
       child: Padding(padding: const EdgeInsets.all(12.0), child: child),
