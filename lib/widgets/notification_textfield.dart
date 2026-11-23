@@ -37,6 +37,7 @@ class NotificationTextfield extends StatelessWidget {
       maxLines: maxLines,
       minLines: minLines,
       keyboardType: keyboardType,
+      style: textTheme.bodyMedium,
       inputFormatters: keyboardType == TextInputType.number
           ? [
               FilteringTextInputFormatter.deny(RegExp(r'^0*')),
