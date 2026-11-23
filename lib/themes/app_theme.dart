@@ -29,7 +29,9 @@ abstract class AppTheme {
       ///Used in section titles like "Theme", "Language", "Default Notification Template"
       headlineMedium: font(
         fontSize: 18,
-        color: colors.textFaint,
+        color: colors.brightness == Brightness.dark
+            ? colors.textFaint
+            : colors.textMuted,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.4,
       ),
