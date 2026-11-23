@@ -53,9 +53,11 @@ class NotificationRadioCard<T> extends StatelessWidget {
                 ],
                 Text(
                   label,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: isSelected ? context.appColors.textPrimary : context.appColors.textSecondary,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500
+                  style: context.appTheme.data.textTheme.titleSmall?.copyWith(
+                    color: isSelected
+                        ? context.appColors.textPrimary
+                        : context.appColors.textSecondary,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                   ),
                 ),
               ],

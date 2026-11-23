@@ -31,6 +31,7 @@ class NotificationTextfield extends StatelessWidget {
       borderSide: BorderSide(color: context.appColors.borderSubtle, width: 2.0),
     );
 
+    final textTheme = context.appTheme.data.textTheme;
     final textField = TextField(
       controller: controller,
       maxLines: maxLines,
@@ -45,9 +46,11 @@ class NotificationTextfield extends StatelessWidget {
 
       decoration: InputDecoration(
         labelText: labelText,
-        labelStyle: Theme.of(context).textTheme.titleMedium,
+        labelStyle: textTheme.titleMedium,
         hintText: hintText,
-        hintStyle: Theme.of(context).textTheme.bodyMedium,
+        hintStyle: textTheme.bodyMedium?.copyWith(
+          color: context.appColors.textMuted,
+        ),
         filled: true,
         fillColor: context.appColors.fieldFill,
         border: border,

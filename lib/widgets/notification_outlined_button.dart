@@ -84,8 +84,8 @@ class NotificationOutlinedButton extends StatelessWidget {
               style:
                   labelStyle ??
                   (selected
-                      ? Theme.of(context).textTheme.labelLarge
-                      : Theme.of(context).textTheme.bodyLarge!),
+                      ? context.appTheme.data.textTheme.labelLarge
+                      : context.appTheme.data.textTheme.bodyLarge!),
             )
           else
             Flexible(child: labelWidget!),

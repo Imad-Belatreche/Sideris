@@ -103,9 +103,9 @@ class _HomePageState extends State<HomePage> {
       SnackBar(
         content: Text(
           context.l10n.homePageNotificationDeleted,
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium?.copyWith(color: context.appColors.onSuccess),
+          style: context.appTheme.data.textTheme.bodyMedium?.copyWith(
+            color: context.appColors.onSuccess,
+          ),
         ),
         backgroundColor: context.appColors.success,
         action: SnackBarAction(
@@ -174,9 +174,11 @@ class _HomePageState extends State<HomePage> {
                               children: [
                                 Text(
                                       getGreeting(),
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.headlineLarge,
+                                      style: context
+                                          .appTheme
+                                          .data
+                                          .textTheme
+                                          .headlineLarge,
                                     )
                                     .animate()
                                     .fadeIn(duration: 400.ms)
@@ -191,9 +193,11 @@ class _HomePageState extends State<HomePage> {
                                       DateFormat.EEEE(
                                         locale,
                                       ).addPattern(", MMMM dd").format(now),
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.headlineSmall,
+                                      style: context
+                                          .appTheme
+                                          .data
+                                          .textTheme
+                                          .headlineSmall,
                                     )
                                     .animate()
                                     .fadeIn(duration: 400.ms, delay: 100.ms)
@@ -306,7 +310,7 @@ class _HomePageState extends State<HomePage> {
                                 'EEEE, MMMM d',
                                 locale,
                               ).format(_selectedDay),
-                              style: Theme.of(context).textTheme.titleLarge,
+                              style: context.appTheme.data.textTheme.titleLarge,
                             )
                             .animate()
                             .fadeIn(duration: 300.ms, curve: Curves.easeIn)
@@ -326,7 +330,7 @@ class _HomePageState extends State<HomePage> {
                                   : context.l10n.homePageCalendarRulesPlanned(
                                       selectedDayRules.length,
                                     ),
-                              style: Theme.of(context).textTheme.labelLarge,
+                              style: context.appTheme.data.textTheme.labelLarge,
                             )
                             .animate()
                             .fadeIn(duration: 300.ms, curve: Curves.easeIn)
@@ -343,7 +347,7 @@ class _HomePageState extends State<HomePage> {
                           child: Center(
                             child: Text(
                               context.l10n.homePageCalendarTapToInspectRules,
-                              style: Theme.of(context).textTheme.bodySmall,
+                              style: context.appTheme.data.textTheme.bodySmall,
                             ),
                           ),
                         )
@@ -381,9 +385,8 @@ class _HomePageState extends State<HomePage> {
                                       transitionDuration: 300.ms,
                                       pageBuilder:
                                           (_, animation, secondaryAnimation) {
-
                                             return context.appTheme.buildBackground(
-                                               MultiBlocProvider(
+                                              MultiBlocProvider(
                                                 providers: [
                                                   BlocProvider.value(
                                                     value: context
@@ -448,7 +451,7 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text(
             context.l10n.homePageListAllActive,
-            style: Theme.of(context).textTheme.titleLarge,
+            style: context.appTheme.data.textTheme.titleLarge,
           ),
         ),
         for (final notification in state.notifications.reversed.toList())
@@ -479,9 +482,9 @@ class _HomePageState extends State<HomePage> {
           content: Text(text),
           title: Text(
             context.l10n.actionWarning,
-            style: Theme.of(
-              context,
-            ).textTheme.titleMedium?.copyWith(color: context.appColors.danger),
+            style: context.appTheme.data.textTheme.titleMedium?.copyWith(
+              color: context.appColors.danger,
+            ),
           ),
           actions: actions,
         );
