@@ -321,20 +321,27 @@ class _SettingsPageState extends State<SettingsPage> {
                           ),
                           SizedBox(height: 12),
 
-                          NotificationTextfield(
-                            controller: _defaultTitleController,
-                            labelText: context.l10n.fieldTitle,
-                            hintText: context.l10n.fieldTitle,
-                            maxLines: 1,
+                          TapRegion(
+                            groupId: "settings_fields",
+                            child: NotificationTextfield(
+                              controller: _defaultTitleController,
+                              labelText: context.l10n.fieldTitle,
+                              hintText: context.l10n.fieldTitle,
+                              maxLines: 1,
+                            ),
                           ),
                           SizedBox(height: 12),
 
-                          NotificationTextfield(
-                            controller: _defaultDescriptionController,
-                            labelText: context.l10n.fieldDescription,
-                            hintText:
-                                context.l10n.settingsPageDefaultDescriptionHint,
-                            maxLines: 3,
+                          TapRegion(
+                            groupId: "settings_fields",
+                            child: NotificationTextfield(
+                              controller: _defaultDescriptionController,
+                              labelText: context.l10n.fieldDescription,
+                              hintText: context
+                                  .l10n
+                                  .settingsPageDefaultDescriptionHint,
+                              maxLines: 3,
+                            ),
                           ),
                           SizedBox(height: 12),
 

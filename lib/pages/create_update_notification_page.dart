@@ -538,10 +538,13 @@ class _CreateUpdateNotificationPageState
                   style: context.appTheme.data.textTheme.headlineMedium,
                 ),
                 SizedBox(height: 5),
-                NotificationTextfield(
-                  controller: _titleController,
-                  hintText: context.l10n.notificationPageTitleHint,
-                  maxLines: 1,
+                TapRegion(
+                  groupId: "create_update_page",
+                  child: NotificationTextfield(
+                    controller: _titleController,
+                    hintText: context.l10n.notificationPageTitleHint,
+                    maxLines: 1,
+                  ),
                 ),
 
                 SizedBox(height: 16),
@@ -551,11 +554,14 @@ class _CreateUpdateNotificationPageState
                   style: context.appTheme.data.textTheme.headlineMedium,
                 ),
                 SizedBox(height: 5),
-                NotificationTextfield(
-                  controller: _descriptionController,
-                  hintText: context.l10n.notificationPageContentHint,
-                  maxLines: 3,
-                  minLines: 3,
+                TapRegion(
+                  groupId: "create_update_page",
+                  child: NotificationTextfield(
+                    controller: _descriptionController,
+                    hintText: context.l10n.notificationPageContentHint,
+                    maxLines: 3,
+                    minLines: 3,
+                  ),
                 ),
 
                 SizedBox(height: 16),
@@ -1106,13 +1112,16 @@ class _CreateUpdateNotificationPageState
                         style: context.appTheme.data.textTheme.labelLarge,
                       ),
 
-                      NotificationTextfield(
-                        controller: _scheduleEveryController,
-                        hintText: "1",
-                        maxLines: 1,
-                        keyboardType: TextInputType.number,
-                        isExpanded: false,
-                        isDense: true,
+                      TapRegion(
+                        groupId: "create_update_page",
+                        child: NotificationTextfield(
+                          controller: _scheduleEveryController,
+                          hintText: "1",
+                          maxLines: 1,
+                          keyboardType: TextInputType.number,
+                          isExpanded: false,
+                          isDense: true,
+                        ),
                       ),
 
                       AnimatedSwitcher(
@@ -1757,13 +1766,16 @@ class _CreateUpdateNotificationPageState
                             style: context.appTheme.data.textTheme.labelLarge,
                           ),
 
-                          NotificationTextfield(
-                            controller: _randomTimesController,
-                            hintText: "5",
-                            maxLines: 1,
-                            isExpanded: false,
-                            isDense: true,
-                            keyboardType: TextInputType.number,
+                          TapRegion(
+                            groupId: "create_update_page",
+                            child: NotificationTextfield(
+                              controller: _randomTimesController,
+                              hintText: "5",
+                              maxLines: 1,
+                              isExpanded: false,
+                              isDense: true,
+                              keyboardType: TextInputType.number,
+                            ),
                           ),
                         ],
                       ),
@@ -1812,13 +1824,16 @@ class _CreateUpdateNotificationPageState
                             style: context.appTheme.data.textTheme.labelLarge,
                           ),
 
-                          NotificationTextfield(
-                            controller: _intervalTimesController,
-                            hintText: "2",
-                            maxLines: 1,
-                            isExpanded: false,
-                            isDense: true,
-                            keyboardType: TextInputType.number,
+                          TapRegion(
+                            groupId: "create_update_page",
+                            child: NotificationTextfield(
+                              controller: _intervalTimesController,
+                              hintText: "2",
+                              maxLines: 1,
+                              isExpanded: false,
+                              isDense: true,
+                              keyboardType: TextInputType.number,
+                            ),
                           ),
 
                           NotificationOutlinedButton(
@@ -1972,13 +1987,16 @@ class _CreateUpdateNotificationPageState
                     "${context.l10n.notificationPageDuration} ",
                     style: context.appTheme.data.textTheme.labelLarge,
                   ),
-                  NotificationTextfield(
-                    controller: _durationCountController,
-                    hintText: "7",
-                    maxLines: 1,
-                    keyboardType: TextInputType.number,
-                    isDense: true,
-                    isExpanded: false,
+                  TapRegion(
+                    groupId: "create_update_page",
+                    child: NotificationTextfield(
+                      controller: _durationCountController,
+                      hintText: "7",
+                      maxLines: 1,
+                      keyboardType: TextInputType.number,
+                      isDense: true,
+                      isExpanded: false,
+                    ),
                   ),
                   NotificationOutlinedButton(
                     label: (_durationUnit ?? ScheduleUnit.daily).unit(
@@ -2059,13 +2077,16 @@ class _CreateUpdateNotificationPageState
                     context.l10n.notificationPageDuration,
                     style: context.appTheme.data.textTheme.labelLarge,
                   ),
-                  NotificationTextfield(
-                    controller: _totalTimesController,
-                    hintText: "10",
-                    maxLines: 1,
-                    keyboardType: TextInputType.number,
-                    isDense: true,
-                    isExpanded: false,
+                  TapRegion(
+                    groupId: "create_update_page",
+                    child: NotificationTextfield(
+                      controller: _totalTimesController,
+                      hintText: "10",
+                      maxLines: 1,
+                      keyboardType: TextInputType.number,
+                      isDense: true,
+                      isExpanded: false,
+                    ),
                   ),
                   Text(
                     context.l10n.notificationPageOccurrences,
