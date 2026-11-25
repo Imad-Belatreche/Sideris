@@ -34,7 +34,6 @@ class NotificationTextfield extends StatelessWidget {
     final textTheme = context.appTheme.data.textTheme;
     final textField = TextField(
       onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
-
       controller: controller,
       maxLines: maxLines,
       minLines: minLines,
