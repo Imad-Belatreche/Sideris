@@ -48,6 +48,7 @@ class NotificationTextfield extends StatelessWidget {
 
       decoration: InputDecoration(
         labelText: labelText,
+        floatingLabelBehavior: FloatingLabelBehavior.always,
         labelStyle: textTheme.titleMedium,
         hintText: hintText,
         hintStyle: textTheme.bodyMedium?.copyWith(

@@ -59,6 +59,7 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
+      resizeToAvoidBottomInset: false,
       body: context.appTheme.buildBackground(_buildPage()),
 
       floatingActionButton: (_selectedIndex == 0)
