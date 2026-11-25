@@ -247,16 +247,13 @@ class _SettingsPageState extends State<SettingsPage> {
                           ),
                           SizedBox(height: 10),
 
-                          //TODO: Add theme changing
                           SingleChildScrollView(
                             // physics: NeverScrollableScrollPhysics(),
                             scrollDirection: Axis.horizontal,
                             child: Row(
                               spacing: 10,
                               children: [
-                                //TODO: Add small icons showcasing each theme
-                                //TODO: Add onTap function that changes their selection
-
+                                //TODO: Add more themes
                                 ThemeSettingsCard(
                                   onTap: () {
                                     setState(() {
